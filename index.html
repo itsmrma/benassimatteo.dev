@@ -70,6 +70,7 @@
 
       /* Micro-animations and tactile feedback */
       .astryx-card {
+        overflow: visible !important;
         transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
                     box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1),
                     border-color 0.2s ease;
@@ -90,9 +91,12 @@
       }
 
       /* Headroom so translateY hover animation never clips against scrollable boundaries */
-      .astryx-stack[data-scrollable="true"] {
-        padding-block: 5px !important;
-        margin-block: -3px !important;
+      .astryx-stack[data-direction="horizontal"] {
+        padding-block: 6px !important;
+        scrollbar-width: none;
+      }
+      .astryx-stack[data-direction="horizontal"]::-webkit-scrollbar {
+        display: none;
       }
 
       .astryx-token {

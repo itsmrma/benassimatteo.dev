@@ -498,10 +498,10 @@ Click "Dispatch via Email Client ✉" to open mailer or "Copy Text" to clipboard
                 </HStack>
               </Card>
             ) : (
-              <Card padding={1.5} variant="default" elevation="low" width="100%">
+              <Card padding={2} variant="default" elevation="low" width="100%">
                 <HStack justify="between" vAlign="center" gap={1.5} width="100%">
                   <StackItem size="fill">
-                    <HStack gap={0.5} vAlign="center" isScrollable wrap="nowrap">
+                    <HStack gap={0.5} vAlign="center" isScrollable wrap="nowrap" paddingBlock={1}>
                       {WORKSTATION_TABS.map((tab) => {
                         const isActive = activeTab === tab.id;
                         return (
@@ -1025,7 +1025,7 @@ Click "Dispatch via Email Client ✉" to open mailer or "Copy Text" to clipboard
                 {activeCategory && activeProject && (
                   <VStack gap={3}>
                     {/* Sub-Tab Selector Bar (Horizontal Swipe on Mobile) */}
-                    <HStack gap={1.5} isScrollable wrap="nowrap" width="100%">
+                    <HStack gap={1.5} isScrollable wrap="nowrap" width="100%" paddingBlock={1}>
                       {categoryProjects.map((proj) => (
                         <Button
                           key={proj.id}
@@ -1268,7 +1268,7 @@ Click "Dispatch via Email Client ✉" to open mailer or "Copy Text" to clipboard
                 {activeTab === 'objectives' && (
                   <VStack gap={3} width="100%">
                     {/* Sub-Tab Selector Bar (Horizontal Swipe on Mobile) */}
-                    <HStack gap={1.5} isScrollable wrap="nowrap" width="100%">
+                    <HStack gap={1.5} isScrollable wrap="nowrap" width="100%" paddingBlock={1}>
                       {motorsportDomains.map((dom) => (
                         <Button
                           key={dom.id}
@@ -1356,7 +1356,7 @@ Click "Dispatch via Email Client ✉" to open mailer or "Copy Text" to clipboard
                   <VStack gap={3} width="100%">
                     {/* Top Command Preset Toolbar (Horizontal Swipe on Mobile) */}
                     <HStack justify="between" vAlign="center" gap={1.5} width="100%">
-                      <HStack gap={1} isScrollable wrap="nowrap" width="100%">
+                      <HStack gap={1} isScrollable wrap="nowrap" width="100%" paddingBlock={1}>
                         {(
                           [
                             'home',
