@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://benassimatteo.dev/sitemap.xml

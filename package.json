@@ -1,0 +1,29 @@
+{
+  "name": "benassimatteo.dev",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "typecheck": "tsc --noEmit",
+    "build": "vite build",
+    "preview": "vite preview",
+    "deploy": "npm run build && npx wrangler deploy",
+    "pages:deploy": "npm run build && npx wrangler pages deploy dist --project-name benassimatteo-dev"
+  },
+  "dependencies": {
+    "@astryxdesign/cli": "^0.7.12",
+    "@astryxdesign/core": "^0.7.12",
+    "@astryxdesign/theme-neutral": "^0.7.12",
+    "@heroicons/react": "^2.2.0",
+    "@stylexjs/stylex": "^0.19.1",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@vitejs/plugin-react-swc": "^4.0.0",
+    "typescript": "^5.8.0",
+    "vite": "^6.2.0"
+  }
+}
