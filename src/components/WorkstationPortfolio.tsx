@@ -423,9 +423,8 @@ Click "Dispatch via Email Client ✉" to open mailer or "Copy Text" to clipboard
                   />
                 </HStack>
               </HStack>
-              <HStack justify="between" vAlign="center" width="100%">
+              <HStack vAlign="center" width="100%">
                 <Token label="125/180 ECTS · AVG 27.3/30 (2L)" size="sm" color="gray" />
-                <Token label="SYSTEM ONLINE" size="sm" color="green" />
               </HStack>
             </VStack>
           ) : (
@@ -437,7 +436,6 @@ Click "Dispatch via Email Client ✉" to open mailer or "Copy Text" to clipboard
                   Computer Engineering @ UNIMORE
                 </Text>
                 <Token label="125/180 ECTS · AVG 27.3/30 (2 HONORS)" size="sm" color="purple" />
-                <Token label="SYSTEM ONLINE" size="sm" color="green" />
               </HStack>
 
               {/* Right: Same-Height Interactive Tokens (Clock, Email, Theme) */}
@@ -652,7 +650,6 @@ Click "Dispatch via Email Client ✉" to open mailer or "Copy Text" to clipboard
                       <VStack gap={3}>
                         <HStack justify="between" vAlign="center" wrap="wrap" gap={1.5}>
                           <HStack gap={1} vAlign="center" wrap="wrap">
-                            <Token label="SYSTEM ONLINE" size="sm" color="green" />
                             <Token label="UNIMORE MANTOVA CAMPUS" size="sm" color="purple" />
                             <Token label="B.Sc. COMPUTER ENGINEERING" size="sm" color="blue" />
                           </HStack>
