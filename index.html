@@ -70,7 +70,6 @@
 
       /* Micro-animations and tactile feedback */
       .astryx-card {
-        overflow: visible !important;
         transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
                     box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1),
                     border-color 0.2s ease;
@@ -79,24 +78,18 @@
       .astryx-button {
         flex-shrink: 0;
         white-space: nowrap;
-        transition: transform 0.16s cubic-bezier(0.16, 1, 0.3, 1),
-                    box-shadow 0.16s ease,
-                    background-color 0.16s ease;
+        transition: box-shadow 0.15s ease, background-color 0.15s ease, opacity 0.15s ease;
       }
       .astryx-button:hover {
-        transform: translateY(-2px);
+        /* No translateY: eliminates clipping at top of dock/scroll containers */
+        opacity: 0.95;
       }
       .astryx-button:active {
         transform: scale(0.98);
       }
 
-      /* Headroom so translateY hover animation never clips against scrollable boundaries */
-      .astryx-stack[data-direction="horizontal"] {
-        padding-block: 6px !important;
-        scrollbar-width: none;
-      }
-      .astryx-stack[data-direction="horizontal"]::-webkit-scrollbar {
-        display: none;
+      .astryx-stack[data-scrollable="true"] {
+        padding-block: 2px;
       }
 
       .astryx-token {
@@ -213,8 +206,7 @@
           width: 100% !important;
           max-width: 100% !important;
           gap: 6px !important;
-          padding-block: 5px !important;
-          margin-block: -3px !important;
+          padding-block: 2px !important;
           -webkit-overflow-scrolling: touch !important;
           scrollbar-width: none !important;
         }
