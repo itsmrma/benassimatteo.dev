@@ -15,6 +15,7 @@ import {
   FEATURED_PROJECTS,
   CONTACTS,
 } from '../data/curatedData';
+import { TelemetryBackground } from './TelemetryBackground';
 
 interface LivreaPortfolioProps {
   onCopyEmail?: () => void;
@@ -141,6 +142,9 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
       paddingInline={0}
       className="livrea-snap-container"
     >
+      {/* Dynamic Lightweight Telemetry Background Animation */}
+      <TelemetryBackground />
+
       {/* 1. Thin Red Lap Progress Bar at Top */}
       <HStack className="livrea-progress-track" aria-hidden="true">
         <Text as="span" className="livrea-progress-bar" style={{ width: `${scrollProgress}%` }}>
@@ -148,21 +152,7 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
         </Text>
       </HStack>
 
-      {/* 2. Floating Lap Counter in Bottom-Left */}
-      <HStack align="center" gap={2} className="livrea-panel-counter" aria-label={`Sector ${activePanel} of 9`}>
-        <Text as="span" className="livrea-counter-dot">{'\u00A0'}</Text>
-        <Text weight="bold" color="accent" size="lg" className="livrea-counter-num">
-          {String(activePanel).padStart(2, '0')}
-        </Text>
-        <Text color="secondary" size="sm">
-          / 09
-        </Text>
-        <Text color="secondary" size="sm" className="livrea-counter-tag">
-          {PANELS[activePanel - 1]?.title}
-        </Text>
-      </HStack>
-
-      {/* 3. Floating Quick-Jump Checkpoints on Right Margin (Desktop) */}
+      {/* 2. Floating Quick-Jump Checkpoints on Right Margin (Desktop) */}
       <VStack gap={1} className="livrea-quick-nav" aria-label="Circuit checkpoint navigation">
         {PANELS.map((p, idx) => {
           const isActive = activePanel === idx + 1;
@@ -229,7 +219,7 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
               </Text>
               <Text color="secondary">·</Text>
               <Text type="code" color="primary">
-                RUST &amp; SYSTEMS DEVELOPER
+                SOFTWARE &amp; SYSTEMS ENGINEER
               </Text>
               <Text color="secondary">·</Text>
               <Text type="code" color="secondary">
@@ -580,7 +570,7 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
                 </HStack>
               </VStack>
 
-              <HStack paddingBlockStart={1} gap={3} wrap="wrap">
+              <HStack paddingBlockStart={1}>
                 <Button
                   label="Inspect Oxide on GitHub ↗"
                   variant="primary"
@@ -589,9 +579,6 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
                   rel="noopener noreferrer"
                   className="livrea-primary-action-btn"
                 />
-                <Text type="code" color="secondary" size="sm" className="livrea-action-note">
-                  github.com/getoxide/oxide
-                </Text>
               </HStack>
             </VStack>
 
@@ -738,7 +725,7 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
                 </HStack>
               </VStack>
 
-              <HStack paddingBlockStart={1} gap={3} wrap="wrap">
+              <HStack paddingBlockStart={1}>
                 <Button
                   label="Inspect SyncForge on GitHub ↗"
                   variant="primary"
@@ -747,9 +734,6 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
                   rel="noopener noreferrer"
                   className="livrea-primary-action-btn"
                 />
-                <Text type="code" color="secondary" size="sm" className="livrea-action-note">
-                  github.com/itsmrma/SyncForge
-                </Text>
               </HStack>
             </VStack>
 
@@ -900,7 +884,7 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
                 </HStack>
               </VStack>
 
-              <HStack paddingBlockStart={1} gap={3} wrap="wrap">
+              <HStack paddingBlockStart={1}>
                 <Button
                   label="Inspect scrobbl.rs on GitHub ↗"
                   variant="primary"
@@ -909,9 +893,6 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
                   rel="noopener noreferrer"
                   className="livrea-primary-action-btn"
                 />
-                <Text type="code" color="secondary" size="sm" className="livrea-action-note">
-                  github.com/itsmrma/scrobbl-rs
-                </Text>
               </HStack>
             </VStack>
 
@@ -1185,7 +1166,7 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
 
               {/* Right Column */}
               <VStack gap={3} className="livrea-machinery-col">
-                {/* TrueNAS Home Lab (benpie) */}
+                {/* TrueNAS Home Lab */}
                 <VStack gap={1} className="livrea-machinery-card">
                   <HStack justify="between" align="center">
                     <Heading level={3} weight="bold" color="primary">
@@ -1198,9 +1179,9 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
                   <Text type="body" color="secondary">
                     Dedicated home lab with ZFS RAIDZ storage pools, automated snapshot replication, Docker microservices, and network monitoring.
                   </Text>
-                  <Link href="https://github.com/itsmrma/benpie" target="_blank" rel="noopener noreferrer" color="accent" size="sm" weight="bold">
-                    GitHub Repository (benpie) ↗
-                  </Link>
+                  <Text type="code" color="secondary" size="sm">
+                    PRIVATE ON-PREM INFRASTRUCTURE
+                  </Text>
                 </VStack>
 
                 {/* UNIMORE Music Library */}
@@ -1405,7 +1386,7 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
             </VStack>
 
             <Text as="p" type="large" color="primary" className="livrea-contact-lead">
-              I build fast, reliable software across the full systems stack — from multi-agent Rust desktop apps to bare-metal C on ARM Cortex-M4. If you're engineering high-throughput software, telemetry pipelines, or systems infrastructure, I'd love to connect.
+              I build fast, reliable software across the full systems stack — from multi-agent desktop apps and distributed services to bare-metal C on ARM Cortex-M4. If you're engineering high-throughput software, telemetry pipelines, or systems infrastructure, I'd love to connect.
             </Text>
 
             {/* 4 High-Contrast Structured Contact Cards */}

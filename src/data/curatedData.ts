@@ -15,7 +15,7 @@ export interface OtherProject {
   name: string;
   desc: string;
   award?: string;
-  href: string;
+  href?: string;
   isLive?: boolean;
 }
 
@@ -49,12 +49,12 @@ export interface MilestoneItem {
 
 export const IDENTITY = {
   name: 'Matteo Benassi',
-  role: 'Computer Engineering student · Rust & systems developer',
+  role: 'Computer Engineering student · Software & Systems Engineer',
   location: 'Mantova, Italy',
   manifesto:
-    'I build fast, reliable software — from Rust desktop apps to bare-metal C. Next stop: motorsport.',
+    'I build fast, reliable software — from high-performance systems to bare-metal C. Next stop: motorsport.',
   bio:
-    "I'm a Computer Engineering student at the University of Modena and Reggio Emilia, Mantova campus. I've won three hackathon podiums, I contribute to open-source Rust tools, and I want to build software for racing teams.",
+    "I'm a Computer Engineering student at the University of Modena and Reggio Emilia, Mantova campus. I've won three hackathon podiums, I contribute to open-source developer tools & systems, and I want to build software for racing teams.",
   availability: 'Open to a curricular internship in 2026/27.',
   lastUpdated: 'November 2026',
 };
@@ -161,7 +161,6 @@ export const OTHER_PROJECTS: OtherProject[] = [
     id: 'truenas',
     name: 'TrueNAS home lab',
     desc: 'ZFS storage and self-hosted services',
-    href: 'https://github.com/itsmrma/benpie',
   },
 ];
 
