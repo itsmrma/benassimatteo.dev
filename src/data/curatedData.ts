@@ -71,12 +71,12 @@ export const FEATURED_PROJECTS: FeaturedProject[] = [
     id: 'oxide',
     title: 'Oxide',
     year: '2026 · now',
-    tagline: 'Core contributor',
+    tagline: 'Core contributor · Active Development (Pre-release)',
     description:
       'Open-source desktop app that runs Claude Code, Codex and Antigravity side by side in isolated Git worktrees, and checks every agent turn before merge.',
     stack: 'Rust · Tauri 2 · React',
     href: 'https://github.com/getoxide/oxide',
-    badge: 'Core contributor',
+    badge: 'Active Development · Pre-release',
     highlight: true,
   },
   {
@@ -114,12 +114,12 @@ export const FEATURED_PROJECTS: FeaturedProject[] = [
     id: 'scrobbl',
     title: 'scrobbl.rs',
     year: '2026',
-    tagline: 'Self-hosted listening archive & daemon',
+    tagline: 'Self-hosted listening archive & daemon · Active Development (Pre-release)',
     description:
       'Single-owner, self-hosted music listening archive and analytics daemon. Collects Spotify plays in the background, ingests multi-year JSON streaming archives, and serves high-throughput personal rankings and activity charts.',
     stack: 'Rust · SQLite WAL · React · Axum',
     href: 'https://github.com/itsmrma/scrobbl-rs',
-    badge: 'Creator · Active',
+    badge: 'Active Development · Pre-release',
   },
 ];
 
@@ -271,7 +271,7 @@ export const CHRONOLOGICAL_MILESTONES: MilestoneItem[] = [
     id: 'm-scrobbl',
     year: '2026',
     title: 'scrobbl.rs',
-    subtitle: 'Self-Hosted Listening Tracker',
+    subtitle: 'Self-Hosted Listening Tracker · Active Development (Pre-Release)',
     description: 'Lightweight Rust daemon collecting Spotify history, local SQLite store, and personal ranking server.',
     stack: 'Rust · React · SQLite',
     href: 'https://github.com/itsmrma/scrobbl-rs',
@@ -298,7 +298,7 @@ export const CHRONOLOGICAL_MILESTONES: MilestoneItem[] = [
     id: 'm-oxide',
     year: '2026 · now',
     title: 'Oxide',
-    subtitle: 'Core Contributor · In Progress',
+    subtitle: 'Core Contributor · Active Development (Pre-Release)',
     description: 'Desktop platform running multi-agent AI worktrees (Claude Code, Codex, Antigravity) with pre-merge turn validation.',
     stack: 'Rust · Tauri 2 · React',
     href: 'https://github.com/getoxide/oxide',

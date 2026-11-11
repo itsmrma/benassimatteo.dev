@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
   Section,
   VStack,
@@ -16,6 +16,12 @@ import {
   CONTACTS,
 } from '../data/curatedData';
 import { TelemetryBackground } from './TelemetryBackground';
+import {
+  DesktopStage,
+  DesktopWindow,
+  AppPreview,
+  type AppPreviewRef,
+} from './desktop';
 
 interface LivreaPortfolioProps {
   onCopyEmail?: () => void;
@@ -38,6 +44,7 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
   const [activePanel, setActivePanel] = useState(1);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [copied, setCopied] = useState(false);
+  const oxidePreviewRef = useRef<AppPreviewRef | null>(null);
 
   const handleCopy = (e?: React.MouseEvent) => {
     if (e) e.preventDefault();
@@ -104,8 +111,19 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
 
     // Keyboard navigation (ArrowUp/ArrowDown, PageUp/PageDown)
     const handleKeyDown = (e: KeyboardEvent) => {
-      const activeTag = (document.activeElement?.tagName || '').toLowerCase();
-      if (activeTag === 'input' || activeTag === 'textarea') return;
+      const activeEl = document.activeElement;
+      if (!activeEl) return;
+      const activeTag = (activeEl.tagName || '').toLowerCase();
+      if (
+        activeTag === 'input' ||
+        activeTag === 'textarea' ||
+        activeTag === 'iframe' ||
+        activeEl.closest('.livrea-desktop-window') ||
+        activeEl.closest('.livrea-desktop-stage') ||
+        activeEl.closest('.livrea-os-window')
+      ) {
+        return;
+      }
 
       if (e.key === 'ArrowDown' || e.key === 'PageDown') {
         if (activePanel < 8) {
@@ -191,11 +209,8 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
               </Text>
             </HStack>
             <HStack align="center" gap={3}>
-              <Text type="code" color="secondary" size="sm">
+              <Text type="code" color="accent" size="sm" weight="bold">
                 STATUS: RUNNING
-              </Text>
-              <Text weight="bold" color="accent" className="livrea-badge-num">
-                01
               </Text>
             </HStack>
           </HStack>
@@ -317,8 +332,8 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
                 SECTOR 02 // COMPETITIVE PODIUM RECORD
               </Text>
             </HStack>
-            <Text weight="bold" color="accent" className="livrea-badge-num">
-              02
+            <Text type="code" color="accent" size="sm" weight="bold">
+              3/3 PODIUMS
             </Text>
           </HStack>
 
@@ -482,144 +497,144 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
             <HStack align="center" gap={2}>
               <Text as="span" className="livrea-red-indicator">{'\u00A0'}</Text>
               <Text weight="bold" color="secondary" size="sm" className="livrea-kicker">
-                SECTOR 03 // FLAGSHIP MULTI-AGENT ARCHITECTURE
-              </Text>
-              <Text color="secondary">·</Text>
-              <Text weight="bold" color="accent" size="sm" className="livrea-kicker">
-                CORE CONTRIBUTOR
+                SECTOR 03 // MULTI-AGENT WORKTREE ARCHITECTURE
               </Text>
             </HStack>
-            <Text weight="bold" color="accent" className="livrea-badge-num">
-              03
-            </Text>
+            <HStack align="center" gap={2}>
+              <Text type="code" color="accent" size="sm" weight="bold" className="livrea-in-progress-tag">
+                ACTIVE DEVELOPMENT
+              </Text>
+              <Text type="code" color="accent" size="sm" weight="bold" className="livrea-in-progress-tag">
+                PRE-RELEASE
+              </Text>
+            </HStack>
           </HStack>
 
-          {/* Two-Column Layout: Technical Specs on Left, Framed App Screenshot on Right */}
-          <HStack justify="between" align="center" gap={6} width="100%" className="livrea-project-split-layout">
-            {/* Left Column: Details & Pillars */}
-            <VStack gap={4} className="livrea-split-left-col">
-              <VStack gap={1}>
-                {/* Oxide Logo + Massive Title */}
-                <HStack align="center" gap={3}>
-                  <img
-                    src="/oxide-icon.svg"
-                    alt="Oxide Logo"
-                    className="livrea-project-logo"
-                  />
-                  <Heading level={2} className="livrea-massive-title">
-                    {oxideProj.title.toUpperCase()}
-                  </Heading>
-                </HStack>
-
-                <HStack align="center" gap={2} paddingBlockStart={1}>
-                  <Text type="code" color="accent" weight="bold" className="livrea-in-progress-tag">
-                    CORE CONTRIBUTOR · 2026 ACTIVE
-                  </Text>
-                </HStack>
-
-                <Text as="p" type="large" color="primary" className="livrea-project-lead">
-                  {oxideProj.description}
-                </Text>
-                <Text type="code" color="accent" weight="bold" size="sm">
-                  STACK: {oxideProj.stack} · Git Worktrees
-                </Text>
-              </VStack>
-
-              {/* 3 Architecture Pillars */}
-              <VStack gap={2} width="100%" className="livrea-pillars-list">
-                <HStack align="start" gap={3} className="livrea-pillar-item">
-                  <Text type="code" color="accent" weight="bold">
-                    01.
-                  </Text>
-                  <VStack gap={0.5}>
-                    <Text weight="bold" color="primary">
-                      Isolated Git Worktrees Concurrency
-                    </Text>
-                    <Text type="body" color="secondary">
-                      Spawns Claude Code, Codex, and Antigravity into independent worktrees so parallel turns never overwrite files.
-                    </Text>
-                  </VStack>
-                </HStack>
-
-                <HStack align="start" gap={3} className="livrea-pillar-item">
-                  <Text type="code" color="accent" weight="bold">
-                    02.
-                  </Text>
-                  <VStack gap={0.5}>
-                    <Text weight="bold" color="primary">
-                      Pre-Merge Verification Gate
-                    </Text>
-                    <Text type="body" color="secondary">
-                      Runs typechecking and test suites on every agent turn before reconciling into the primary branch.
-                    </Text>
-                  </VStack>
-                </HStack>
-
-                <HStack align="start" gap={3} className="livrea-pillar-item">
-                  <Text type="code" color="accent" weight="bold">
-                    03.
-                  </Text>
-                  <VStack gap={0.5}>
-                    <Text weight="bold" color="primary">
-                      Rust &amp; Tauri 2 Native Performance
-                    </Text>
-                    <Text type="body" color="secondary">
-                      Low-memory backend executing async subagent channels with native OS performance.
-                    </Text>
-                  </VStack>
-                </HStack>
-              </VStack>
-
-              <HStack paddingBlockStart={1}>
-                <Button
-                  label="Inspect Oxide on GitHub ↗"
-                  variant="primary"
-                  href={oxideProj.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="livrea-primary-action-btn"
-                />
-              </HStack>
-            </VStack>
-
-            {/* Right Column: Framed Real Desktop App Screenshot */}
-            <VStack gap={2} className="livrea-split-right-col">
-              <VStack className="livrea-mockup-frame">
-                {/* Desktop Window Title Bar */}
-                <HStack justify="between" align="center" className="livrea-mockup-titlebar">
-                  <HStack gap={1} align="center">
-                    <Text as="span" className="livrea-window-dot dot-red">{'\u00A0'}</Text>
-                    <Text as="span" className="livrea-window-dot dot-yellow">{'\u00A0'}</Text>
-                    <Text as="span" className="livrea-window-dot dot-green">{'\u00A0'}</Text>
+          {/* Oxide Full-Panel Stage: allows window to float, move and resize over the entire layout including the text */}
+          <DesktopStage className="livrea-oxide-full-stage" height="min(72svh, 590px)">
+            <HStack justify="between" align="center" gap={6} width="100%" className="livrea-project-split-layout livrea-oxide-underlay">
+              {/* Left Column: Details & Pillars (interactive underlay) */}
+              <VStack gap={2} className="livrea-split-left-col">
+                <VStack gap={1}>
+                  {/* Oxide Logo + Massive Title */}
+                  <HStack align="center" gap={3}>
+                    <img
+                      src="/oxide-icon.svg"
+                      alt="Oxide Logo"
+                      className="livrea-project-logo"
+                    />
+                    <Heading level={2} className="livrea-massive-title">
+                      {oxideProj.title.toUpperCase()}
+                    </Heading>
                   </HStack>
-                  <Text type="code" color="secondary" size="sm" className="livrea-window-title">
-                    Oxide // Thread: Claude Code + Diff Surface
+
+                  <HStack align="center" gap={2} paddingBlockStart={1} wrap="wrap">
+                    <Text type="code" color="accent" weight="bold" className="livrea-in-progress-tag">
+                      CORE CONTRIBUTOR
+                    </Text>
+                    <Text type="code" color="accent" weight="bold" className="livrea-in-progress-tag">
+                      ACTIVE DEVELOPMENT
+                    </Text>
+                    <Text type="code" color="accent" weight="bold" className="livrea-in-progress-tag">
+                      PRE-RELEASE
+                    </Text>
+                  </HStack>
+
+                  <Text as="p" type="large" color="primary" className="livrea-project-lead">
+                    {oxideProj.description}
+                  </Text>
+                  <Text type="code" color="accent" weight="bold" size="sm">
+                    STACK: {oxideProj.stack} · Git Worktrees · Status: Active Development (Pre-Release)
+                  </Text>
+                </VStack>
+
+                {/* 3 Architecture Pillars */}
+                <VStack gap={1} width="100%" className="livrea-pillars-list">
+                  <HStack align="start" gap={3} className="livrea-pillar-item">
+                    <Text type="code" color="accent" weight="bold">
+                      01.
+                    </Text>
+                    <VStack gap={0.5}>
+                      <Text weight="bold" color="primary">
+                        Isolated Git Worktrees Concurrency
+                      </Text>
+                      <Text type="body" color="secondary">
+                        Spawns Claude Code, Codex, and Antigravity into independent worktrees so parallel turns never overwrite files.
+                      </Text>
+                    </VStack>
+                  </HStack>
+
+                  <HStack align="start" gap={3} className="livrea-pillar-item">
+                    <Text type="code" color="accent" weight="bold">
+                      02.
+                    </Text>
+                    <VStack gap={0.5}>
+                      <Text weight="bold" color="primary">
+                        Pre-Merge Verification Gate
+                      </Text>
+                      <Text type="body" color="secondary">
+                        Runs typechecking and test suites on every agent turn before reconciling into the primary branch.
+                      </Text>
+                    </VStack>
+                  </HStack>
+
+                  <HStack align="start" gap={3} className="livrea-pillar-item">
+                    <Text type="code" color="accent" weight="bold">
+                      03.
+                    </Text>
+                    <VStack gap={0.5}>
+                      <Text weight="bold" color="primary">
+                        Rust &amp; Tauri 2 Native Performance
+                      </Text>
+                      <Text type="body" color="secondary">
+                        Low-memory backend executing async subagent channels with native OS performance.
+                      </Text>
+                    </VStack>
+                  </HStack>
+                </VStack>
+
+                <HStack paddingBlockStart={1}>
+                  <Button
+                    label="Inspect Oxide on GitHub ↗"
+                    variant="primary"
+                    href={oxideProj.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="livrea-primary-action-btn"
+                  />
+                </HStack>
+              </VStack>
+
+              {/* Right Column: Slot / Caption */}
+              <VStack gap={2} className="livrea-split-right-col livrea-stage-right-slot">
+                <HStack justify="between" align="center" width="100%" className="livrea-stage-caption">
+                  <Text type="supporting" color="secondary" size="sm">
+                    Live demo of the real Oxide UI · sample data
                   </Text>
                   <Text type="code" color="accent" size="sm">
-                    GUI
+                    TAURI 2
                   </Text>
                 </HStack>
-
-                {/* Real Screenshot */}
-                <AspectRatio ratio={16 / 10} fit="cover">
-                  <img
-                    src="/oxide-thread.png"
-                    alt="Oxide desktop interface with Claude Code thread in the center and pre-merge diff surface on the right"
-                    className="livrea-app-screenshot"
-                  />
-                </AspectRatio>
               </VStack>
+            </HStack>
 
-              <HStack justify="between" align="center">
-                <Text type="supporting" color="secondary" size="sm">
-                  Official Oxide preview: Threads on left, agent prompt center, diff view right
-                </Text>
-                <Text type="code" color="accent" size="sm">
-                  TAURI 2
-                </Text>
-              </HStack>
-            </VStack>
-          </HStack>
+            {/* Real Oxide Interactive Live Demo: starts on the right, but free to move and resize over the text! */}
+            <DesktopWindow
+              title="Oxide"
+              tag="TAURI 2"
+              initialPlacement="right"
+              onReset={() => oxidePreviewRef.current?.reset()}
+            >
+              <AppPreview
+                ref={oxidePreviewRef}
+                src="/demos/oxide/index.html"
+                poster="/oxide-thread.png"
+                title="Oxide Live Demo"
+                logicalMinW={1140}
+                logicalMinH={720}
+              />
+            </DesktopWindow>
+          </DesktopStage>
 
           <HStack justify="between" align="center" width="100%" className="livrea-bottom-strip">
             <Text type="code" color="secondary" size="sm">
@@ -644,15 +659,15 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
                 SECTOR 04 // DIGITAL SIGNAL PROCESSING &amp; MCP
               </Text>
             </HStack>
-            <Text weight="bold" color="accent" className="livrea-badge-num">
-              04
+            <Text type="code" color="accent" size="sm" weight="bold">
+              RUST FFT + TAURI 2
             </Text>
           </HStack>
 
-          {/* Two-Column Layout: Technical Specs on Left, Animated Preview on Right */}
+          {/* Two-Column Layout: Technical Specs on Left, Interactive App on Right */}
           <HStack justify="between" align="center" gap={6} width="100%" className="livrea-project-split-layout">
             {/* Left Column: Details & Pillars */}
-            <VStack gap={4} className="livrea-split-left-col">
+            <VStack gap={2} className="livrea-split-left-col">
               <VStack gap={1}>
                 {/* SyncForge Logo + Massive Title */}
                 <HStack align="center" gap={3}>
@@ -681,7 +696,7 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
               </VStack>
 
               {/* 3 Architecture Pillars */}
-              <VStack gap={2} width="100%" className="livrea-pillars-list">
+              <VStack gap={1} width="100%" className="livrea-pillars-list">
                 <HStack align="start" gap={3} className="livrea-pillar-item">
                   <Text type="code" color="accent" weight="bold">
                     01.
@@ -738,19 +753,27 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
             </VStack>
 
             {/* Right Column: Framed Real Desktop App Animated Preview */}
-            <VStack gap={2} className="livrea-split-right-col">
-              <VStack className="livrea-mockup-frame">
+            <VStack gap={2} width="100%" className="livrea-split-right-col">
+              <VStack width="100%" className="livrea-mockup-frame">
                 {/* Desktop Window Title Bar */}
-                <HStack justify="between" align="center" className="livrea-mockup-titlebar">
-                  <HStack gap={1} align="center">
-                    <Text as="span" className="livrea-window-dot dot-red">{'\u00A0'}</Text>
-                    <Text as="span" className="livrea-window-dot dot-yellow">{'\u00A0'}</Text>
-                    <Text as="span" className="livrea-window-dot dot-green">{'\u00A0'}</Text>
+                <HStack
+                  justify="between"
+                  align="center"
+                  width="100%"
+                  className="livrea-mockup-titlebar"
+                >
+                  <HStack align="center" gap={3}>
+                    <HStack align="center" gap={1.5} className="livrea-win-controls">
+                      <span className="livrea-win-dot dot-reset" aria-hidden="true" />
+                      <span className="livrea-win-dot dot-compact" aria-hidden="true" />
+                      <span className="livrea-win-dot dot-fill" aria-hidden="true" />
+                    </HStack>
+                    <Text type="code" size="sm" className="livrea-win-title-text">
+                      SyncForge // Batch Processing &amp; Waveform Analysis
+                    </Text>
                   </HStack>
-                  <Text type="code" color="secondary" size="sm" className="livrea-window-title">
-                    SyncForge // Batch Processing &amp; Waveform Analysis
-                  </Text>
-                  <Text type="code" color="accent" size="sm">
+
+                  <Text type="code" size="xsm" className="livrea-win-tag-badge">
                     RUST FFT
                   </Text>
                 </HStack>
@@ -765,7 +788,7 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
                 </AspectRatio>
               </VStack>
 
-              <HStack justify="between" align="center">
+              <HStack justify="between" align="center" width="100%" className="livrea-stage-caption">
                 <Text type="supporting" color="secondary" size="sm">
                   Official SyncForge application interface: batch tracks alignment &amp; metadata editing
                 </Text>
@@ -798,20 +821,21 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
               <Text weight="bold" color="secondary" size="sm" className="livrea-kicker">
                 SECTOR 05 // SELF-HOSTED ARCHIVE &amp; SYSTEMS DAEMON
               </Text>
-              <Text color="secondary">·</Text>
-              <Text weight="bold" color="accent" size="sm" className="livrea-kicker">
-                CREATOR
+            </HStack>
+            <HStack align="center" gap={2}>
+              <Text type="code" color="accent" size="sm" weight="bold" className="livrea-in-progress-tag">
+                ACTIVE DEVELOPMENT
+              </Text>
+              <Text type="code" color="accent" size="sm" weight="bold" className="livrea-in-progress-tag">
+                PRE-RELEASE
               </Text>
             </HStack>
-            <Text weight="bold" color="accent" className="livrea-badge-num">
-              05
-            </Text>
           </HStack>
 
-          {/* Two-Column Layout: Technical Specs on Left, Framed App Preview on Right */}
+          {/* Two-Column Layout: Technical Specs on Left, Interactive App on Right */}
           <HStack justify="between" align="center" gap={6} width="100%" className="livrea-project-split-layout">
             {/* Left Column: Details & Pillars */}
-            <VStack gap={4} className="livrea-split-left-col">
+            <VStack gap={2} className="livrea-split-left-col">
               <VStack gap={1}>
                 {/* scrobbl Logo + Massive Title */}
                 <HStack align="center" gap={3}>
@@ -825,9 +849,15 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
                   </Heading>
                 </HStack>
 
-                <HStack align="center" gap={2} paddingBlockStart={1}>
+                <HStack align="center" gap={2} paddingBlockStart={1} wrap="wrap">
                   <Text type="code" color="accent" weight="bold" className="livrea-in-progress-tag">
-                    RUST DAEMON · SQLITE WAL · EMBEDDED REACT
+                    CREATOR
+                  </Text>
+                  <Text type="code" color="accent" weight="bold" className="livrea-in-progress-tag">
+                    ACTIVE DEVELOPMENT
+                  </Text>
+                  <Text type="code" color="accent" weight="bold" className="livrea-in-progress-tag">
+                    PRE-RELEASE
                   </Text>
                 </HStack>
 
@@ -835,22 +865,22 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
                   {scrobblProj.description}
                 </Text>
                 <Text type="code" color="accent" weight="bold" size="sm">
-                  STACK: {scrobblProj.stack} · Spotify Web API
+                  STACK: {scrobblProj.stack} · Spotify Web API · Status: Active Development (Pre-Release)
                 </Text>
               </VStack>
 
               {/* 3 Architecture Pillars */}
-              <VStack gap={2} width="100%" className="livrea-pillars-list">
+              <VStack gap={1} width="100%" className="livrea-pillars-list">
                 <HStack align="start" gap={3} className="livrea-pillar-item">
                   <Text type="code" color="accent" weight="bold">
                     01.
                   </Text>
                   <VStack gap={0.5}>
                     <Text weight="bold" color="primary">
-                      Background Collection &amp; Idempotent Ingestion
+                      Background Collection &amp; Ingestion
                     </Text>
                     <Text type="body" color="secondary">
-                      Polls Spotify playback with adaptive intervals, reconciling duplicate plays and ingesting multi-year extended JSON archives safely.
+                      Adaptive Spotify polling with duplicate reconciliation and multi-year JSON archive ingestion.
                     </Text>
                   </VStack>
                 </HStack>
@@ -864,7 +894,7 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
                       Dual SQLite Architecture &amp; WAL Mode
                     </Text>
                     <Text type="body" color="secondary">
-                      Isolates listening analytics (archive.db) from user credentials and tokens (auth.db), querying 50,000+ tracks in &lt; 5ms.
+                      Isolates listening analytics (archive.db) from auth tokens (auth.db), querying 50,000+ tracks in &lt; 5ms.
                     </Text>
                   </VStack>
                 </HStack>
@@ -878,7 +908,7 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
                       Single-Binary Embedded Distribution
                     </Text>
                     <Text type="body" color="secondary">
-                      Compiles React and TypeScript assets directly into the standalone Rust binary with bundled SQLite, running with zero external dependencies.
+                      Compiles React and TypeScript assets directly into the standalone Rust binary with bundled SQLite.
                     </Text>
                   </VStack>
                 </HStack>
@@ -897,19 +927,27 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
             </VStack>
 
             {/* Right Column: Framed Real Desktop App Tour GIF */}
-            <VStack gap={2} className="livrea-split-right-col">
-              <VStack className="livrea-mockup-frame">
+            <VStack gap={2} width="100%" className="livrea-split-right-col">
+              <VStack width="100%" className="livrea-mockup-frame">
                 {/* Desktop Window Title Bar */}
-                <HStack justify="between" align="center" className="livrea-mockup-titlebar">
-                  <HStack gap={1} align="center">
-                    <Text as="span" className="livrea-window-dot dot-red">{'\u00A0'}</Text>
-                    <Text as="span" className="livrea-window-dot dot-yellow">{'\u00A0'}</Text>
-                    <Text as="span" className="livrea-window-dot dot-green">{'\u00A0'}</Text>
+                <HStack
+                  justify="between"
+                  align="center"
+                  width="100%"
+                  className="livrea-mockup-titlebar"
+                >
+                  <HStack align="center" gap={3}>
+                    <HStack align="center" gap={1.5} className="livrea-win-controls">
+                      <span className="livrea-win-dot dot-reset" aria-hidden="true" />
+                      <span className="livrea-win-dot dot-compact" aria-hidden="true" />
+                      <span className="livrea-win-dot dot-fill" aria-hidden="true" />
+                    </HStack>
+                    <Text type="code" size="sm" className="livrea-win-title-text">
+                      scrobbl.rs // Dashboard: Listening Archive &amp; Charts
+                    </Text>
                   </HStack>
-                  <Text type="code" color="secondary" size="sm" className="livrea-window-title">
-                    scrobbl.rs // Dashboard: Listening Archive &amp; Charts
-                  </Text>
-                  <Text type="code" color="accent" size="sm">
+
+                  <Text type="code" size="xsm" className="livrea-win-tag-badge">
                     RUST + SQLITE
                   </Text>
                 </HStack>
@@ -924,7 +962,7 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
                 </AspectRatio>
               </VStack>
 
-              <HStack justify="between" align="center">
+              <HStack justify="between" align="center" width="100%" className="livrea-stage-caption">
                 <Text type="supporting" color="secondary" size="sm">
                   Official scrobbl.rs interface: listening dashboard, history query engine &amp; rankings
                 </Text>
@@ -958,8 +996,8 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
                 SECTOR 06 // LOW-LEVEL EMBEDDED &amp; DISTRIBUTED GIS
               </Text>
             </HStack>
-            <Text weight="bold" color="accent" className="livrea-badge-num">
-              06
+            <Text type="code" color="accent" size="sm" weight="bold">
+              C + POSTGIS
             </Text>
           </HStack>
 
@@ -1085,12 +1123,12 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
                 SECTOR 07 // AUXILIARY MACHINERY &amp; HOME LAB
               </Text>
             </HStack>
-            <Text weight="bold" color="accent" className="livrea-badge-num">
-              07
+            <Text type="code" color="accent" size="sm" weight="bold">
+              SYSTEMS &amp; INFRASTRUCTURE
             </Text>
           </HStack>
 
-          <VStack gap={4} width="100%" className="livrea-detail-block">
+          <VStack gap={3} width="100%" className="livrea-detail-block">
             <VStack gap={1}>
               <Heading level={2} className="livrea-section-head">
                 MORE MACHINERY
@@ -1100,127 +1138,121 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
               </Text>
             </VStack>
 
-            {/* Compact Technical Table / Grid with Direct Repository Links */}
-            <HStack justify="between" align="start" gap={4} width="100%" className="livrea-machinery-grid">
-              {/* Left Column */}
-              <VStack gap={3} className="livrea-machinery-col">
-                {/* AMD Fan Control */}
-                <VStack gap={1} className="livrea-machinery-card">
-                  <HStack justify="between" align="center">
-                    <Heading level={3} weight="bold" color="primary">
-                      AMD Fan Control
-                    </Heading>
-                    <Text type="code" color="secondary" size="sm">
-                      RUST FFI
-                    </Text>
-                  </HStack>
-                  <Text type="body" color="secondary">
-                    Low-level GPU fan curve utility built with Rust FFI binding to Linux sysfs hardware sensor monitors.
+            {/* Symmetrical 2-Column Precision Grid with Equal-Height Rows */}
+            <VStack width="100%" className="livrea-machinery-grid">
+              {/* Row 1, Col 1: AMD Fan Control */}
+              <VStack gap={2} className="livrea-machinery-card">
+                <HStack justify="between" align="center">
+                  <Heading level={3} weight="bold" color="primary">
+                    AMD Fan Control
+                  </Heading>
+                  <Text type="code" color="secondary" size="sm">
+                    RUST FFI
                   </Text>
-                  <Link href="https://github.com/itsmrma/amd-fan-control" target="_blank" rel="noopener noreferrer" color="accent" size="sm" weight="bold">
-                    GitHub Repository ↗
-                  </Link>
-                </VStack>
-
-                {/* Viessmann Dashboard */}
-                <VStack gap={1} className="livrea-machinery-card">
-                  <HStack justify="between" align="center">
-                    <Heading level={3} weight="bold" color="primary">
-                      Viessmann Dashboard
-                    </Heading>
-                    <Text type="code" color="secondary" size="sm">
-                      HOME ASSISTANT
-                    </Text>
-                  </HStack>
-                  <Text type="body" color="secondary">
-                    Custom Home Assistant telemetry integration for monitoring heat pump COP modulation and energy efficiency curves.
-                  </Text>
-                  <Link href="https://github.com/itsmrma/viesmann-dashboard-hass" target="_blank" rel="noopener noreferrer" color="accent" size="sm" weight="bold">
-                    GitHub Repository ↗
-                  </Link>
-                </VStack>
-
-                {/* Music History Analyzer */}
-                <VStack gap={1} className="livrea-machinery-card">
-                  <HStack justify="between" align="center">
-                    <Heading level={3} weight="bold" color="primary">
-                      Music History Analyzer
-                    </Heading>
-                    <Text type="code" color="accent" size="sm">
-                      LIVE APP
-                    </Text>
-                  </HStack>
-                  <Text type="body" color="secondary">
-                    Interactive streaming history explorer importing multiple years of Spotify account JSON archives.
-                  </Text>
-                  <HStack gap={3} wrap="wrap">
-                    <Link href="https://spotify-history-analyzer.benassimatteo.dev" target="_blank" rel="noopener noreferrer" color="accent" size="sm" weight="bold">
-                      Live Web Application ↗
-                    </Link>
-                    <Link href="https://github.com/itsmrma/spotify-history-analyzer" target="_blank" rel="noopener noreferrer" color="secondary" size="sm">
-                      GitHub Repo ↗
-                    </Link>
-                  </HStack>
-                </VStack>
+                </HStack>
+                <Text type="body" color="secondary">
+                  Low-level GPU fan curve utility built with Rust FFI binding to Linux sysfs hardware sensor monitors.
+                </Text>
+                <Link href="https://github.com/itsmrma/amd-fan-control" target="_blank" rel="noopener noreferrer" color="accent" size="sm" weight="bold">
+                  GitHub Repository ↗
+                </Link>
               </VStack>
 
-              {/* Right Column */}
-              <VStack gap={3} className="livrea-machinery-col">
-                {/* TrueNAS Home Lab */}
-                <VStack gap={1} className="livrea-machinery-card">
-                  <HStack justify="between" align="center">
-                    <Heading level={3} weight="bold" color="primary">
-                      TrueNAS Home Lab
-                    </Heading>
-                    <Text type="code" color="secondary" size="sm">
-                      ZFS / LINUX
-                    </Text>
-                  </HStack>
-                  <Text type="body" color="secondary">
-                    Dedicated home lab with ZFS RAIDZ storage pools, automated snapshot replication, Docker microservices, and network monitoring.
-                  </Text>
+              {/* Row 1, Col 2: TrueNAS Home Lab */}
+              <VStack gap={2} className="livrea-machinery-card">
+                <HStack justify="between" align="center">
+                  <Heading level={3} weight="bold" color="primary">
+                    TrueNAS Home Lab
+                  </Heading>
                   <Text type="code" color="secondary" size="sm">
-                    PRIVATE ON-PREM INFRASTRUCTURE
+                    ZFS / LINUX
                   </Text>
-                </VStack>
-
-                {/* UNIMORE Music Library */}
-                <VStack gap={1} className="livrea-machinery-card">
-                  <HStack justify="between" align="center">
-                    <Heading level={3} weight="bold" color="primary">
-                      UNIMORE Music Library
-                    </Heading>
-                    <Text type="code" color="accent" size="sm">
-                      PYTHON / UV
-                    </Text>
-                  </HStack>
-                  <Text type="body" color="secondary">
-                    Academic music archive catalog service built with Python, Django, uv dependency management, and MusicBrainz API integration.
-                  </Text>
-                  <Link href="https://github.com/itsmrma/uni-musiclib-project" target="_blank" rel="noopener noreferrer" color="accent" size="sm" weight="bold">
-                    GitHub Repository ↗
-                  </Link>
-                </VStack>
-
-                {/* Language Credentials */}
-                <VStack gap={1} className="livrea-machinery-card">
-                  <HStack justify="between" align="center">
-                    <Heading level={3} weight="bold" color="primary">
-                      Cambridge B2 First
-                    </Heading>
-                    <Text type="code" color="accent" size="sm">
-                      PROFICIENCY
-                    </Text>
-                  </HStack>
-                  <Text type="body" color="secondary">
-                    Professional working English proficiency · Native Italian speaker.
-                  </Text>
-                  <Text type="code" color="secondary" size="sm">
-                    Technical documentation &amp; international team communication.
-                  </Text>
-                </VStack>
+                </HStack>
+                <Text type="body" color="secondary">
+                  Dedicated home lab with ZFS RAIDZ storage pools, automated snapshot replication, Docker microservices, and network monitoring.
+                </Text>
+                <Text type="code" color="secondary" size="sm">
+                  PRIVATE ON-PREM INFRASTRUCTURE
+                </Text>
               </VStack>
-            </HStack>
+
+              {/* Row 2, Col 1: Viessmann Dashboard */}
+              <VStack gap={2} className="livrea-machinery-card">
+                <HStack justify="between" align="center">
+                  <Heading level={3} weight="bold" color="primary">
+                    Viessmann Dashboard
+                  </Heading>
+                  <Text type="code" color="secondary" size="sm">
+                    HOME ASSISTANT
+                  </Text>
+                </HStack>
+                <Text type="body" color="secondary">
+                  Custom Home Assistant telemetry integration for monitoring heat pump COP modulation and energy efficiency curves.
+                </Text>
+                <Link href="https://github.com/itsmrma/viesmann-dashboard-hass" target="_blank" rel="noopener noreferrer" color="accent" size="sm" weight="bold">
+                  GitHub Repository ↗
+                </Link>
+              </VStack>
+
+              {/* Row 2, Col 2: UNIMORE Music Library */}
+              <VStack gap={2} className="livrea-machinery-card">
+                <HStack justify="between" align="center">
+                  <Heading level={3} weight="bold" color="primary">
+                    UNIMORE Music Library
+                  </Heading>
+                  <Text type="code" color="accent" size="sm">
+                    PYTHON / UV
+                  </Text>
+                </HStack>
+                <Text type="body" color="secondary">
+                  Academic music archive catalog service built with Python, Django, uv dependency management, and MusicBrainz API integration.
+                </Text>
+                <Link href="https://github.com/itsmrma/uni-musiclib-project" target="_blank" rel="noopener noreferrer" color="accent" size="sm" weight="bold">
+                  GitHub Repository ↗
+                </Link>
+              </VStack>
+
+              {/* Row 3, Col 1: Music History Analyzer */}
+              <VStack gap={2} className="livrea-machinery-card">
+                <HStack justify="between" align="center">
+                  <Heading level={3} weight="bold" color="primary">
+                    Music History Analyzer
+                  </Heading>
+                  <Text type="code" color="accent" size="sm">
+                    LIVE APP
+                  </Text>
+                </HStack>
+                <Text type="body" color="secondary">
+                  Interactive streaming history explorer importing multiple years of Spotify account JSON archives.
+                </Text>
+                <HStack gap={3} wrap="wrap">
+                  <Link href="https://spotify-history-analyzer.benassimatteo.dev" target="_blank" rel="noopener noreferrer" color="accent" size="sm" weight="bold">
+                    Live Web Application ↗
+                  </Link>
+                  <Link href="https://github.com/itsmrma/spotify-history-analyzer" target="_blank" rel="noopener noreferrer" color="secondary" size="sm">
+                    GitHub Repo ↗
+                  </Link>
+                </HStack>
+              </VStack>
+
+              {/* Row 3, Col 2: Language Credentials */}
+              <VStack gap={2} className="livrea-machinery-card">
+                <HStack justify="between" align="center">
+                  <Heading level={3} weight="bold" color="primary">
+                    Cambridge B2 First
+                  </Heading>
+                  <Text type="code" color="accent" size="sm">
+                    PROFICIENCY
+                  </Text>
+                </HStack>
+                <Text type="body" color="secondary">
+                  Professional working English proficiency · Native Italian speaker.
+                </Text>
+                <Text type="code" color="secondary" size="sm">
+                  Technical documentation &amp; international team communication.
+                </Text>
+              </VStack>
+            </VStack>
           </VStack>
 
           <HStack justify="between" align="center" width="100%" className="livrea-bottom-strip">
@@ -1246,8 +1278,8 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
                 SECTOR 08 // ACADEMIC &amp; SYSTEMS TRAJECTORY
               </Text>
             </HStack>
-            <Text weight="bold" color="accent" className="livrea-badge-num">
-              08
+            <Text type="code" color="accent" size="sm" weight="bold">
+              2019 → 2027
             </Text>
           </HStack>
 
@@ -1368,8 +1400,8 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
                 SECTOR 09 // PIT WALL &amp; CONTACT TRANSMISSION
               </Text>
             </HStack>
-            <Text weight="bold" color="accent" className="livrea-badge-num">
-              09
+            <Text type="code" color="accent" size="sm" weight="bold">
+              OPEN TO CONNECT
             </Text>
           </HStack>
 

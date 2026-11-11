@@ -5,6 +5,8 @@
   "scripts": {
     "dev": "vite",
     "typecheck": "tsc --noEmit",
+    "test:geometry": "node scripts/test-geometry.mjs",
+    "sync:demos": "node scripts/sync-demos.mjs",
     "build": "vite build",
     "preview": "vite preview",
     "deploy": "npm run build && npx wrangler deploy",

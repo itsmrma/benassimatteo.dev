@@ -17,5 +17,6 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src", "astryx-themes.js"]
+  "include": ["src", "astryx-themes.js"],
+  "exclude": ["src/**/*.test.ts"]
 }

@@ -1,0 +1,1 @@
+var e=e=>`p${e}:review-threads:`,t=e=>`p${e}:pr-comments:`;export{e as n,t};
