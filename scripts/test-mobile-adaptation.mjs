@@ -11,6 +11,10 @@ import {
   getContactSectorId,
   resolveWaypointScrollTarget,
   handleWaypointJump,
+  getDesktopWindowConfig,
+  calculateWindowDimensions,
+  getAppPreviewMode,
+  OXIDE_SHOWCASE_PILLARS,
   TelemetryAnimationController,
 } from '../src/utils/mobileAdaptation.ts';
 
@@ -258,6 +262,75 @@ test('mobileWaypointHud: handleWaypointJump invokes scroll callback and closes m
   handleWaypointJump(getContactSectorId(), mockScrollTo, mockCloseMenu);
   assert.equal(scrolledTo, 'panel-9', 'Direct jump to Contact target');
   assert.equal(menuClosed, true, 'Closes menu upon direct contact jump');
+});
+
+test('mobileWindow: suppresses traffic lights and 8 resize handles on mobile / touch mode', () => {
+  // Mobile configuration
+  const mobileConfig = getDesktopWindowConfig(true);
+  assert.equal(mobileConfig.hideTrafficLights, true, 'Traffic lights must be suppressed on mobile');
+  assert.equal(mobileConfig.hideResizeHandles, true, '8 resize handles must be suppressed on mobile');
+  assert.equal(mobileConfig.aspectRatio, '16 / 10', 'Intrinsic 16:10 aspect ratio enforced on mobile');
+  assert.equal(mobileConfig.position, 'relative', 'Mobile window uses relative positioning');
+  assert.equal(mobileConfig.transform, 'none', 'Mobile window suppresses absolute translate3d');
+
+  // Desktop configuration
+  const desktopConfig = getDesktopWindowConfig(false);
+  assert.equal(desktopConfig.hideTrafficLights, false, 'Traffic lights visible on desktop');
+  assert.equal(desktopConfig.hideResizeHandles, false, '8 resize handles present on desktop');
+  assert.equal(desktopConfig.aspectRatio, null, 'No forced aspect-ratio on desktop');
+  assert.equal(desktopConfig.position, 'absolute', 'Desktop window is positioned absolutely in stage');
+});
+
+test('mobileWindow: enforces non-zero intrinsic aspect ratio and eliminates layout shift', () => {
+  const widths = [320, 360, 375, 414, 768];
+
+  for (const w of widths) {
+    const dim = calculateWindowDimensions(w, true);
+    assert.ok(dim.height > 0, `Height for width ${w} must be strictly positive`);
+    // 16:10 aspect ratio: height should match w / 1.6 or clamped to minH
+    const expectedHeight = Math.max(240, Math.round(w / 1.6));
+    assert.equal(dim.height, expectedHeight, `Height for ${w}px matches 16:10 or minH 240px`);
+    assert.equal(dim.aspectRatio, '16 / 10', 'Enforces 16:10 aspect ratio');
+  }
+
+  // Desktop check
+  const desktopDim = calculateWindowDimensions(1200, false);
+  assert.equal(desktopDim.aspectRatio, null, 'Desktop dimensions are unconstrained by mobile aspect ratio');
+});
+
+test('touchSafePreview: replaces microscopic inline iframe with crisp showcase contract on mobile', () => {
+  const mobileMode = getAppPreviewMode({ isMobile: true });
+
+  assert.equal(mobileMode.allowInlineIframe, false, 'Inline interactive iframe is forbidden on mobile');
+  assert.equal(mobileMode.hasScrollTrappingRisk, false, 'Touch-safe showcase has zero scroll trapping risk');
+  assert.equal(mobileMode.showcaseActive, true, 'Visual feature showcase is active');
+  assert.equal(mobileMode.supportsFullscreenModal, true, 'Fullscreen demo modal launcher is available');
+
+  // Verify the 3 key architectural pillars are present
+  assert.ok(Array.isArray(mobileMode.pillars), 'Pillars list should be provided');
+  assert.equal(mobileMode.pillars.length, 3, 'Must highlight 3 architectural pillars');
+
+  const pillarKeys = mobileMode.pillars.map((p) => p.key);
+  assert.ok(pillarKeys.includes('worktrees'), 'Includes Worktree Concurrency pillar');
+  assert.ok(pillarKeys.includes('premerge'), 'Includes Pre-Merge Verification Gate pillar');
+  assert.ok(pillarKeys.includes('tauri2'), 'Includes Tauri 2 IPC Bridge pillar');
+
+  // Desktop check: desktop mounts iframe directly
+  const desktopMode = getAppPreviewMode({ isMobile: false });
+  assert.equal(desktopMode.allowInlineIframe, true, 'Desktop mounts inline iframe');
+  assert.equal(desktopMode.showcaseActive, false, 'Desktop does not use mobile fallback showcase');
+});
+
+test('touchSafePreview: fullscreen web demo modal contract', () => {
+  // Modal closed
+  const closedState = getAppPreviewMode({ isMobile: true, isModalOpen: false });
+  assert.equal(closedState.isModalActive, false);
+
+  // Modal opened
+  const openedState = getAppPreviewMode({ isMobile: true, isModalOpen: true });
+  assert.equal(openedState.isModalActive, true, 'Modal is active');
+  assert.equal(openedState.hasExitControl, true, 'Modal must have an explicit exit control');
+  assert.equal(openedState.trapsPageScroll, false, 'Modal is isolated and does not hijack page scroll');
 });
 
 test('telemetryAnimationController: coarse-pointer / touch devices disable cursor tracking & repulsion', () => {

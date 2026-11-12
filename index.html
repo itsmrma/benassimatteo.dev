@@ -835,8 +835,74 @@
       .livrea-desktop-window.is-mobile {
         position: relative !important;
         width: 100% !important;
-        height: 100% !important;
+        height: auto !important;
+        aspect-ratio: 16 / 10 !important;
+        min-height: 240px;
         transform: none !important;
+      }
+      .livrea-desktop-window.is-mobile .livrea-win-controls {
+        display: none !important;
+      }
+      .livrea-desktop-window.is-mobile .livrea-win-handle {
+        display: none !important;
+      }
+
+      /* Touch-safe Oxide Showcase & Fullscreen Modal */
+      .livrea-app-preview-mobile {
+        user-select: none;
+        touch-action: pan-y;
+      }
+      .livrea-showcase-pills {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .livrea-showcase-pill {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 4px;
+        padding: 4px 8px;
+        cursor: pointer;
+        outline: none;
+        transition: background 0.15s ease, border-color 0.15s ease;
+      }
+      .livrea-showcase-pill:hover {
+        background: rgba(255, 255, 255, 0.1);
+        border-color: rgba(255, 255, 255, 0.25);
+      }
+      .livrea-showcase-pill.is-active {
+        background: rgba(225, 6, 0, 0.16);
+        border-color: rgba(225, 6, 0, 0.55);
+      }
+      .livrea-showcase-detail {
+        background: rgba(14, 15, 20, 0.72);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 6px;
+        padding: 8px 10px;
+        box-sizing: border-box;
+      }
+      .livrea-showcase-desc {
+        line-height: 1.35;
+        font-size: 0.8rem;
+      }
+      .livrea-showcase-spec {
+        font-size: 0.72rem;
+        letter-spacing: 0.02em;
+      }
+      .livrea-fullscreen-demo-btn {
+        min-height: 38px;
+        font-weight: 600;
+      }
+      .livrea-showcase-note {
+        font-size: 0.72rem;
+        letter-spacing: 0.02em;
+      }
+      .livrea-fullscreen-modal {
+        animation: livrea-fade-in 0.2s ease-out;
+      }
+      @keyframes livrea-fade-in {
+        from { opacity: 0; }
+        to { opacity: 1; }
       }
 
       .livrea-win-titlebar {

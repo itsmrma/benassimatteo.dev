@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useRef, useState, useEffect } from 'react';
 import { Stack } from '@astryxdesign/core';
+import { isMobileViewport } from '../../utils/mobileAdaptation';
 
 export interface StageContextValue {
   stageW: number;
@@ -35,9 +36,7 @@ export function DesktopStage({
 
   useEffect(() => {
     const checkMobile = () => {
-      const isCoarse = window.matchMedia('(pointer: coarse)').matches;
-      const isNarrow = window.innerWidth < 1024;
-      setIsMobile(isCoarse || isNarrow);
+      setIsMobile(isMobileViewport());
     };
 
     checkMobile();
