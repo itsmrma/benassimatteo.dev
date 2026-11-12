@@ -549,10 +549,39 @@
       .livrea-kpi-grid {
         margin-top: 10px;
       }
+      .livrea-kpi-mobile {
+        display: none !important;
+      }
+      .livrea-kpi-desktop {
+        display: block !important;
+      }
       @media (max-width: 820px) {
         .livrea-kpi-grid {
-          flex-direction: column !important;
-          gap: 0.75rem !important;
+          display: grid !important;
+          grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+          gap: 6px !important;
+          margin-top: 6px !important;
+          width: 100% !important;
+        }
+        .livrea-kpi-desktop {
+          display: none !important;
+        }
+        .livrea-kpi-mobile {
+          display: block !important;
+        }
+        .livrea-kpi-mobile-label {
+          font-family: var(--font-mono, monospace);
+          font-size: 0.62rem !important;
+          letter-spacing: 0.05em;
+          text-transform: uppercase;
+          line-height: 1.2;
+        }
+        .livrea-kpi-mobile-val {
+          font-size: clamp(0.75rem, 2.9vw, 1.05rem) !important;
+          font-weight: 800;
+          letter-spacing: -0.02em;
+          white-space: nowrap;
+          line-height: 1.2;
         }
       }
       .livrea-kpi-box {
@@ -562,6 +591,18 @@
         padding: 18px 22px;
         border-radius: 4px;
         transition: border-color 0.15s ease;
+      }
+      @media (max-width: 820px) {
+        .livrea-kpi-box {
+          padding: 8px 6px !important;
+          text-align: center;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          min-width: 0;
+          overflow: hidden;
+        }
       }
       .livrea-kpi-box:hover {
         border-color: rgba(225, 6, 0, 0.5);
@@ -576,10 +617,37 @@
       .livrea-podium-cards {
         margin-top: 10px;
       }
+      .livrea-podium-full-details {
+        display: block !important;
+      }
+      .livrea-podium-mobile-summary {
+        display: none !important;
+      }
       @media (max-width: 820px) {
         .livrea-podium-cards {
           flex-direction: column !important;
-          gap: 1.25rem !important;
+          gap: 0.75rem !important;
+        }
+        .livrea-podium-card.livrea-podium-p1 {
+          padding: 18px 16px !important;
+          box-shadow: 0 0 16px rgba(225, 6, 0, 0.16);
+        }
+        .livrea-podium-card.livrea-podium-summary {
+          padding: 12px 14px !important;
+          background: rgba(19, 20, 24, 0.85);
+          border: 1px solid rgba(255, 255, 255, 0.08);
+          gap: 6px !important;
+        }
+        .livrea-podium-summary .livrea-podium-full-details {
+          display: none !important;
+        }
+        .livrea-podium-summary .livrea-podium-mobile-summary {
+          display: flex !important;
+          flex-direction: column;
+          gap: 4px;
+        }
+        .livrea-podium-summary .livrea-podium-rank {
+          font-size: 1.4rem !important;
         }
       }
       .livrea-podium-card {
@@ -1619,9 +1687,10 @@
         border-color: rgba(255, 255, 255, 0.2);
       }
 
-      /* Panel 07 Starting Grid */
+      /* Panel 08 Starting Grid & Telemetry Timeline */
       .livrea-grid-rows {
         margin-top: 8px;
+        position: relative;
       }
       .livrea-grid-row {
         background: #131418;
@@ -1629,6 +1698,7 @@
         padding: 16px 24px;
         border-radius: 4px;
         transition: border-color 0.15s ease;
+        position: relative;
       }
       .livrea-grid-row:hover {
         border-color: rgba(225, 6, 0, 0.4);
@@ -1640,12 +1710,51 @@
         width: 50px;
         flex-shrink: 0;
       }
-      @media (max-width: 768px) {
+      @media (max-width: 820px) {
+        .livrea-grid-timeline {
+          position: relative;
+          padding-left: 28px !important;
+          margin-left: 4px;
+        }
+        /* Continuous vertical timeline track line */
+        .livrea-grid-timeline::before {
+          content: '';
+          position: absolute;
+          left: 10px;
+          top: 18px;
+          bottom: 24px;
+          width: 2px;
+          background: linear-gradient(180deg, #E10600 0%, rgba(225, 6, 0, 0.5) 60%, rgba(255, 255, 255, 0.2) 100%);
+          z-index: 1;
+        }
+        /* Telemetry node item */
+        .livrea-timeline-node {
+          position: relative;
+          margin-bottom: 8px;
+        }
+        /* Telemetry node marker */
+        .livrea-timeline-node::before {
+          content: '';
+          position: absolute;
+          left: -23px;
+          top: 18px;
+          width: 10px;
+          height: 10px;
+          border-radius: 50%;
+          background: #0D0E11;
+          border: 2px solid #E10600;
+          box-shadow: 0 0 6px rgba(225, 6, 0, 0.7);
+          z-index: 2;
+        }
+        .livrea-timeline-node.is-active-node::before {
+          background: #E10600;
+          box-shadow: 0 0 10px rgba(225, 6, 0, 0.95);
+        }
         .livrea-grid-row {
           flex-direction: column !important;
           align-items: flex-start !important;
-          gap: 8px !important;
-          padding: 14px 16px;
+          gap: 6px !important;
+          padding: 14px 16px !important;
         }
         .livrea-grid-pos {
           width: auto;
@@ -1700,7 +1809,7 @@
         padding-left: 0;
         margin-top: 10px;
       }
-      @media (max-width: 768px) {
+      @media (max-width: 820px) {
         .livrea-bottom-strip {
           flex-direction: column !important;
           align-items: flex-start !important;
@@ -1708,6 +1817,10 @@
           padding-top: 8px;
           padding-bottom: 2px;
           margin-top: 12px;
+        }
+        /* Consolidate repetitive intermediate strips on mobile to prevent visual noise */
+        .livrea-intermediate-strip {
+          display: none !important;
         }
         .livrea-scroll-hint {
           display: none !important;
