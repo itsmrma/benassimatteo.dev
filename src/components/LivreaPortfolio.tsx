@@ -303,6 +303,10 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
                 GitHub ↗
               </Link>
               <Text color="secondary">·</Text>
+              <Link href={CONTACTS.linkedin} target="_blank" rel="noopener noreferrer" color="secondary">
+                LinkedIn ↗
+              </Link>
+              <Text color="secondary">·</Text>
               <Link href={CONTACTS.cvEn} target="_blank" rel="noopener noreferrer" color="secondary">
                 CV (EN)
               </Link>
@@ -530,7 +534,7 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
 
                   <HStack align="center" gap={2} paddingBlockStart={1} wrap="wrap">
                     <Text type="code" color="accent" weight="bold" className="livrea-in-progress-tag">
-                      CORE CONTRIBUTOR
+                      CO-FOUNDER
                     </Text>
                     <Text type="code" color="accent" weight="bold" className="livrea-in-progress-tag">
                       ACTIVE DEVELOPMENT
@@ -593,15 +597,24 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
                   </HStack>
                 </VStack>
 
-                <HStack paddingBlockStart={1}>
+                <HStack paddingBlockStart={1} gap={2} wrap="wrap">
                   <Button
-                    label="Inspect Oxide on GitHub ↗"
+                    label="Inspect on GitHub ↗"
                     variant="primary"
                     href={oxideProj.href}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="livrea-primary-action-btn"
                   />
+                  {oxideProj.website && (
+                    <Button
+                      label="Website ↗"
+                      variant="secondary"
+                      href={oxideProj.website}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    />
+                  )}
                 </HStack>
               </VStack>
 
@@ -1491,28 +1504,42 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
                 </HStack>
               </VStack>
 
-              {/* Card 4: Base Location */}
+              {/* Card 4: LinkedIn & Network */}
               <VStack gap={2} className="livrea-contact-card">
                 <Text type="code" color="secondary" size="sm">
-                  CHANNEL 04 // LOCATION
+                  CHANNEL 04 // NETWORK
                 </Text>
                 <Heading level={4} weight="bold" color="primary">
-                  Mantova, Italy
+                  LinkedIn Profile
                 </Heading>
                 <Text type="body" color="secondary">
-                  UNIMORE Computer Engineering Campus. Italian native, professional working English.
+                  Based in Mantova (UNIMORE). Open to high-performance motorsport and systems software opportunities.
                 </Text>
-                <Text type="code" color="accent" size="sm">
-                  NEXT STOP: MOTORSPORT
-                </Text>
+                <Button
+                  label="Connect on LinkedIn ↗"
+                  variant="secondary"
+                  href={CONTACTS.linkedin}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                />
               </VStack>
             </HStack>
           </VStack>
 
           <HStack justify="between" align="center" width="100%" className="livrea-bottom-strip">
-            <Text type="code" color="secondary" size="sm">
-              MATTEO BENASSI · COMPUTER ENGINEERING @ UNIMORE
-            </Text>
+            <HStack align="center" gap={3} wrap="wrap">
+              <Text type="code" color="secondary" size="sm">
+                MATTEO BENASSI · COMPUTER ENGINEERING @ UNIMORE
+              </Text>
+              <Text color="secondary">·</Text>
+              <Link href={CONTACTS.linkedin} target="_blank" rel="noopener noreferrer" color="accent">
+                LinkedIn ↗
+              </Link>
+              <Text color="secondary">·</Text>
+              <Link href={CONTACTS.github} target="_blank" rel="noopener noreferrer" color="secondary">
+                GitHub ↗
+              </Link>
+            </HStack>
             <Text type="code" color="secondary" size="sm">
               MANTOVA, ITALY · 2026
             </Text>

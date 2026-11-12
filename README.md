@@ -32,7 +32,7 @@ Rather than displaying static screenshots or artificial mockups, the portfolio f
 
 | Project | Role / Recognition | Stack | Description |
 |---|---|---|---|
-| **[Oxide](https://github.com/getoxide/oxide)** | Core Contributor (Pre-release) | Rust · Tauri 2 · React | Desktop orchestrator running Claude Code, Codex, and Antigravity in isolated Git worktrees with turn-by-turn verification. |
+| **[Oxide](https://github.com/getoxide/oxide)** · [Website](https://oxide.cavallinilorenzo.com) | Co-founder (Pre-release) | Rust · Tauri 2 · React | Desktop orchestrator running Claude Code, Codex, and Antigravity in isolated Git worktrees with turn-by-turn verification. Conceived and co-founded with Lorenzo Cavallini. |
 | **[SyncForge](https://github.com/itsmrma/SyncForge)** | Author | Rust · Tauri 2 · FFmpeg | Audio and subtitle alignment via FFT cross-correlation and lossless MKV remuxing, including an MCP server. |
 | **[Garda Chiese Alert](https://github.com/cavallinilorenzo/alert-app-garda-chiese)** | 1st Place · Hack4Water 2026 | Django · PostGIS · React · Gemini | Citizen reporting platform covering a 76,645-hectare river basin with geospatial and multi-modal AI triage. |
 | **[SCIoTeM Smart City](https://github.com/itsmrma)** | 2nd Place · SCIoTeM 2026 & 2025 | Embedded C · STM32 · LoRaWAN | Urban IoT sensing node with ultra-low power telemetry and bare-metal STM32 firmware. |

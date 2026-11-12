@@ -6,6 +6,7 @@ export interface FeaturedProject {
   description: string;
   stack: string;
   href: string;
+  website?: string;
   badge?: string;
   highlight?: boolean;
 }
@@ -54,7 +55,7 @@ export const IDENTITY = {
   manifesto:
     'I build fast, reliable software — from high-performance systems to bare-metal C. Next stop: motorsport.',
   bio:
-    "I'm a Computer Engineering student at the University of Modena and Reggio Emilia, Mantova campus. I've won three hackathon podiums, I contribute to open-source developer tools & systems, and I want to build software for racing teams.",
+    "I'm a Computer Engineering student at the University of Modena and Reggio Emilia, Mantova campus. Co-founder of Oxide, 3x hackathon podium winner, open-source systems developer, and aspiring motorsport software engineer.",
   availability: 'Open to a curricular internship in 2026/27.',
   lastUpdated: 'November 2026',
 };
@@ -71,11 +72,12 @@ export const FEATURED_PROJECTS: FeaturedProject[] = [
     id: 'oxide',
     title: 'Oxide',
     year: '2026 · now',
-    tagline: 'Core contributor · Active Development (Pre-release)',
+    tagline: 'Co-founder · Active Development (Pre-release)',
     description:
       'Open-source desktop app that runs Claude Code, Codex and Antigravity side by side in isolated Git worktrees, and checks every agent turn before merge.',
     stack: 'Rust · Tauri 2 · React',
     href: 'https://github.com/getoxide/oxide',
+    website: 'https://oxide.cavallinilorenzo.com',
     badge: 'Active Development · Pre-release',
     highlight: true,
   },
@@ -215,6 +217,7 @@ export const CONTACTS = {
   email: 'info@benassimatteo.dev',
   github: 'https://github.com/itsmrma',
   githubUsername: 'itsmrma',
+  linkedin: 'https://www.linkedin.com/in/matteo-benassi-bb47b02b0/',
   cvEn: '/cv/CV_Matteo_Benassi_EN.pdf',
   cvIt: '/cv/CV_Matteo_Benassi_IT.pdf',
 };
@@ -298,8 +301,8 @@ export const CHRONOLOGICAL_MILESTONES: MilestoneItem[] = [
     id: 'm-oxide',
     year: '2026 · now',
     title: 'Oxide',
-    subtitle: 'Core Contributor · Active Development (Pre-Release)',
-    description: 'Desktop platform running multi-agent AI worktrees (Claude Code, Codex, Antigravity) with pre-merge turn validation.',
+    subtitle: 'Co-founder · Active Development (Pre-Release)',
+    description: 'Desktop platform running multi-agent AI worktrees (Claude Code, Codex, Antigravity) with pre-merge turn validation. Conceived and co-founded with Lorenzo Cavallini.',
     stack: 'Rust · Tauri 2 · React',
     href: 'https://github.com/getoxide/oxide',
     isLargest: true,
