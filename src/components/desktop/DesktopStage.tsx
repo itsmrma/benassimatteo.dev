@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useRef, useState, useEffect } from 'react';
 import { Stack } from '@astryxdesign/core';
+import { isMobileViewport } from '../../utils/mobileAdaptation';
 
 export interface StageContextValue {
   stageW: number;
@@ -22,28 +23,32 @@ export interface DesktopStageProps {
   children: React.ReactNode;
   height?: string | number;
   className?: string;
+  mobileBreakpoint?: number;
 }
 
 export function DesktopStage({
   children,
   height,
   className = '',
+  mobileBreakpoint = 1024,
 }: DesktopStageProps) {
   const stageRef = useRef<HTMLElement | null>(null);
   const [dimensions, setDimensions] = useState({ stageW: 0, stageH: 0 });
-  const [isMobile, setIsMobile] = useState(false);
+  const [isMobile, setIsMobile] = useState(() =>
+    typeof window !== 'undefined'
+      ? isMobileViewport(undefined, undefined, mobileBreakpoint)
+      : false,
+  );
 
   useEffect(() => {
     const checkMobile = () => {
-      const isCoarse = window.matchMedia('(pointer: coarse)').matches;
-      const isNarrow = window.innerWidth < 1024;
-      setIsMobile(isCoarse || isNarrow);
+      setIsMobile(isMobileViewport(undefined, undefined, mobileBreakpoint));
     };
 
     checkMobile();
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
-  }, []);
+  }, [mobileBreakpoint]);
 
   useEffect(() => {
     const el = stageRef.current;

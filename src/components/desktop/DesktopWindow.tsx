@@ -12,6 +12,7 @@ import {
   applyDrag,
 } from './geometry';
 import { useWindowDrag } from './useWindowDrag';
+import { getDesktopWindowConfig } from '../../utils/mobileAdaptation';
 
 export interface DesktopWindowProps {
   title: string;
@@ -23,6 +24,7 @@ export interface DesktopWindowProps {
   minW?: number;
   minH?: number;
   initialPlacement?: PresetPlacement;
+  aspectRatio?: string;
 }
 
 const RESIZE_HANDLES: { dir: Dir; className: string }[] = [
@@ -46,8 +48,10 @@ export function DesktopWindow({
   minW = 360,
   minH = 240,
   initialPlacement = 'right',
+  aspectRatio = '16 / 10',
 }: DesktopWindowProps) {
   const { stageW, stageH, stageRef, isMobile } = useDesktopStage();
+  const config = getDesktopWindowConfig(isMobile, aspectRatio);
   const windowRef = useRef<HTMLElement | null>(null);
   const hasMeasuredRef = useRef(false);
 
@@ -136,7 +140,7 @@ export function DesktopWindow({
   );
 
   const w = isMobile ? '100%' : `${rectWidth(rect)}px`;
-  const h = isMobile ? '100%' : `${rectHeight(rect)}px`;
+  const h = isMobile ? 'auto' : `${rectHeight(rect)}px`;
   const transform = isMobile
     ? 'none'
     : `translate3d(${rect.left}px, ${rect.top}px, 0)`;
@@ -148,6 +152,8 @@ export function DesktopWindow({
       style={{
         width: w,
         height: h,
+        aspectRatio: isMobile && config.aspectRatio ? config.aspectRatio : undefined,
+        minHeight: isMobile ? `${minH}px` : undefined,
         transform,
       }}
     >
@@ -169,33 +175,35 @@ export function DesktopWindow({
         onDoubleClick={!isMobile ? handleToggleFill : undefined}
       >
         <HStack align="center" gap={1.5}>
-          {/* Traffic light control dots */}
-          <HStack align="center" gap={1} className="livrea-win-controls" onPointerDown={(e) => e.stopPropagation()}>
-            <button
-              type="button"
-              className="livrea-win-dot dot-reset"
-              aria-label="Reset window and demo state"
-              title="Reset window (Red)"
-              onPointerDown={(e) => e.stopPropagation()}
-              onClick={handleReset}
-            />
-            <button
-              type="button"
-              className="livrea-win-dot dot-compact"
-              aria-label="Compact window view (60%)"
-              title="Compact preset (Yellow)"
-              onPointerDown={(e) => e.stopPropagation()}
-              onClick={handleCompact}
-            />
-            <button
-              type="button"
-              className="livrea-win-dot dot-fill"
-              aria-label={isFilled ? 'Restore window size' : 'Fill stage'}
-              title={isFilled ? 'Restore window (Green)' : 'Fill stage (Green)'}
-              onPointerDown={(e) => e.stopPropagation()}
-              onClick={handleToggleFill}
-            />
-          </HStack>
+          {/* Traffic light control dots (suppressed on mobile/touch mode) */}
+          {!config.hideTrafficLights && (
+            <HStack align="center" gap={1} className="livrea-win-controls" onPointerDown={(e) => e.stopPropagation()}>
+              <button
+                type="button"
+                className="livrea-win-dot dot-reset"
+                aria-label="Reset window and demo state"
+                title="Reset window (Red)"
+                onPointerDown={(e) => e.stopPropagation()}
+                onClick={handleReset}
+              />
+              <button
+                type="button"
+                className="livrea-win-dot dot-compact"
+                aria-label="Compact window view (60%)"
+                title="Compact preset (Yellow)"
+                onPointerDown={(e) => e.stopPropagation()}
+                onClick={handleCompact}
+              />
+              <button
+                type="button"
+                className="livrea-win-dot dot-fill"
+                aria-label={isFilled ? 'Restore window size' : 'Fill stage'}
+                title={isFilled ? 'Restore window (Green)' : 'Fill stage (Green)'}
+                onPointerDown={(e) => e.stopPropagation()}
+                onClick={handleToggleFill}
+              />
+            </HStack>
+          )}
 
           <HStack align="center" gap={1} className="livrea-win-title-group">
             {icon}
@@ -218,9 +226,10 @@ export function DesktopWindow({
       </VStack>
 
       {/* Resize Handles (Desktop Only) */}
-      {!isMobile &&
+      {!config.hideResizeHandles &&
         RESIZE_HANDLES.map(({ dir, className: handleClass }) => (
-          <span
+          <Text
+            as="span"
             key={dir}
             role={dir === 'se' ? 'slider' : undefined}
             tabIndex={dir === 'se' ? 0 : undefined}
@@ -233,9 +242,11 @@ export function DesktopWindow({
             onKeyDown={dir === 'se' ? handleSeKeyDown : undefined}
           >
             {dir === 'se' && (
-              <span className="livrea-win-grip-indicator" aria-hidden="true" />
+              <Text as="span" className="livrea-win-grip-indicator" aria-hidden="true">
+                {'\u00A0'}
+              </Text>
             )}
-          </span>
+          </Text>
         ))}
     </VStack>
   );

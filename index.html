@@ -9,7 +9,7 @@
       content="Portfolio of Matteo Benassi — Computer Engineering B.Sc. student at UNIMORE (125/180 ECTS, Weighted Avg 27.3/30 · 2 Honors), Software &amp; Systems Engineer, 3x hackathon podium winner, and aspiring Motorsport software engineer."
     />
     <meta name="author" content="Matteo Benassi" />
-    <meta name="theme-color" content="#0A0B0D" />
+    <meta name="theme-color" content="#0B0D12" />
     <link rel="canonical" href="https://benassimatteo.dev/" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 
@@ -41,7 +41,7 @@
 
       html {
         scroll-behavior: smooth;
-        background-color: #0A0B0D;
+        background-color: #0B0D12;
       }
 
       body {
@@ -49,7 +49,7 @@
         min-height: 100vh;
         width: 100%;
         overflow-x: hidden;
-        background-color: #0A0B0D;
+        background-color: #0B0D12;
         color: #FFFFFF;
         font-family: 'Archivo', -apple-system, BlinkMacSystemFont, sans-serif;
       }
@@ -58,7 +58,7 @@
         position: relative;
         width: 100%;
         min-height: 100vh;
-        background-color: #0A0B0D;
+        background-color: #0B0D12;
       }
 
       /* Clean subtle scrollbar */
@@ -67,19 +67,33 @@
         height: 6px;
       }
       ::-webkit-scrollbar-track {
-        background: #0A0B0D;
+        background: #0B0D12;
       }
       ::-webkit-scrollbar-thumb {
         background: rgba(255, 255, 255, 0.2);
         border-radius: 3px;
       }
       ::-webkit-scrollbar-thumb:hover {
-        background: #E10600;
+        background: #E03E3E;
       }
 
       /* ========================================================================= */
       /* LIVREA MOTORSPORT SYSTEM */
       /* ========================================================================= */
+
+      :root {
+        --color-tech-cyan: #CBD5E1;
+        --color-tech-cyan-dim: rgba(203, 213, 225, 0.08);
+        --color-tech-cyan-border: rgba(203, 213, 225, 0.20);
+      }
+      .livrea-text-cyan {
+        color: var(--color-tech-cyan, #CBD5E1) !important;
+      }
+      .livrea-badge-cyan {
+        background: var(--color-tech-cyan-dim, rgba(203, 213, 225, 0.08)) !important;
+        border: 1px solid var(--color-tech-cyan-border, rgba(203, 213, 225, 0.20)) !important;
+        color: var(--color-tech-cyan, #CBD5E1) !important;
+      }
 
       /* Dynamic Lightweight Telemetry Canvas Background */
       .livrea-telemetry-canvas {
@@ -102,11 +116,77 @@
         scroll-behavior: smooth;
         background-color: transparent;
       }
-      @media (max-width: 820px) {
+
+      /* Desktop viewports >= 820px with fine pointer retain inner container scroll-snapping */
+      @media (min-width: 820px) and (pointer: fine) {
+        html, body {
+          height: 100%;
+          overflow: hidden;
+        }
         .livrea-snap-container {
-          scroll-snap-type: none;
-          height: 100svh;
+          height: 100vh;
+          overflow-y: scroll;
+          scroll-snap-type: y mandatory;
+        }
+      }
+
+      /* Mobile viewports < 820px or touch-coarse devices: root document handles scrolling */
+      @media (max-width: 819.98px), (pointer: coarse) {
+        html {
+          height: auto;
+          min-height: 100%;
+          overflow-y: auto;
           -webkit-overflow-scrolling: touch;
+        }
+        body {
+          height: auto;
+          min-height: 100%;
+          overflow-y: visible;
+          overflow-x: hidden;
+        }
+        #root {
+          height: auto;
+          min-height: 100%;
+        }
+        .livrea-snap-container {
+          height: auto !important;
+          min-height: 100% !important;
+          overflow: visible !important;
+          overflow-y: visible !important;
+          scroll-snap-type: none !important;
+          -webkit-overflow-scrolling: auto !important;
+        }
+        .livrea-panel {
+          scroll-snap-align: none !important;
+          min-height: auto !important;
+          height: auto !important;
+          scroll-margin-top: 56px;
+        }
+        .livrea-panel-inner {
+          min-height: auto !important;
+          height: auto !important;
+          justify-content: flex-start !important;
+          gap: 12px !important;
+        }
+        .livrea-panel-01 {
+          padding-top: calc(48px + 18px) !important;
+        }
+
+        /* WCAG Touch Target Accessibility: min 44x44px for primary buttons and touch controls */
+        button,
+        [role="button"],
+        .livrea-btn {
+          min-height: 44px;
+          min-width: 44px;
+          box-sizing: border-box;
+        }
+
+        .livrea-bottom-strip a,
+        .livrea-hero-strip a {
+          min-height: 36px;
+          display: inline-flex;
+          align-items: center;
+          padding: 4px 6px;
         }
       }
 
@@ -123,8 +203,8 @@
       }
       .livrea-progress-bar {
         height: 100%;
-        background-color: #E10600;
-        box-shadow: 0 0 10px rgba(225, 6, 0, 0.7);
+        background-color: #E03E3E;
+        box-shadow: none;
         transition: width 0.08s linear;
       }
 
@@ -141,7 +221,12 @@
         padding: 8px 6px;
         backdrop-filter: blur(12px);
       }
-      @media (max-width: 1024px) {
+      @media (min-width: 820px) and (pointer: fine) {
+        .livrea-quick-nav {
+          display: flex !important;
+        }
+      }
+      @media (max-width: 819.98px), (pointer: coarse) {
         .livrea-quick-nav {
           display: none !important;
         }
@@ -157,8 +242,175 @@
         background: rgba(255, 255, 255, 0.1);
       }
       .livrea-nav-dot.is-active {
-        background: rgba(225, 6, 0, 0.25);
-        border: 1px solid #E10600;
+        background: rgba(224, 62, 62, 0.14);
+        border: 1px solid #E03E3E;
+      }
+
+      /* Mobile Telemetry Waypoint HUD & Quick-Jump Navigation */
+      .livrea-mobile-hud {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 998;
+        background: rgba(10, 10, 14, 0.96);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+      }
+      @media (min-width: 820px) and (pointer: fine) {
+        .livrea-mobile-hud {
+          display: none !important;
+        }
+      }
+      .livrea-mobile-hud-bar {
+        min-height: 44px;
+        padding: 2px 12px;
+      }
+      .livrea-hud-kicker-btn {
+        min-height: 44px;
+        min-width: 44px;
+        background: transparent !important;
+        border: none !important;
+        padding: 4px 8px !important;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      .livrea-hud-kicker-btn:active,
+      .livrea-hud-kicker-btn:focus-visible {
+        background: rgba(255, 255, 255, 0.08) !important;
+      }
+      .livrea-hud-kicker-badge {
+        background: rgba(224, 62, 62, 0.12);
+        border: 1px solid rgba(224, 62, 62, 0.32);
+        border-radius: 3px;
+        padding: 2px 6px;
+        letter-spacing: 0.05em;
+      }
+      .livrea-hud-kicker-title {
+        letter-spacing: 0.08em;
+      }
+      .livrea-hud-kicker-chevron {
+        font-size: 13px;
+        margin-left: 2px;
+      }
+      .livrea-hud-actions {
+        flex-shrink: 0;
+      }
+      .livrea-hud-lap-counter {
+        opacity: 0.6;
+        min-width: 32px;
+        text-align: right;
+      }
+      .livrea-hud-contact-shortcut {
+        height: 28px !important;
+        min-height: 28px !important;
+        min-width: auto !important;
+        padding: 2px 8px !important;
+        background: rgba(255, 255, 255, 0.05) !important;
+        border: 1px solid rgba(255, 255, 255, 0.14) !important;
+        border-radius: 3px !important;
+        font-family: var(--font-mono);
+        font-size: 0.68rem !important;
+        letter-spacing: 0.04em;
+        line-height: 1;
+        transition: all 0.15s ease;
+      }
+      .livrea-hud-contact-shortcut:hover,
+      .livrea-hud-contact-shortcut:active {
+        background: rgba(255, 255, 255, 0.12) !important;
+        border-color: rgba(255, 255, 255, 0.28) !important;
+      }
+
+      /* Waypoint Drawer / Dropdown Ribbon */
+      .livrea-hud-drawer {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: rgba(12, 13, 17, 0.98);
+        backdrop-filter: blur(24px);
+        -webkit-backdrop-filter: blur(24px);
+        border-bottom: 2px solid #E03E3E;
+        box-shadow: 0 16px 36px rgba(0, 0, 0, 0.85);
+        padding: 12px 14px 18px 14px;
+        max-height: calc(100svh - 58px);
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+      .livrea-hud-drawer-header {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        padding-bottom: 8px;
+        margin-bottom: 4px;
+      }
+      .livrea-hud-close-btn {
+        min-height: 44px;
+        min-width: 44px;
+        padding: 4px 8px !important;
+      }
+      .livrea-hud-sector-list {
+        display: flex;
+        flex-direction: column;
+      }
+      .livrea-hud-sector-btn {
+        width: 100%;
+        min-height: 48px;
+        padding: 8px 12px !important;
+        border-radius: 5px;
+        border: 1px solid rgba(255, 255, 255, 0.08) !important;
+        background: rgba(255, 255, 255, 0.03) !important;
+        text-align: left;
+        cursor: pointer;
+        transition: all 0.12s ease;
+      }
+      .livrea-hud-sector-btn:active,
+      .livrea-hud-sector-btn:hover {
+        background: rgba(255, 255, 255, 0.08) !important;
+        border-color: rgba(255, 255, 255, 0.2) !important;
+      }
+      .livrea-hud-sector-btn.is-active {
+        background: rgba(224, 62, 62, 0.12) !important;
+        border-color: #E03E3E !important;
+      }
+      .livrea-hud-sector-pill {
+        display: inline-block;
+        padding: 3px 6px;
+        border-radius: 3px;
+        background: rgba(255, 255, 255, 0.06);
+        font-weight: 700;
+      }
+      .livrea-hud-sector-btn.is-active .livrea-hud-sector-pill {
+        background: #E03E3E;
+        color: #FFFFFF !important;
+      }
+      .livrea-hud-sector-name {
+        letter-spacing: 0.06em;
+      }
+      .livrea-hud-sector-desc {
+        opacity: 0.7;
+        font-size: 11px;
+      }
+      .livrea-hud-active-flag {
+        letter-spacing: 0.05em;
+        font-weight: 700;
+      }
+      .livrea-hud-jump-arrow {
+        opacity: 0.5;
+        font-size: 14px;
+      }
+      .livrea-hud-bottom-contact {
+        width: 100%;
+        min-height: 48px;
+        margin-top: 6px;
+        background: linear-gradient(135deg, #E03E3E 0%, #C93030 100%) !important;
+        border: none !important;
+        border-radius: 5px;
+        box-shadow: 0 4px 14px rgba(224, 62, 62, 0.25);
+      }
+      .livrea-hud-bottom-contact:hover,
+      .livrea-hud-bottom-contact:active {
+        background: linear-gradient(135deg, #EB4D4D 0%, #C93030 100%) !important;
       }
 
       /* Common Panel Anatomy */
@@ -175,79 +427,146 @@
         background-color: transparent;
         border-bottom: 1px solid rgba(255, 255, 255, 0.08);
       }
+      @media (min-width: 1025px) {
+        .livrea-panel {
+          padding: 22px 80px 22px 52px;
+          min-height: 100vh;
+        }
+        .livrea-panel-inner {
+          min-height: calc(100vh - 44px);
+        }
+      }
       @media (max-width: 1024px) {
         .livrea-panel {
           padding: 14px 22px;
-          min-height: 100svh;
+          min-height: auto;
+        }
+        .livrea-panel-inner {
+          min-height: auto;
         }
       }
-      @media (max-width: 768px) {
+      @media (max-width: 820px) {
         .livrea-panel {
-          padding: 12px 16px;
-          min-height: 100svh;
-          height: auto;
-          scroll-snap-align: none;
+          padding: 12px 16px !important;
+          min-height: auto !important;
+          height: auto !important;
+          scroll-snap-align: none !important;
+          scroll-margin-top: 56px;
+        }
+        .livrea-panel-01 {
+          padding-top: calc(48px + 18px) !important;
+        }
+        .livrea-panel-inner {
+          min-height: auto !important;
+          height: auto !important;
+          justify-content: flex-start !important;
+          gap: 12px !important;
+        }
+        /* Eliminate mid-page hero footer strip */
+        .livrea-hero-strip {
+          display: none !important;
+        }
+        /* Eliminate unwanted empty gaps inside sections */
+        .livrea-hero-center,
+        .livrea-podium-container,
+        .livrea-detail-block,
+        .livrea-project-split-layout,
+        .sf-hub-center,
+        .livrea-contact-center {
+          margin-block: 4px 10px !important;
+        }
+        .livrea-split-left-col,
+        .livrea-split-right-col {
+          flex: none !important;
+          height: auto !important;
+          min-height: 0 !important;
+        }
+        .livrea-stage-caption {
+          margin-top: 6px !important;
+          padding-top: 0 !important;
         }
       }
       @media (max-width: 480px) {
         .livrea-panel {
-          padding: 10px 12px;
+          padding: 10px 14px !important;
+        }
+        .livrea-panel-01 {
+          padding-top: calc(48px + 16px) !important;
         }
       }
 
-      .livrea-panel-inner {
-        height: 100%;
-        min-height: calc(100vh - 32px);
-        width: 100%;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-      }
-      @media (max-width: 1024px) {
-        .livrea-panel-inner {
-          min-height: calc(100svh - 28px);
-        }
-      }
-      @media (max-width: 768px) {
-        .livrea-panel-inner {
-          min-height: calc(100svh - 24px);
-          gap: 1rem;
-        }
-      }
-
-      /* Technical Livery Header */
+      /* Technical Livery Header — Strictly Single Line Everywhere */
       .livrea-telemetry-header {
         border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         padding-bottom: 6px;
         margin-bottom: 4px;
         min-height: 24px;
+        display: flex !important;
+        flex-direction: row !important;
+        flex-wrap: nowrap !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        gap: 8px !important;
+        width: 100% !important;
+        box-sizing: border-box;
       }
       @media (max-width: 640px) {
         .livrea-telemetry-header {
-          padding-bottom: 5px;
-          gap: 6px;
+          padding-bottom: 4px;
+          gap: 6px !important;
+          flex-wrap: nowrap !important;
+          align-items: center !important;
         }
+      }
+      .livrea-telemetry-left {
+        min-width: 0 !important;
+        overflow: hidden !important;
+        flex: 1 1 auto !important;
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        gap: 8px !important;
       }
       .livrea-red-indicator {
         display: inline-block;
         width: 6px;
-        height: 18px;
-        background-color: #E10600;
+        height: 16px;
+        background-color: #E03E3E;
         border-radius: 1px;
+        flex-shrink: 0;
       }
       .livrea-kicker {
-        letter-spacing: 0.12em;
+        letter-spacing: 0.08em;
         text-transform: uppercase;
         font-family: var(--font-mono);
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        min-width: 0 !important;
+        font-size: 0.78rem;
       }
       @media (max-width: 640px) {
         .livrea-kicker {
-          font-size: 0.7rem;
-          letter-spacing: 0.06em;
-          max-width: calc(100vw - 110px);
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
+          font-size: 0.68rem !important;
+          letter-spacing: 0.04em !important;
+          white-space: nowrap !important;
+          overflow: hidden !important;
+          text-overflow: ellipsis !important;
+          max-width: 100%;
+        }
+      }
+      .livrea-telemetry-badge {
+        flex-shrink: 0 !important;
+        white-space: nowrap !important;
+        font-family: var(--font-mono);
+        font-size: 0.72rem;
+        letter-spacing: 0.04em;
+        color: #9A9EA8 !important;
+        font-weight: 600;
+      }
+      @media (max-width: 640px) {
+        .livrea-telemetry-badge {
+          font-size: 0.65rem !important;
         }
       }
       .livrea-badge-num {
@@ -255,7 +574,7 @@
         font-size: clamp(1.8rem, 4.5vw, 4rem);
         line-height: 1;
         letter-spacing: -0.03em;
-        color: #E10600;
+        color: #E03E3E;
       }
 
       /* Big Typography */
@@ -268,6 +587,45 @@
         font-size: clamp(3rem, 11vw, 9.5rem);
         margin: 0;
         color: #FFFFFF;
+      }
+      @media (max-width: 820px) {
+        .livrea-huge-name {
+          font-size: clamp(2.4rem, 10vw, 3.8rem);
+          line-height: 0.88;
+        }
+        .livrea-massive-title {
+          font-size: clamp(1.8rem, 6.5vw, 2.4rem);
+        }
+        .livrea-section-head {
+          font-size: clamp(1.6rem, 5.5vw, 2.2rem);
+        }
+        .livrea-hero-center {
+          margin-block: 6px 10px !important;
+        }
+        .livrea-role-strip {
+          margin-block: 4px !important;
+        }
+        .livrea-manifesto-card {
+          padding: 12px 14px !important;
+          margin-block: 4px !important;
+        }
+        .livrea-manifesto-text {
+          font-size: 0.95rem !important;
+          line-height: 1.4 !important;
+        }
+      }
+      @media (min-width: 1025px) {
+        .livrea-hero-center,
+        .livrea-detail-block,
+        .livrea-project-split-layout,
+        .livrea-podium-container,
+        .livrea-contact-center {
+          max-width: 1680px;
+          width: 100%;
+        }
+        .livrea-huge-name {
+          font-size: clamp(4.5rem, 9.5vw, 9.5rem);
+        }
       }
       .livrea-massive-title {
         font-family: 'Archivo', sans-serif;
@@ -306,12 +664,17 @@
       @media (max-width: 640px) {
         .livrea-role-strip {
           font-size: 0.78rem;
-          gap: 0.35rem 0.6rem !important;
+          flex-direction: column !important;
+          align-items: flex-start !important;
+          gap: 3px !important;
+        }
+        .livrea-role-separator {
+          display: none !important;
         }
       }
       .livrea-manifesto-card {
-        background: #131418;
-        border-left: 4px solid #E10600;
+        background: #12151D;
+        border-left: 4px solid #E03E3E;
         border-top: 1px solid rgba(255, 255, 255, 0.08);
         border-right: 1px solid rgba(255, 255, 255, 0.08);
         border-bottom: 1px solid rgba(255, 255, 255, 0.08);
@@ -335,22 +698,72 @@
       .livrea-kpi-grid {
         margin-top: 10px;
       }
+      .livrea-kpi-mobile {
+        display: none !important;
+      }
+      .livrea-kpi-desktop {
+        display: block !important;
+      }
       @media (max-width: 820px) {
         .livrea-kpi-grid {
-          flex-direction: column !important;
-          gap: 0.75rem !important;
+          display: grid !important;
+          grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+          gap: 6px !important;
+          margin-top: 6px !important;
+          width: 100% !important;
+        }
+        .livrea-kpi-desktop {
+          display: none !important;
+        }
+        .livrea-kpi-mobile {
+          display: block !important;
+        }
+        .livrea-kpi-mobile-label {
+          font-family: var(--font-mono, monospace);
+          font-size: 0.62rem !important;
+          letter-spacing: 0.05em;
+          text-transform: uppercase;
+          line-height: 1.2;
+        }
+        .livrea-kpi-mobile-val {
+          font-size: clamp(0.75rem, 2.9vw, 1.05rem) !important;
+          font-weight: 800;
+          letter-spacing: -0.02em;
+          white-space: nowrap;
+          line-height: 1.2;
+        }
+        .livrea-kpi-mobile-val.livrea-kpi-val-podium {
+          color: #E03E3E !important;
+        }
+        .livrea-kpi-mobile-val.livrea-kpi-val-academic {
+          color: var(--color-tech-cyan, #CBD5E1) !important;
+        }
+        .livrea-kpi-mobile-val.livrea-kpi-val-status {
+          color: #FFFFFF !important;
         }
       }
       .livrea-kpi-box {
         flex: 1;
-        background: #131418;
+        background: #12151D;
         border: 1px solid rgba(255, 255, 255, 0.09);
         padding: 18px 22px;
         border-radius: 4px;
         transition: border-color 0.15s ease;
       }
+      @media (max-width: 820px) {
+        .livrea-kpi-box {
+          padding: 8px 6px !important;
+          text-align: center;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          min-width: 0;
+          overflow: hidden;
+        }
+      }
       .livrea-kpi-box:hover {
-        border-color: rgba(225, 6, 0, 0.5);
+        border-color: rgba(224, 62, 62, 0.35);
       }
 
       /* Panel 02: The Podium */
@@ -362,15 +775,42 @@
       .livrea-podium-cards {
         margin-top: 10px;
       }
+      .livrea-podium-full-details {
+        display: block !important;
+      }
+      .livrea-podium-mobile-summary {
+        display: none !important;
+      }
       @media (max-width: 820px) {
         .livrea-podium-cards {
           flex-direction: column !important;
-          gap: 1.25rem !important;
+          gap: 0.75rem !important;
+        }
+        .livrea-podium-card.livrea-podium-p1 {
+          padding: 18px 16px !important;
+          box-shadow: 0 0 16px rgba(224, 62, 62, 0.10);
+        }
+        .livrea-podium-card.livrea-podium-summary {
+          padding: 12px 14px !important;
+          background: rgba(19, 20, 24, 0.85);
+          border: 1px solid rgba(255, 255, 255, 0.08);
+          gap: 6px !important;
+        }
+        .livrea-podium-summary .livrea-podium-full-details {
+          display: none !important;
+        }
+        .livrea-podium-summary .livrea-podium-mobile-summary {
+          display: flex !important;
+          flex-direction: column;
+          gap: 4px;
+        }
+        .livrea-podium-summary .livrea-podium-rank {
+          font-size: 1.4rem !important;
         }
       }
       .livrea-podium-card {
         flex: 1;
-        background: #131418;
+        background: #12151D;
         border: 1px solid rgba(255, 255, 255, 0.1);
         padding: 24px;
         border-radius: 4px;
@@ -380,8 +820,8 @@
         border-color: rgba(255, 255, 255, 0.25);
       }
       .livrea-podium-p1 {
-        border-color: #E10600;
-        background: linear-gradient(180deg, rgba(225, 6, 0, 0.12) 0%, rgba(19, 20, 24, 0.98) 100%);
+        border-color: #E03E3E;
+        background: linear-gradient(180deg, rgba(224, 62, 62, 0.08) 0%, rgba(19, 20, 24, 0.98) 100%);
       }
       .livrea-podium-rank {
         font-family: 'Archivo', sans-serif;
@@ -401,54 +841,59 @@
       .livrea-detail-block {
         margin-block: auto;
         width: 100%;
-        max-width: 1550px;
+        max-width: 1680px;
       }
 
       /* Panels 03, 04, 05 Details & Split Media Mockups */
       .livrea-project-split-layout {
         margin-block: auto;
         width: 100%;
-        max-width: 1550px;
+        max-width: 1680px;
         display: flex;
         justify-content: space-between !important;
         align-items: center;
-        gap: 2.5rem;
+        gap: 3rem;
         padding-bottom: 8px;
       }
       @media (max-width: 1024px) {
         .livrea-project-split-layout {
           flex-direction: column !important;
-          gap: 1.25rem !important;
-          padding-bottom: 12px;
-          align-items: stretch;
+          gap: 1rem !important;
+          padding-bottom: 8px !important;
+          margin-block: 4px 10px !important;
+          align-items: stretch !important;
+          height: auto !important;
+          min-height: 0 !important;
+        }
+        .livrea-split-left-col {
+          max-width: 100% !important;
+          flex: none !important;
+          height: auto !important;
+          min-height: 0 !important;
+        }
+        .livrea-split-right-col {
+          max-width: 100% !important;
+          flex: none !important;
+          height: auto !important;
+          min-height: 0 !important;
+          align-items: stretch !important;
+          margin-left: 0 !important;
         }
       }
       .livrea-split-left-col {
-        flex: 1 1 450px;
-        max-width: 620px;
+        flex: 1 1 480px;
+        max-width: 660px;
         min-width: 0;
         width: 100%;
       }
-      @media (max-width: 1024px) {
-        .livrea-split-left-col {
-          max-width: 100%;
-        }
-      }
       .livrea-split-right-col {
-        flex: 1.2 1 500px;
-        max-width: 840px;
+        flex: 1.3 1 540px;
+        max-width: 960px;
         min-width: 0;
         width: 100%;
         display: flex;
         flex-direction: column;
         align-items: stretch;
-      }
-      @media (max-width: 1024px) {
-        .livrea-split-right-col {
-          max-width: 100%;
-          align-items: stretch;
-          margin-left: 0;
-        }
       }
       .livrea-project-logo {
         width: clamp(44px, 3.2vw, 58px);
@@ -471,46 +916,63 @@
         line-height: 1.45;
         max-width: 640px;
       }
+      .livrea-role-badge {
+        display: inline-flex;
+        align-items: center;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        color: #D1D5DB;
+        padding: 2px 8px;
+        border-radius: 3px;
+        font-size: 0.7rem;
+        font-family: var(--font-mono, monospace);
+        letter-spacing: 0.04em;
+        font-weight: 600;
+        text-transform: uppercase;
+      }
       .livrea-in-progress-tag {
-        background: rgba(225, 6, 0, 0.18);
-        border: 1px solid #E10600;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        color: #D1D5DB;
         padding: 2px 7px;
         border-radius: 3px;
         font-size: 0.7rem;
+        letter-spacing: 0.03em;
       }
       .livrea-pillars-list {
         margin-top: 2px;
       }
       .livrea-pillar-item {
         background: rgba(255, 255, 255, 0.02);
-        border-left: 3px solid #E10600;
+        border-left: 3px solid rgba(255, 255, 255, 0.2);
         padding: 5px 12px;
         border-radius: 0 4px 4px 0;
         border-top: 1px solid rgba(255, 255, 255, 0.04);
         border-bottom: 1px solid rgba(255, 255, 255, 0.04);
         border-right: 1px solid rgba(255, 255, 255, 0.04);
-        transition: background 0.15s ease;
+        transition: background 0.15s ease, border-left-color 0.15s ease;
       }
       .livrea-pillar-item:hover {
         background: rgba(255, 255, 255, 0.04);
+        border-left-color: var(--color-tech-cyan, #CBD5E1);
       }
       .livrea-mockup-frame {
-        background: #0E0F14;
+        background: #10131A;
         border: 1px solid rgba(255, 255, 255, 0.16);
         border-radius: 8px;
         overflow: hidden;
-        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.85), 0 0 0 1px rgba(225, 6, 0, 0.15);
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.85), 0 0 0 1px rgba(224, 62, 62, 0.10);
         display: flex;
         flex-direction: column;
         width: 100%;
         transition: border-color 0.2s ease, box-shadow 0.2s ease;
       }
       .livrea-mockup-frame:hover {
-        border-color: rgba(225, 6, 0, 0.45);
-        box-shadow: 0 24px 60px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(225, 6, 0, 0.3);
+        border-color: rgba(224, 62, 62, 0.32);
+        box-shadow: 0 24px 60px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(224, 62, 62, 0.18);
       }
       .livrea-mockup-titlebar {
-        background: #090A0E;
+        background: #0D0E13;
         border-bottom: 1px solid rgba(255, 255, 255, 0.08);
         padding: 7px 14px;
         min-height: 34px;
@@ -525,7 +987,7 @@
         width: 100%;
         height: 100%;
         object-fit: cover;
-        background: #0E0F14;
+        background: #10131A;
       }
       /* Desktop Stage & Window Architecture (ANTEPRIME_FINESTRE) */
       .livrea-desktop-stage {
@@ -552,8 +1014,8 @@
         pointer-events: none;
       }
       .livrea-stage-caption {
-        margin-top: auto;
-        padding-top: 8px;
+        margin-top: 8px;
+        padding-top: 2px;
         pointer-events: auto;
       }
       .livrea-desktop-stage.livrea-oxide-full-stage .livrea-desktop-window {
@@ -604,10 +1066,10 @@
         position: absolute;
         top: 0;
         left: 0;
-        background: #0E0F14;
+        background: #10131A;
         border: 1px solid rgba(255, 255, 255, 0.16);
         border-radius: 8px;
-        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.85), 0 0 0 1px rgba(225, 6, 0, 0.15);
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.85), 0 0 0 1px rgba(224, 62, 62, 0.10);
         display: flex;
         flex-direction: column;
         overflow: hidden;
@@ -616,17 +1078,83 @@
         transition: border-color 0.2s ease, box-shadow 0.2s ease;
       }
       .livrea-desktop-window:hover {
-        border-color: rgba(225, 6, 0, 0.45);
+        border-color: rgba(224, 62, 62, 0.32);
       }
       .livrea-desktop-window.is-mobile {
         position: relative !important;
         width: 100% !important;
-        height: 100% !important;
+        height: auto !important;
+        aspect-ratio: 16 / 10 !important;
+        min-height: 240px;
         transform: none !important;
+      }
+      .livrea-desktop-window.is-mobile .livrea-win-controls {
+        display: none !important;
+      }
+      .livrea-desktop-window.is-mobile .livrea-win-handle {
+        display: none !important;
+      }
+
+      /* Touch-safe Oxide Showcase & Fullscreen Modal */
+      .livrea-app-preview-mobile {
+        user-select: none;
+        touch-action: pan-y;
+      }
+      .livrea-showcase-pills {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .livrea-showcase-pill {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 4px;
+        padding: 4px 8px;
+        cursor: pointer;
+        outline: none;
+        transition: background 0.15s ease, border-color 0.15s ease;
+      }
+      .livrea-showcase-pill:hover {
+        background: rgba(255, 255, 255, 0.1);
+        border-color: rgba(255, 255, 255, 0.25);
+      }
+      .livrea-showcase-pill.is-active {
+        background: rgba(224, 62, 62, 0.10);
+        border-color: rgba(224, 62, 62, 0.35);
+      }
+      .livrea-showcase-detail {
+        background: rgba(14, 15, 20, 0.72);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 6px;
+        padding: 8px 10px;
+        box-sizing: border-box;
+      }
+      .livrea-showcase-desc {
+        line-height: 1.35;
+        font-size: 0.8rem;
+      }
+      .livrea-showcase-spec {
+        font-size: 0.72rem;
+        letter-spacing: 0.02em;
+      }
+      .livrea-fullscreen-demo-btn {
+        min-height: 38px;
+        font-weight: 600;
+      }
+      .livrea-showcase-note {
+        font-size: 0.72rem;
+        letter-spacing: 0.02em;
+      }
+      .livrea-fullscreen-modal {
+        animation: livrea-fade-in 0.2s ease-out;
+      }
+      @keyframes livrea-fade-in {
+        from { opacity: 0; }
+        to { opacity: 1; }
       }
 
       .livrea-win-titlebar {
-        background: #090A0E;
+        background: #0D0E13;
         border-bottom: 1px solid rgba(255, 255, 255, 0.08);
         padding: 6px 12px;
         min-height: 32px;
@@ -673,16 +1201,29 @@
 
       .livrea-win-title-text {
         font-weight: 600;
-        letter-spacing: 0.04em;
+        letter-spacing: 0.03em;
+        font-size: 0.75rem;
         color: rgba(255, 255, 255, 0.9);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 100%;
+      }
+      @media (max-width: 640px) {
+        .livrea-win-title-text {
+          font-size: 0.7rem;
+          max-width: 220px;
+        }
       }
       .livrea-win-tag-badge {
         padding: 2px 6px;
-        border-radius: 4px;
-        background: rgba(225, 6, 0, 0.15);
-        border: 1px solid rgba(225, 6, 0, 0.3);
-        color: #FF4D4D;
-        font-size: 0.72rem;
+        border-radius: 3px;
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        color: #9A9EA8;
+        font-size: 0.7rem;
+        letter-spacing: 0.04em;
+        flex-shrink: 0;
       }
       .livrea-win-content {
         flex: 1;
@@ -719,7 +1260,7 @@
         outline: none;
       }
       .livrea-win-handle-se:focus-visible {
-        outline: 2px solid var(--color-accent, #E10600);
+        outline: 2px solid var(--color-accent, #E03E3E);
         outline-offset: -2px;
       }
       .livrea-win-grip-indicator {
@@ -738,19 +1279,19 @@
 
       /* OS Resizable Window & 8-Direction Handles (Strict zero position shift) */
       .livrea-os-window {
-        background: #0E0F14;
+        background: #10131A;
         border: 1px solid rgba(255, 255, 255, 0.16);
         border-radius: 8px;
-        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.85), 0 0 0 1px rgba(225, 6, 0, 0.15);
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.85), 0 0 0 1px rgba(224, 62, 62, 0.10);
         transition: box-shadow 0.2s ease, border-color 0.2s ease;
         user-select: none;
         overflow: visible !important;
       }
       .livrea-os-window:hover {
-        border-color: rgba(225, 6, 0, 0.45);
+        border-color: rgba(224, 62, 62, 0.32);
       }
       .livrea-os-titlebar {
-        background: #090A0E;
+        background: #0D0E13;
         border-bottom: 1px solid rgba(255, 255, 255, 0.08);
         padding: 6px 12px;
         min-height: 32px;
@@ -824,10 +1365,10 @@
         z-index: 45;
       }
       .handle-n:hover, .handle-s:hover, .handle-w:hover, .handle-e:hover {
-        background: rgba(225, 6, 0, 0.25);
+        background: rgba(224, 62, 62, 0.14);
       }
       .handle-nw:hover, .handle-ne:hover, .handle-sw:hover, .handle-se:hover {
-        background: rgba(225, 6, 0, 0.5);
+        background: rgba(224, 62, 62, 0.35);
         border-radius: 2px;
       }
 
@@ -838,14 +1379,14 @@
         border-radius: 3px !important;
       }
       .livrea-mode-btn.is-active {
-        background: rgba(225, 6, 0, 0.3) !important;
+        background: rgba(224, 62, 62, 0.18) !important;
         color: #FFFFFF !important;
-        border: 1px solid #E10600 !important;
+        border: 1px solid #E03E3E !important;
       }
 
       .livrea-resize-indicator {
-        background: rgba(225, 6, 0, 0.22);
-        border: 1px solid #E10600;
+        background: rgba(224, 62, 62, 0.12);
+        border: 1px solid #E03E3E;
         padding: 1px 5px;
         border-radius: 2px;
         font-size: 0.65rem;
@@ -883,7 +1424,7 @@
         width: 100%;
         height: 100%;
         overflow: hidden;
-        background: #08090C;
+        background: #0A0C11;
         border-radius: 0 0 7px 7px;
         display: flex;
         flex-direction: column;
@@ -891,20 +1432,20 @@
 
       /* SyncForge Desktop Styles */
       .sf-app-root {
-        background: #0C0D11;
+        background: #0E1016;
         flex: 1;
         overflow: hidden;
         display: flex;
         flex-direction: column;
       }
       .sf-toast-bar {
-        background: rgba(225, 6, 0, 0.22);
-        border-bottom: 1px solid #E10600;
+        background: rgba(224, 62, 62, 0.12);
+        border-bottom: 1px solid #E03E3E;
         padding: 4px 10px;
         font-size: 0.72rem;
       }
       .sf-app-header {
-        background: #090A0D;
+        background: #0C0E14;
         border-bottom: 1px solid rgba(255, 255, 255, 0.08);
         padding: 6px 12px;
       }
@@ -925,7 +1466,7 @@
       .sf-hero-icon-box {
         width: 64px;
         height: 64px;
-        background: #14151B;
+        background: #161922;
         border: 1px solid rgba(255, 255, 255, 0.14);
         border-radius: 16px;
         box-shadow: 0 10px 25px rgba(0, 0, 0, 0.7);
@@ -951,8 +1492,8 @@
         transition: all 0.15s ease;
       }
       .sf-pill:hover {
-        background: rgba(225, 6, 0, 0.2);
-        border-color: #E10600;
+        background: rgba(224, 62, 62, 0.12);
+        border-color: #E03E3E;
         color: #FFFFFF;
       }
       .sf-hub-action-strip {
@@ -960,7 +1501,7 @@
         padding-top: 10px;
       }
       .sf-cta-btn {
-        background: #E10600 !important;
+        background: #E03E3E !important;
         color: #FFFFFF !important;
         font-weight: 800 !important;
         font-size: 0.72rem !important;
@@ -981,13 +1522,13 @@
         padding-bottom: 6px;
       }
       .sf-sync-status-badge {
-        background: rgba(225, 6, 0, 0.18);
-        border: 1px solid #E10600;
+        background: rgba(224, 62, 62, 0.12);
+        border: 1px solid #E03E3E;
         padding: 2px 7px;
         border-radius: 3px;
       }
       .sf-tracks-table {
-        background: #090A0D;
+        background: #0C0E14;
         border: 1px solid rgba(255, 255, 255, 0.08);
         border-radius: 4px;
         padding: 4px 8px;
@@ -1001,11 +1542,11 @@
         border-bottom: none;
       }
       .sf-track-row.is-selected {
-        background: rgba(225, 6, 0, 0.14);
-        border: 1px solid rgba(225, 6, 0, 0.35);
+        background: rgba(224, 62, 62, 0.10);
+        border: 1px solid rgba(224, 62, 62, 0.22);
       }
       .sf-waveform-box {
-        background: #08090C;
+        background: #0A0C11;
         border: 1px solid rgba(255, 255, 255, 0.08);
         padding: 8px 12px;
         border-radius: 4px;
@@ -1044,19 +1585,19 @@
 
       /* Oxide Desktop Styles */
       .ox-app-root {
-        background: #0D0E12;
+        background: #0F1218;
         flex: 1;
         overflow: hidden;
         display: flex;
         flex-direction: column;
       }
       .ox-toast-bar {
-        background: rgba(225, 6, 0, 0.22);
-        border-bottom: 1px solid #E10600;
+        background: rgba(224, 62, 62, 0.12);
+        border-bottom: 1px solid #E03E3E;
         padding: 3px 10px;
       }
       .ox-app-menubar {
-        background: #090A0D;
+        background: #0C0E14;
         border-bottom: 1px solid rgba(255, 255, 255, 0.08);
         padding: 5px 12px;
         min-height: 30px;
@@ -1069,7 +1610,7 @@
         font-size: 0.65rem;
       }
       .ox-commit-btn {
-        background: #E10600 !important;
+        background: #E03E3E !important;
         color: #FFFFFF !important;
         font-weight: 800 !important;
         font-size: 0.66rem !important;
@@ -1082,7 +1623,7 @@
       .ox-threads-col {
         width: 175px;
         flex-shrink: 0;
-        background: #090A0E;
+        background: #0D0E13;
         border-right: 1px solid rgba(255, 255, 255, 0.08);
         padding: 6px;
         box-sizing: border-box;
@@ -1105,12 +1646,12 @@
         background: rgba(255, 255, 255, 0.04);
       }
       .ox-thread-item.is-active {
-        background: rgba(225, 6, 0, 0.18);
-        border-left: 2px solid #E10600;
+        background: rgba(224, 62, 62, 0.12);
+        border-left: 2px solid #E03E3E;
       }
       .ox-chat-col {
         flex: 1;
-        background: #0C0D11;
+        background: #0E1016;
         padding: 8px 12px;
         box-sizing: border-box;
       }
@@ -1124,14 +1665,14 @@
         padding-right: 4px;
       }
       .ox-user-bubble {
-        background: #14151B;
+        background: #161922;
         border: 1px solid rgba(255, 255, 255, 0.08);
         padding: 6px 10px;
         border-radius: 4px;
       }
       .ox-agent-bubble {
-        background: #111217;
-        border-left: 2px solid #E10600;
+        background: #13151D;
+        border-left: 2px solid #E03E3E;
         border-top: 1px solid rgba(255, 255, 255, 0.08);
         border-right: 1px solid rgba(255, 255, 255, 0.08);
         border-bottom: 1px solid rgba(255, 255, 255, 0.08);
@@ -1139,14 +1680,14 @@
         border-radius: 0 4px 4px 0;
       }
       .ox-turn-gate-box {
-        background: #090A0D;
+        background: #0C0E14;
         border: 1px solid rgba(255, 255, 255, 0.1);
         padding: 6px 8px;
         border-radius: 3px;
         margin-top: 4px;
       }
       .ox-input-bar {
-        background: #14151B;
+        background: #161922;
         border: 1px solid rgba(255, 255, 255, 0.08);
         border-radius: 4px;
         padding: 4px 8px;
@@ -1154,7 +1695,7 @@
       .ox-diff-col {
         width: 170px;
         flex-shrink: 0;
-        background: #0A0B0E;
+        background: #0C0E14;
         border-left: 1px solid rgba(255, 255, 255, 0.08);
         padding: 6px;
         box-sizing: border-box;
@@ -1180,7 +1721,7 @@
         padding: 1px 2px;
       }
       .ox-cta-btn {
-        background: #E10600 !important;
+        background: #E03E3E !important;
         color: #FFFFFF !important;
         font-weight: 800 !important;
         font-size: 0.68rem !important;
@@ -1195,19 +1736,19 @@
 
       /* scrobbl.rs Dashboard Styles */
       .sc-app-root {
-        background: #0C0D11;
+        background: #0E1016;
         flex: 1;
         overflow: hidden;
         display: flex;
         flex-direction: column;
       }
       .sc-toast-bar {
-        background: rgba(225, 6, 0, 0.22);
-        border-bottom: 1px solid #E10600;
+        background: rgba(224, 62, 62, 0.12);
+        border-bottom: 1px solid #E03E3E;
         padding: 3px 10px;
       }
       .sc-app-menubar {
-        background: #090A0E;
+        background: #0D0E13;
         border-bottom: 1px solid rgba(255, 255, 255, 0.08);
         padding: 6px 12px;
         min-height: 32px;
@@ -1219,8 +1760,8 @@
         border-radius: 3px !important;
       }
       .sc-period-btn.is-active {
-        background: rgba(225, 6, 0, 0.25) !important;
-        border: 1px solid #E10600 !important;
+        background: rgba(224, 62, 62, 0.14) !important;
+        border: 1px solid #E03E3E !important;
         color: #FFFFFF !important;
       }
       .sc-dashboard-body {
@@ -1233,7 +1774,7 @@
       }
       .sc-kpi-card {
         flex: 1;
-        background: #111217;
+        background: #13151D;
         border: 1px solid rgba(255, 255, 255, 0.08);
         padding: 8px 12px;
         border-radius: 4px;
@@ -1246,7 +1787,7 @@
         margin-bottom: 2px;
       }
       .sc-top-artists-box {
-        background: #090A0E;
+        background: #0D0E13;
         border: 1px solid rgba(255, 255, 255, 0.08);
         padding: 6px 10px;
         border-radius: 4px;
@@ -1267,7 +1808,7 @@
       }
       .sc-bar-fill {
         height: 100%;
-        background: #E10600;
+        background: #E03E3E;
         border-radius: 3px;
       }
       .sc-dashboard-footer {
@@ -1275,7 +1816,7 @@
         padding-top: 6px;
       }
       .sc-cta-btn {
-        background: #E10600 !important;
+        background: #E03E3E !important;
         color: #FFFFFF !important;
         font-weight: 800 !important;
         font-size: 0.68rem !important;
@@ -1284,32 +1825,50 @@
       }
 
       .livrea-primary-action-btn {
-        background: #E10600 !important;
+        background: #E03E3E !important;
         color: #FFFFFF !important;
         font-weight: 800 !important;
         border: none !important;
         margin-bottom: 4px;
       }
 
-      /* Panel 05 Split Architecture */
+      /* Sector 06 (Embedded & GIS) Split Architecture Cards */
       .livrea-split-engineering {
         margin-top: 8px;
+      }
+      .livrea-system-split-box {
+        flex: 1;
+        background: #12151D;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 20px;
+        border-radius: 4px;
+        box-sizing: border-box;
       }
       @media (max-width: 820px) {
         .livrea-split-engineering {
           flex-direction: column !important;
           gap: 1.25rem !important;
+          width: 100% !important;
+        }
+        .livrea-system-split-box {
+          width: 100% !important;
+          padding: 16px 14px !important;
+          box-sizing: border-box !important;
+          flex: none !important;
+        }
+        .livrea-system-split-box .livrea-card-specs {
+          padding: 10px 12px !important;
+          font-size: 0.8125rem !important;
+          line-height: 1.45 !important;
+          word-break: break-word;
+        }
+        .livrea-system-split-box h3 {
+          font-size: 1.15rem !important;
+          line-height: 1.3 !important;
         }
       }
-      .livrea-system-split-box {
-        flex: 1;
-        background: #131418;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        padding: 20px;
-        border-radius: 4px;
-      }
 
-      /* Panel 06 Machinery Grid (Aligned 2-Column Grid) */
+      /* Panel 07 Machinery Grid */
       .livrea-machinery-grid {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
@@ -1317,14 +1876,8 @@
         width: 100%;
         margin-top: 6px;
       }
-      @media (max-width: 820px) {
-        .livrea-machinery-grid {
-          grid-template-columns: 1fr;
-          gap: 10px;
-        }
-      }
       .livrea-machinery-card {
-        background: #131418;
+        background: #12151D;
         border: 1px solid rgba(255, 255, 255, 0.08);
         padding: 14px 18px;
         border-radius: 4px;
@@ -1338,20 +1891,86 @@
       .livrea-machinery-card:hover {
         border-color: rgba(255, 255, 255, 0.2);
       }
+      .livrea-card-action-btn {
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        color: #E03E3E;
+        font-weight: bold;
+        font-size: 0.875rem;
+      }
+      .livrea-card-action-btn:hover {
+        text-decoration: underline;
+      }
+      .livrea-card-status-note {
+        display: inline-flex;
+        align-items: center;
+        font-size: 0.8rem;
+        color: var(--color-text-secondary);
+      }
+      @media (max-width: 820px) {
+        .livrea-machinery-grid {
+          grid-template-columns: 1fr;
+          gap: 10px;
+          margin-top: 4px;
+        }
+        .livrea-machinery-card {
+          padding: 12px 14px;
+          gap: 8px;
+        }
+        .livrea-machinery-card .livrea-machinery-desc {
+          font-size: 0.85rem;
+          line-height: 1.4;
+        }
+        .livrea-card-action-btn {
+          min-height: 44px;
+          min-width: 44px;
+          display: flex !important;
+          align-items: center;
+          justify-content: space-between;
+          width: 100%;
+          padding: 10px 14px;
+          background: rgba(255, 255, 255, 0.04);
+          border: 1px solid rgba(255, 255, 255, 0.1);
+          border-radius: 4px;
+          box-sizing: border-box;
+          color: #fff;
+          text-decoration: none !important;
+        }
+        .livrea-card-action-btn:active {
+          background: rgba(224, 62, 62, 0.10);
+          border-color: #E03E3E;
+        }
+        .livrea-card-status-note {
+          min-height: 38px;
+          padding: 4px 0;
+        }
+      }
 
-      /* Panel 07 Starting Grid */
+      /* Panel 08 Starting Grid & Telemetry Timeline */
       .livrea-grid-rows {
         margin-top: 8px;
+        position: relative;
       }
       .livrea-grid-row {
-        background: #131418;
+        background: #12151D;
         border: 1px solid rgba(255, 255, 255, 0.08);
         padding: 16px 24px;
         border-radius: 4px;
         transition: border-color 0.15s ease;
+        position: relative;
       }
       .livrea-grid-row:hover {
-        border-color: rgba(225, 6, 0, 0.4);
+        border-color: rgba(224, 62, 62, 0.25);
+      }
+      .livrea-grid-node-header {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 12px;
+        flex-shrink: 0;
+        min-width: 175px;
       }
       .livrea-grid-pos {
         font-family: var(--font-mono);
@@ -1360,12 +1979,60 @@
         width: 50px;
         flex-shrink: 0;
       }
-      @media (max-width: 768px) {
+      @media (max-width: 820px) {
+        .livrea-grid-timeline {
+          position: relative;
+          padding-left: 28px !important;
+          margin-left: 4px;
+        }
+        /* Continuous vertical timeline track line */
+        .livrea-grid-timeline::before {
+          content: '';
+          position: absolute;
+          left: 10px;
+          top: 18px;
+          bottom: 24px;
+          width: 2px;
+          background: linear-gradient(180deg, #E03E3E 0%, rgba(224, 62, 62, 0.35) 60%, rgba(255, 255, 255, 0.2) 100%);
+          z-index: 1;
+        }
+        /* Telemetry node item */
+        .livrea-timeline-node {
+          position: relative;
+          margin-bottom: 8px;
+        }
+        /* Telemetry node marker */
+        .livrea-timeline-node::before {
+          content: '';
+          position: absolute;
+          left: -23px;
+          top: 18px;
+          width: 10px;
+          height: 10px;
+          border-radius: 50%;
+          background: #0F1117;
+          border: 2px solid #E03E3E;
+          box-shadow: 0 0 4px rgba(224, 62, 62, 0.25);
+          z-index: 2;
+        }
+        .livrea-timeline-node.is-active-node::before {
+          background: #E03E3E;
+          box-shadow: 0 0 6px rgba(224, 62, 62, 0.35);
+        }
         .livrea-grid-row {
           flex-direction: column !important;
           align-items: flex-start !important;
+          gap: 6px !important;
+          padding: 14px 16px !important;
+        }
+        .livrea-grid-node-header {
+          min-width: auto !important;
+          width: 100% !important;
+          justify-content: flex-start !important;
           gap: 8px !important;
-          padding: 14px 16px;
+        }
+        .livrea-grid-node-body {
+          width: 100% !important;
         }
         .livrea-grid-pos {
           width: auto;
@@ -1373,7 +2040,7 @@
         }
       }
 
-      /* Panel 08 Redesigned Contact Section */
+      /* Sector 09 Contact Section & Ergonomic Action Deck */
       .livrea-contact-center {
         margin-block: auto;
         width: 100%;
@@ -1387,15 +2054,15 @@
       .livrea-contact-cards-grid {
         margin-top: 10px;
       }
-      @media (max-width: 900px) {
-        .livrea-contact-cards-grid {
-          flex-direction: column !important;
-          gap: 1rem !important;
-        }
+      .livrea-contact-cards-desktop {
+        display: flex;
+      }
+      .livrea-contact-action-deck {
+        display: none;
       }
       .livrea-contact-card {
         flex: 1;
-        background: #131418;
+        background: #12151D;
         border: 1px solid rgba(255, 255, 255, 0.1);
         padding: 22px;
         border-radius: 4px;
@@ -1409,8 +2076,77 @@
         border-color: rgba(255, 255, 255, 0.25);
       }
       .livrea-contact-card.is-primary-action {
-        border-color: #E10600;
-        background: linear-gradient(180deg, rgba(225, 6, 0, 0.1) 0%, rgba(19, 20, 24, 0.98) 100%);
+        border-color: #E03E3E;
+        background: linear-gradient(180deg, rgba(224, 62, 62, 0.08) 0%, rgba(19, 20, 24, 0.98) 100%);
+      }
+
+      @media (max-width: 820px) {
+        .livrea-contact-cards-desktop {
+          display: none !important;
+        }
+        .livrea-contact-action-deck {
+          display: flex !important;
+          flex-direction: column;
+          gap: 10px;
+          width: 100%;
+          margin-top: 8px;
+        }
+        .livrea-contact-deck-item {
+          width: 100%;
+        }
+        .livrea-contact-deck-btn {
+          width: 100%;
+          min-height: 52px;
+          padding: 12px 16px;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          background: #12151D;
+          border: 1px solid rgba(255, 255, 255, 0.12);
+          border-radius: 4px;
+          box-sizing: border-box;
+          color: var(--color-text-primary);
+          text-decoration: none;
+          transition: background 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+          user-select: none;
+          -webkit-tap-highlight-color: transparent;
+        }
+        .livrea-contact-deck-btn:active {
+          transform: scale(0.99);
+        }
+        .livrea-contact-deck-btn.is-primary-deck-action {
+          border-color: #E03E3E;
+          background: linear-gradient(135deg, rgba(224, 62, 62, 0.12) 0%, rgba(19, 20, 24, 0.95) 100%);
+          box-shadow: 0 0 12px rgba(224, 62, 62, 0.10);
+        }
+        .livrea-contact-deck-btn.is-primary-deck-action:hover,
+        .livrea-contact-deck-btn.is-primary-deck-action:active {
+          border-color: #EB4D4D;
+          background: linear-gradient(135deg, rgba(224, 62, 62, 0.18) 0%, rgba(19, 20, 24, 1) 100%);
+        }
+        .livrea-contact-deck-btn:hover {
+          border-color: rgba(255, 255, 255, 0.3);
+          background: #1a1b20;
+        }
+        .livrea-contact-toast {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          padding: 3px 8px;
+          background: #E03E3E;
+          color: #fff;
+          font-family: var(--font-mono);
+          font-size: 0.75rem;
+          font-weight: bold;
+          border-radius: 2px;
+          letter-spacing: 0.05em;
+          box-shadow: 0 0 8px rgba(224, 62, 62, 0.35);
+          animation: livrea-toast-pulse 0.2s ease-out;
+        }
+        @keyframes livrea-toast-pulse {
+          0% { transform: scale(0.92); opacity: 0; }
+          100% { transform: scale(1); opacity: 1; }
+        }
       }
 
       /* Bottom Navigation Strip — cleanly aligned with content margins */
@@ -1420,14 +2156,38 @@
         padding-left: 0;
         margin-top: 10px;
       }
-      @media (max-width: 768px) {
+      @media (max-width: 820px) {
         .livrea-bottom-strip {
           flex-direction: column !important;
           align-items: flex-start !important;
-          gap: 6px !important;
-          padding-top: 8px;
-          padding-bottom: 2px;
-          margin-top: 12px;
+          gap: 4px !important;
+          padding-top: 6px !important;
+          padding-bottom: 2px !important;
+          margin-top: 8px !important;
+        }
+        .livrea-finish-strip {
+          flex-direction: row !important;
+          justify-content: center !important;
+          align-items: center !important;
+          text-align: center;
+          padding-top: 10px !important;
+          margin-top: 10px !important;
+        }
+        .livrea-finish-strip > * {
+          text-align: center;
+        }
+        .livrea-bottom-strip a,
+        .livrea-hero-strip a {
+          min-height: 32px !important;
+          padding: 3px 6px !important;
+          font-size: 0.8rem !important;
+        }
+        .livrea-hero-strip .livrea-email-link {
+          color: #FFFFFF !important;
+        }
+        /* Consolidate repetitive intermediate strips on mobile to prevent visual noise */
+        .livrea-intermediate-strip {
+          display: none !important;
         }
         .livrea-scroll-hint {
           display: none !important;
