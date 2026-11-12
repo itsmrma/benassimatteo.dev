@@ -21,7 +21,7 @@ Rather than displaying static screenshots or artificial mockups, the portfolio f
 ### Highlights
 
 - **Interactive Desktop Window Stage**: Custom-built window manager supporting 8-directional edge/corner resizing, multi-touch drag, pointer capture, stage boundaries, and preset transitions (maximize, default, restore).
-- **Live In-Browser App Previews**: Embedded live frontend of Oxide inside a sandboxed iframe with deterministic IPC mock fixtures, alongside interactive showcases for SyncForge and Scrobbl.
+- **Live In-Browser App Previews**: Embedded live frontend of Oxide inside a sandboxed iframe with deterministic IPC mock fixtures, alongside interactive showcases for SyncForge and scrobbl.rs.
 - **Motorsport Telemetry Canvas**: Procedural canvas-rendered background simulating racing telemetry data channels and time-series telemetry plots.
 - **Astryx Design System**: Fully built on `@astryxdesign/core` layout primitives and semantic design tokens, strictly avoiding unstyled `<div>` / `<span>` primitives.
 - **Responsive Snap Scroll**: 9 distinct telemetry panels (Chassis, Podium, Oxide, SyncForge, Scrobbl, Embedded, Machinery, Grid, Contact) with smooth keyboard and scroll navigation.
@@ -36,7 +36,7 @@ Rather than displaying static screenshots or artificial mockups, the portfolio f
 | **[SyncForge](https://github.com/itsmrma/SyncForge)** | Author | Rust · Tauri 2 · FFmpeg | Audio and subtitle alignment via FFT cross-correlation and lossless MKV remuxing, including an MCP server. |
 | **[Garda Chiese Alert](https://github.com/cavallinilorenzo/alert-app-garda-chiese)** | 1st Place · Hack4Water 2026 | Django · PostGIS · React · Gemini | Citizen reporting platform covering a 76,645-hectare river basin with geospatial and multi-modal AI triage. |
 | **[SCIoTeM Smart City](https://github.com/itsmrma)** | 2nd Place · SCIoTeM 2026 & 2025 | Embedded C · STM32 · LoRaWAN | Urban IoT sensing node with ultra-low power telemetry and bare-metal STM32 firmware. |
-| **[Scrobbl](https://github.com/itsmrma/scrobbl.rs)** | Author | Rust · macOS Cocoa / AppKit | Lightweight native menu bar scrobbler for macOS with instant Apple Music and Spotify recognition. |
+| **[scrobbl.rs](https://github.com/itsmrma/scrobbl-rs)** | Author | Rust · SQLite WAL · Axum · React | Self-hosted music listening archive and analytics daemon. Background Spotify collection, multi-year archive ingestion, and personal rankings in a single binary. |
 
 ---
 
@@ -49,7 +49,7 @@ benassimatteo.dev/
 │   ├── demos/oxide/        # Pre-built interactive web demo of Oxide with mock IPC
 │   ├── oxide-thread.png    # High-resolution Oxide fallback asset
 │   ├── syncforge-preview.* # Preview assets for SyncForge
-│   └── scrobbl-preview.*   # Preview assets for Scrobbl
+│   └── scrobbl-preview.*   # Preview assets for scrobbl.rs
 ├── src/
 │   ├── components/
 │   │   ├── desktop/        # Interactive macOS window stage engine
