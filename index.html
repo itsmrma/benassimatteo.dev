@@ -155,6 +155,24 @@
         .livrea-panel-01 {
           padding-top: 54px;
         }
+
+        /* WCAG Touch Target Accessibility: min 44x44px for buttons, links and interactive elements */
+        button,
+        a,
+        [role="button"],
+        .livrea-btn {
+          min-height: 44px;
+          min-width: 44px;
+          box-sizing: border-box;
+        }
+
+        .livrea-bottom-strip a,
+        .livrea-hero-strip a {
+          min-height: 44px;
+          display: inline-flex;
+          align-items: center;
+          padding: 6px 4px;
+        }
       }
 
       /* Lap progress bar at fixed top */
@@ -440,6 +458,8 @@
         .livrea-telemetry-header {
           padding-bottom: 5px;
           gap: 6px;
+          flex-wrap: wrap;
+          align-items: flex-start;
         }
       }
       .livrea-red-indicator {
@@ -456,12 +476,14 @@
       }
       @media (max-width: 640px) {
         .livrea-kicker {
-          font-size: 0.7rem;
-          letter-spacing: 0.06em;
-          max-width: calc(100vw - 110px);
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
+          font-size: 0.72rem;
+          letter-spacing: 0.05em;
+          max-width: 100%;
+          white-space: normal;
+          word-break: break-word;
+          overflow: visible;
+          text-overflow: clip;
+          line-height: 1.35;
         }
       }
       .livrea-badge-num {
@@ -1657,19 +1679,13 @@
         border-radius: 4px;
       }
 
-      /* Panel 06 Machinery Grid (Aligned 2-Column Grid) */
+      /* Panel 07 Machinery Grid */
       .livrea-machinery-grid {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
         gap: 12px;
         width: 100%;
         margin-top: 6px;
-      }
-      @media (max-width: 820px) {
-        .livrea-machinery-grid {
-          grid-template-columns: 1fr;
-          gap: 10px;
-        }
       }
       .livrea-machinery-card {
         background: #131418;
@@ -1685,6 +1701,62 @@
       }
       .livrea-machinery-card:hover {
         border-color: rgba(255, 255, 255, 0.2);
+      }
+      .livrea-card-action-btn {
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        color: #E10600;
+        font-weight: bold;
+        font-size: 0.875rem;
+      }
+      .livrea-card-action-btn:hover {
+        text-decoration: underline;
+      }
+      .livrea-card-status-note {
+        display: inline-flex;
+        align-items: center;
+        font-size: 0.8rem;
+        color: var(--color-text-secondary);
+      }
+      @media (max-width: 820px) {
+        .livrea-machinery-grid {
+          grid-template-columns: 1fr;
+          gap: 10px;
+          margin-top: 4px;
+        }
+        .livrea-machinery-card {
+          padding: 12px 14px;
+          gap: 8px;
+        }
+        .livrea-machinery-card .livrea-machinery-desc {
+          font-size: 0.85rem;
+          line-height: 1.4;
+        }
+        .livrea-card-action-btn {
+          min-height: 44px;
+          min-width: 44px;
+          display: flex !important;
+          align-items: center;
+          justify-content: space-between;
+          width: 100%;
+          padding: 10px 14px;
+          background: rgba(255, 255, 255, 0.04);
+          border: 1px solid rgba(255, 255, 255, 0.1);
+          border-radius: 4px;
+          box-sizing: border-box;
+          color: #fff;
+          text-decoration: none !important;
+        }
+        .livrea-card-action-btn:active {
+          background: rgba(225, 6, 0, 0.15);
+          border-color: #E10600;
+        }
+        .livrea-card-status-note {
+          min-height: 38px;
+          padding: 4px 0;
+        }
       }
 
       /* Panel 08 Starting Grid & Telemetry Timeline */
@@ -1762,7 +1834,7 @@
         }
       }
 
-      /* Panel 08 Redesigned Contact Section */
+      /* Sector 09 Contact Section & Ergonomic Action Deck */
       .livrea-contact-center {
         margin-block: auto;
         width: 100%;
@@ -1776,11 +1848,11 @@
       .livrea-contact-cards-grid {
         margin-top: 10px;
       }
-      @media (max-width: 900px) {
-        .livrea-contact-cards-grid {
-          flex-direction: column !important;
-          gap: 1rem !important;
-        }
+      .livrea-contact-cards-desktop {
+        display: flex;
+      }
+      .livrea-contact-action-deck {
+        display: none;
       }
       .livrea-contact-card {
         flex: 1;
@@ -1800,6 +1872,75 @@
       .livrea-contact-card.is-primary-action {
         border-color: #E10600;
         background: linear-gradient(180deg, rgba(225, 6, 0, 0.1) 0%, rgba(19, 20, 24, 0.98) 100%);
+      }
+
+      @media (max-width: 820px) {
+        .livrea-contact-cards-desktop {
+          display: none !important;
+        }
+        .livrea-contact-action-deck {
+          display: flex !important;
+          flex-direction: column;
+          gap: 10px;
+          width: 100%;
+          margin-top: 8px;
+        }
+        .livrea-contact-deck-item {
+          width: 100%;
+        }
+        .livrea-contact-deck-btn {
+          width: 100%;
+          min-height: 52px;
+          padding: 12px 16px;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          background: #131418;
+          border: 1px solid rgba(255, 255, 255, 0.12);
+          border-radius: 4px;
+          box-sizing: border-box;
+          color: var(--color-text-primary);
+          text-decoration: none;
+          transition: background 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+          user-select: none;
+          -webkit-tap-highlight-color: transparent;
+        }
+        .livrea-contact-deck-btn:active {
+          transform: scale(0.99);
+        }
+        .livrea-contact-deck-btn.is-primary-deck-action {
+          border-color: #E10600;
+          background: linear-gradient(135deg, rgba(225, 6, 0, 0.2) 0%, rgba(19, 20, 24, 0.95) 100%);
+          box-shadow: 0 0 12px rgba(225, 6, 0, 0.15);
+        }
+        .livrea-contact-deck-btn.is-primary-deck-action:hover,
+        .livrea-contact-deck-btn.is-primary-deck-action:active {
+          border-color: #ff2a24;
+          background: linear-gradient(135deg, rgba(225, 6, 0, 0.3) 0%, rgba(19, 20, 24, 1) 100%);
+        }
+        .livrea-contact-deck-btn:hover {
+          border-color: rgba(255, 255, 255, 0.3);
+          background: #1a1b20;
+        }
+        .livrea-contact-toast {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          padding: 3px 8px;
+          background: #E10600;
+          color: #fff;
+          font-family: var(--font-mono);
+          font-size: 0.75rem;
+          font-weight: bold;
+          border-radius: 2px;
+          letter-spacing: 0.05em;
+          box-shadow: 0 0 8px rgba(225, 6, 0, 0.6);
+          animation: livrea-toast-pulse 0.2s ease-out;
+        }
+        @keyframes livrea-toast-pulse {
+          0% { transform: scale(0.92); opacity: 0; }
+          100% { transform: scale(1); opacity: 1; }
+        }
       }
 
       /* Bottom Navigation Strip — cleanly aligned with content margins */

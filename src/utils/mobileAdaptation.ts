@@ -848,3 +848,232 @@ export function getAppPreviewMode(options: AppPreviewModeOptions): AppPreviewMod
     trapsPageScroll: false,
   };
 }
+
+/**
+ * WCAG 2.5.5 / 2.5.8 minimum target sizing constants.
+ * Standard interactive elements on mobile require at least 44x44px.
+ * Thumb-friendly direct mobile actions (contact deck) require at least 48px height.
+ */
+export const MIN_TOUCH_TARGET_SIZE = 44;
+export const CONTACT_ACTION_MIN_HEIGHT = 48;
+
+export type TouchTargetRole = 'button' | 'link' | 'shortcut' | 'contact-action';
+
+export interface TouchTargetConfig {
+  minHeight: number;
+  minWidth: number;
+  touchSafe: boolean;
+}
+
+/**
+ * Returns touch target sizing contracts for mobile vs desktop interactive elements.
+ */
+export function getTouchTargetConfig(
+  role: TouchTargetRole,
+  isMobile: boolean
+): TouchTargetConfig {
+  if (isMobile) {
+    const minSize = role === 'contact-action' ? CONTACT_ACTION_MIN_HEIGHT : MIN_TOUCH_TARGET_SIZE;
+    return {
+      minHeight: minSize,
+      minWidth: minSize,
+      touchSafe: true,
+    };
+  }
+  return {
+    minHeight: 32,
+    minWidth: 32,
+    touchSafe: true,
+  };
+}
+
+export interface MachineryProject {
+  id: string;
+  title: string;
+  tech: string;
+  category: string;
+  description: string;
+  githubUrl?: string;
+  liveUrl?: string;
+  statusNote?: string;
+}
+
+/**
+ * Curated list of the 6 auxiliary machinery and lab projects for Sector 07.
+ */
+export function getAuxiliaryMachineryProjects(): MachineryProject[] {
+  return [
+    {
+      id: 'amd-fan-control',
+      title: 'AMD Fan Control',
+      tech: 'RUST FFI',
+      category: 'SYSTEMS UTILITY',
+      description:
+        'Low-level GPU fan curve utility built with Rust FFI binding to Linux sysfs hardware sensor monitors.',
+      githubUrl: 'https://github.com/itsmrma/amd-fan-control',
+    },
+    {
+      id: 'truenas-homelab',
+      title: 'TrueNAS Home Lab',
+      tech: 'ZFS / LINUX',
+      category: 'INFRASTRUCTURE',
+      description:
+        'Dedicated home lab with ZFS RAIDZ storage pools, automated snapshot replication, Docker microservices, and network monitoring.',
+      statusNote: 'PRIVATE ON-PREM INFRASTRUCTURE',
+    },
+    {
+      id: 'viessmann-dashboard',
+      title: 'Viessmann Dashboard',
+      tech: 'HOME ASSISTANT',
+      category: 'ENERGY TELEMETRY',
+      description:
+        'Custom Home Assistant telemetry integration for monitoring heat pump COP modulation and energy efficiency curves.',
+      githubUrl: 'https://github.com/itsmrma/viesmann-dashboard-hass',
+    },
+    {
+      id: 'uni-musiclib',
+      title: 'UNIMORE Music Library',
+      tech: 'PYTHON / UV',
+      category: 'CATALOG SERVICE',
+      description:
+        'Academic music archive catalog service built with Python, Django, uv dependency management, and MusicBrainz API integration.',
+      githubUrl: 'https://github.com/itsmrma/uni-musiclib-project',
+    },
+    {
+      id: 'music-history-analyzer',
+      title: 'Music History Analyzer',
+      tech: 'LIVE APP',
+      category: 'ANALYTICS ENGINE',
+      description:
+        'Interactive streaming history explorer importing multiple years of Spotify account JSON archives.',
+      liveUrl: 'https://spotify-history-analyzer.benassimatteo.dev',
+      githubUrl: 'https://github.com/itsmrma/spotify-history-analyzer',
+    },
+    {
+      id: 'language-credentials',
+      title: 'Cambridge B2 First',
+      tech: 'PROFICIENCY',
+      category: 'COMMUNICATION',
+      description:
+        'Professional working English proficiency · Native Italian speaker. Technical documentation & international team communication.',
+      statusNote: 'TECHNICAL SPECIFICATIONS & TEAMS',
+    },
+  ];
+}
+
+export interface MachineryGridConfig {
+  columns: number;
+  isCompact: boolean;
+  hasTouchActionLinks: boolean;
+  minTouchTarget?: number;
+}
+
+/**
+ * Returns machinery card grid layout settings.
+ * On mobile, uses compact high-density layout with touch-friendly actions to avoid vertical bloat.
+ * On desktop, maintains 2-column precision layout.
+ */
+export function getMachineryGridConfig(isMobile: boolean): MachineryGridConfig {
+  if (isMobile) {
+    return {
+      columns: 1,
+      isCompact: true,
+      hasTouchActionLinks: true,
+      minTouchTarget: MIN_TOUCH_TARGET_SIZE,
+    };
+  }
+  return {
+    columns: 2,
+    isCompact: false,
+    hasTouchActionLinks: false,
+  };
+}
+
+export interface ContactDeckAction {
+  id: 'email' | 'github' | 'linkedin' | 'cv';
+  action: 'email' | 'github' | 'linkedin' | 'cv';
+  label: string;
+  subtitle: string;
+  iconType: string;
+  minHeight: number;
+  href?: string;
+  instantFeedback?: boolean;
+  variant: 'primary' | 'secondary';
+}
+
+/**
+ * Returns direct mobile contact action deck buttons (>= 48px height) for thumb ergonomics.
+ * Provides instant feedback when email is copied.
+ */
+export function getContactDeckActions(isCopied: boolean = false): ContactDeckAction[] {
+  return [
+    {
+      id: 'email',
+      action: 'email',
+      label: isCopied ? 'EMAIL COPIED ✓' : 'EMAIL MATTEO',
+      subtitle: isCopied ? 'Copied to clipboard' : 'm.benassi30@gmail.com',
+      iconType: 'email',
+      minHeight: CONTACT_ACTION_MIN_HEIGHT,
+      instantFeedback: true,
+      variant: 'primary',
+    },
+    {
+      id: 'github',
+      action: 'github',
+      label: 'GITHUB PROFILE ↗',
+      subtitle: '@itsmrma · Repositories & Oxide',
+      iconType: 'github',
+      minHeight: CONTACT_ACTION_MIN_HEIGHT,
+      href: 'https://github.com/itsmrma',
+      variant: 'secondary',
+    },
+    {
+      id: 'linkedin',
+      action: 'linkedin',
+      label: 'LINKEDIN NETWORK ↗',
+      subtitle: 'Matteo Benassi · Systems Engineer',
+      iconType: 'linkedin',
+      minHeight: CONTACT_ACTION_MIN_HEIGHT,
+      href: 'https://www.linkedin.com/in/matteo-benassi/',
+      variant: 'secondary',
+    },
+    {
+      id: 'cv',
+      action: 'cv',
+      label: 'DOWNLOAD CV (PDF) ↗',
+      subtitle: 'Academic & technical resume',
+      iconType: 'cv',
+      minHeight: CONTACT_ACTION_MIN_HEIGHT,
+      href: 'https://benassimatteo.dev/cv.pdf',
+      variant: 'secondary',
+    },
+  ];
+}
+
+export interface TelemetryKickerConfig {
+  wrap: boolean;
+  allowEllipsis: boolean;
+  maxLines: number;
+  overflow: 'visible' | 'hidden';
+}
+
+/**
+ * Returns typography wrapping configuration for telemetry kickers.
+ * On narrow mobile screens (320px–375px), kickers wrap gracefully without ellipses or clipping.
+ */
+export function getTelemetryKickerConfig(viewportWidth: number): TelemetryKickerConfig {
+  if (viewportWidth < 640) {
+    return {
+      wrap: true,
+      allowEllipsis: false,
+      maxLines: 2,
+      overflow: 'visible',
+    };
+  }
+  return {
+    wrap: false,
+    allowEllipsis: false,
+    maxLines: 1,
+    overflow: 'visible',
+  };
+}

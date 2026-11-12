@@ -22,6 +22,13 @@ import {
   getAppPreviewMode,
   OXIDE_SHOWCASE_PILLARS,
   TelemetryAnimationController,
+  MIN_TOUCH_TARGET_SIZE,
+  CONTACT_ACTION_MIN_HEIGHT,
+  getTouchTargetConfig,
+  getAuxiliaryMachineryProjects,
+  getMachineryGridConfig,
+  getContactDeckActions,
+  getTelemetryKickerConfig,
 } from '../src/utils/mobileAdaptation.ts';
 
 test('mobileAdaptation: isMobileViewport correctly detects mobile vs desktop', () => {
@@ -579,4 +586,129 @@ test('telemetryAnimationController: strictly respects prefers-reduced-motion by 
   assert.equal(normalController.getIsRunning(), false, 'Loop halted when reduced motion enabled');
   assert.equal(stoppedCount, 1, 'onStop called when reduced motion enabled');
   assert.equal(staticFrameCount, 2, 'Static frame rendered on transition to reduced motion');
+});
+
+test('touchTargetAccessibility: verifies WCAG minimum touch target dimensions across mobile interactive elements', () => {
+  assert.ok(MIN_TOUCH_TARGET_SIZE >= 44, 'Base mobile touch target must be at least 44x44px (WCAG 2.5.5/2.5.8)');
+  assert.ok(CONTACT_ACTION_MIN_HEIGHT >= 48, 'Contact deck actions must be at least 48px height for thumb friendliness');
+
+  const mobileBtn = getTouchTargetConfig('button', true);
+  assert.equal(mobileBtn.minHeight, 44);
+  assert.equal(mobileBtn.minWidth, 44);
+  assert.equal(mobileBtn.touchSafe, true);
+
+  const mobileLink = getTouchTargetConfig('link', true);
+  assert.equal(mobileLink.minHeight, 44);
+  assert.equal(mobileLink.minWidth, 44);
+  assert.equal(mobileLink.touchSafe, true);
+
+  const mobileContact = getTouchTargetConfig('contact-action', true);
+  assert.equal(mobileContact.minHeight, 48);
+  assert.equal(mobileContact.minWidth, 48);
+  assert.equal(mobileContact.touchSafe, true);
+
+  const desktopBtn = getTouchTargetConfig('button', false);
+  assert.equal(desktopBtn.minHeight, 32);
+  assert.equal(desktopBtn.touchSafe, true);
+});
+
+test('machineryGrid: structures 6 hardware/lab projects into a responsive high-density card grid', () => {
+  const projects = getAuxiliaryMachineryProjects();
+  assert.equal(projects.length, 6, 'Must contain exactly 6 auxiliary machinery / lab projects');
+
+  // Verify project identities and content
+  const fanControl = projects.find((p) => p.id === 'amd-fan-control');
+  assert.ok(fanControl, 'AMD Fan Control project exists');
+  assert.equal(fanControl.tech, 'RUST FFI');
+  assert.equal(fanControl.githubUrl, 'https://github.com/itsmrma/amd-fan-control');
+
+  const truenas = projects.find((p) => p.id === 'truenas-homelab');
+  assert.ok(truenas, 'TrueNAS Home Lab project exists');
+  assert.equal(truenas.tech, 'ZFS / LINUX');
+
+  const viessmann = projects.find((p) => p.id === 'viessmann-dashboard');
+  assert.ok(viessmann, 'Viessmann Dashboard project exists');
+  assert.equal(viessmann.tech, 'HOME ASSISTANT');
+  assert.equal(viessmann.githubUrl, 'https://github.com/itsmrma/viesmann-dashboard-hass');
+
+  const musicLib = projects.find((p) => p.id === 'uni-musiclib');
+  assert.ok(musicLib, 'UNIMORE Music Library project exists');
+  assert.equal(musicLib.tech, 'PYTHON / UV');
+  assert.equal(musicLib.githubUrl, 'https://github.com/itsmrma/uni-musiclib-project');
+
+  const musicHistory = projects.find((p) => p.id === 'music-history-analyzer');
+  assert.ok(musicHistory, 'Music History Analyzer project exists');
+  assert.equal(musicHistory.tech, 'LIVE APP');
+  assert.equal(musicHistory.liveUrl, 'https://spotify-history-analyzer.benassimatteo.dev');
+  assert.equal(musicHistory.githubUrl, 'https://github.com/itsmrma/spotify-history-analyzer');
+
+  const credentials = projects.find((p) => p.id === 'language-credentials');
+  assert.ok(credentials, 'Language credentials project exists');
+  assert.equal(credentials.tech, 'PROFICIENCY');
+
+  // Verify responsive grid layout config
+  const desktopConfig = getMachineryGridConfig(false);
+  assert.equal(desktopConfig.columns, 2, 'Desktop machinery grid uses 2 columns');
+  assert.equal(desktopConfig.isCompact, false);
+  assert.equal(desktopConfig.hasTouchActionLinks, false);
+
+  const mobileConfig = getMachineryGridConfig(true);
+  assert.equal(mobileConfig.columns, 1, 'Mobile machinery grid uses 1 column high-density format');
+  assert.equal(mobileConfig.isCompact, true, 'Mobile machinery grid uses compact high-density cards');
+  assert.equal(mobileConfig.hasTouchActionLinks, true, 'Mobile machinery cards have dedicated touch-friendly action links');
+  assert.equal(mobileConfig.minTouchTarget, 44, 'Touch action links satisfy >= 44px touch target');
+});
+
+test('contactActionDeck: provides dedicated >= 48px direct action buttons with instant email copy feedback', () => {
+  // Test initial state
+  const initialActions = getContactDeckActions(false);
+  assert.equal(initialActions.length, 4, 'Mobile contact deck has 4 direct primary actions');
+
+  for (const action of initialActions) {
+    assert.ok(
+      action.minHeight >= 48,
+      `Action ${action.id} height (${action.minHeight}px) must be >= 48px for thumb ergonomics`
+    );
+  }
+
+  const emailAction = initialActions.find((a) => a.id === 'email');
+  assert.ok(emailAction, 'Email direct action exists');
+  assert.equal(emailAction.instantFeedback, true, 'Email action supports instant feedback indicator');
+  assert.match(emailAction.label, /EMAIL/i);
+
+  const githubAction = initialActions.find((a) => a.id === 'github');
+  assert.ok(githubAction, 'GitHub action exists');
+  assert.equal(githubAction.href, 'https://github.com/itsmrma');
+
+  const linkedinAction = initialActions.find((a) => a.id === 'linkedin');
+  assert.ok(linkedinAction, 'LinkedIn action exists');
+  assert.equal(linkedinAction.href, 'https://www.linkedin.com/in/matteo-benassi/');
+
+  const cvAction = initialActions.find((a) => a.id === 'cv');
+  assert.ok(cvAction, 'CV download action exists');
+  assert.ok(cvAction.href.includes('cv.pdf'), 'CV action points to CV PDF');
+
+  // Test copied state
+  const copiedActions = getContactDeckActions(true);
+  const copiedEmail = copiedActions.find((a) => a.id === 'email');
+  assert.ok(copiedEmail, 'Copied email action exists');
+  assert.match(copiedEmail.label, /COPIED/i, 'Label changes immediately to show copied feedback');
+});
+
+test('telemetryKicker: wraps gracefully without ellipses or clipping on narrow phone viewports (320px–375px)', () => {
+  // Narrow phone viewports
+  const config320 = getTelemetryKickerConfig(320);
+  assert.equal(config320.wrap, true, '320px viewport kickers must wrap');
+  assert.equal(config320.allowEllipsis, false, '320px viewport kickers must NOT use ellipses');
+  assert.equal(config320.overflow, 'visible', '320px viewport kickers overflow must be visible (no clipping)');
+
+  const config375 = getTelemetryKickerConfig(375);
+  assert.equal(config375.wrap, true, '375px viewport kickers must wrap');
+  assert.equal(config375.allowEllipsis, false, '375px viewport kickers must NOT use ellipses');
+  assert.equal(config375.overflow, 'visible', '375px viewport kickers overflow must be visible (no clipping)');
+
+  // Desktop viewport
+  const configDesktop = getTelemetryKickerConfig(1280);
+  assert.equal(configDesktop.wrap, false, 'Desktop kickers remain single line');
+  assert.equal(configDesktop.allowEllipsis, false);
 });

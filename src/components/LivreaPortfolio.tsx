@@ -861,9 +861,9 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
                 >
                   <HStack align="center" gap={3}>
                     <HStack align="center" gap={1.5} className="livrea-win-controls">
-                      <span className="livrea-win-dot dot-reset" aria-hidden="true" />
-                      <span className="livrea-win-dot dot-compact" aria-hidden="true" />
-                      <span className="livrea-win-dot dot-fill" aria-hidden="true" />
+                      <Text as="span" className="livrea-win-dot dot-reset" aria-hidden="true">{'\u00A0'}</Text>
+                      <Text as="span" className="livrea-win-dot dot-compact" aria-hidden="true">{'\u00A0'}</Text>
+                      <Text as="span" className="livrea-win-dot dot-fill" aria-hidden="true">{'\u00A0'}</Text>
                     </HStack>
                     <Text type="code" size="sm" className="livrea-win-title-text">
                       SyncForge // Batch Processing &amp; Waveform Analysis
@@ -1035,9 +1035,9 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
                 >
                   <HStack align="center" gap={3}>
                     <HStack align="center" gap={1.5} className="livrea-win-controls">
-                      <span className="livrea-win-dot dot-reset" aria-hidden="true" />
-                      <span className="livrea-win-dot dot-compact" aria-hidden="true" />
-                      <span className="livrea-win-dot dot-fill" aria-hidden="true" />
+                      <Text as="span" className="livrea-win-dot dot-reset" aria-hidden="true">{'\u00A0'}</Text>
+                      <Text as="span" className="livrea-win-dot dot-compact" aria-hidden="true">{'\u00A0'}</Text>
+                      <Text as="span" className="livrea-win-dot dot-fill" aria-hidden="true">{'\u00A0'}</Text>
                     </HStack>
                     <Text type="code" size="sm" className="livrea-win-title-text">
                       scrobbl.rs // Dashboard: Listening Archive &amp; Charts
@@ -1247,10 +1247,18 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
                     RUST FFI
                   </Text>
                 </HStack>
-                <Text type="body" color="secondary">
+                <Text type="body" color="secondary" className="livrea-machinery-desc">
                   Low-level GPU fan curve utility built with Rust FFI binding to Linux sysfs hardware sensor monitors.
                 </Text>
-                <Link href="https://github.com/itsmrma/amd-fan-control" target="_blank" rel="noopener noreferrer" color="accent" size="sm" weight="bold">
+                <Link
+                  href="https://github.com/itsmrma/amd-fan-control"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  color="accent"
+                  size="sm"
+                  weight="bold"
+                  className="livrea-card-action-btn"
+                >
                   GitHub Repository ↗
                 </Link>
               </VStack>
@@ -1265,10 +1273,10 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
                     ZFS / LINUX
                   </Text>
                 </HStack>
-                <Text type="body" color="secondary">
+                <Text type="body" color="secondary" className="livrea-machinery-desc">
                   Dedicated home lab with ZFS RAIDZ storage pools, automated snapshot replication, Docker microservices, and network monitoring.
                 </Text>
-                <Text type="code" color="secondary" size="sm">
+                <Text type="code" color="secondary" size="sm" className="livrea-card-status-note">
                   PRIVATE ON-PREM INFRASTRUCTURE
                 </Text>
               </VStack>
@@ -1283,10 +1291,18 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
                     HOME ASSISTANT
                   </Text>
                 </HStack>
-                <Text type="body" color="secondary">
+                <Text type="body" color="secondary" className="livrea-machinery-desc">
                   Custom Home Assistant telemetry integration for monitoring heat pump COP modulation and energy efficiency curves.
                 </Text>
-                <Link href="https://github.com/itsmrma/viesmann-dashboard-hass" target="_blank" rel="noopener noreferrer" color="accent" size="sm" weight="bold">
+                <Link
+                  href="https://github.com/itsmrma/viesmann-dashboard-hass"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  color="accent"
+                  size="sm"
+                  weight="bold"
+                  className="livrea-card-action-btn"
+                >
                   GitHub Repository ↗
                 </Link>
               </VStack>
@@ -1301,10 +1317,18 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
                     PYTHON / UV
                   </Text>
                 </HStack>
-                <Text type="body" color="secondary">
+                <Text type="body" color="secondary" className="livrea-machinery-desc">
                   Academic music archive catalog service built with Python, Django, uv dependency management, and MusicBrainz API integration.
                 </Text>
-                <Link href="https://github.com/itsmrma/uni-musiclib-project" target="_blank" rel="noopener noreferrer" color="accent" size="sm" weight="bold">
+                <Link
+                  href="https://github.com/itsmrma/uni-musiclib-project"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  color="accent"
+                  size="sm"
+                  weight="bold"
+                  className="livrea-card-action-btn"
+                >
                   GitHub Repository ↗
                 </Link>
               </VStack>
@@ -1319,14 +1343,29 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
                     LIVE APP
                   </Text>
                 </HStack>
-                <Text type="body" color="secondary">
+                <Text type="body" color="secondary" className="livrea-machinery-desc">
                   Interactive streaming history explorer importing multiple years of Spotify account JSON archives.
                 </Text>
                 <HStack gap={3} wrap="wrap">
-                  <Link href="https://spotify-history-analyzer.benassimatteo.dev" target="_blank" rel="noopener noreferrer" color="accent" size="sm" weight="bold">
+                  <Link
+                    href="https://spotify-history-analyzer.benassimatteo.dev"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    color="accent"
+                    size="sm"
+                    weight="bold"
+                    className="livrea-card-action-btn"
+                  >
                     Live Web Application ↗
                   </Link>
-                  <Link href="https://github.com/itsmrma/spotify-history-analyzer" target="_blank" rel="noopener noreferrer" color="secondary" size="sm">
+                  <Link
+                    href="https://github.com/itsmrma/spotify-history-analyzer"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    color="secondary"
+                    size="sm"
+                    className="livrea-card-action-btn"
+                  >
                     GitHub Repo ↗
                   </Link>
                 </HStack>
@@ -1342,10 +1381,10 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
                     PROFICIENCY
                   </Text>
                 </HStack>
-                <Text type="body" color="secondary">
+                <Text type="body" color="secondary" className="livrea-machinery-desc">
                   Professional working English proficiency · Native Italian speaker.
                 </Text>
-                <Text type="code" color="secondary" size="sm">
+                <Text type="code" color="secondary" size="sm" className="livrea-card-status-note">
                   Technical documentation &amp; international team communication.
                 </Text>
               </VStack>
@@ -1518,8 +1557,8 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
               I build fast, reliable software across the full systems stack — from multi-agent desktop apps and distributed services to bare-metal C on ARM Cortex-M4. If you're engineering high-throughput software, telemetry pipelines, or systems infrastructure, I'd love to connect.
             </Text>
 
-            {/* 4 High-Contrast Structured Contact Cards */}
-            <HStack justify="between" align="stretch" gap={3} width="100%" className="livrea-contact-cards-grid">
+            {/* Desktop: 4 High-Contrast Structured Contact Cards */}
+            <HStack justify="between" align="stretch" gap={3} width="100%" className="livrea-contact-cards-grid livrea-contact-cards-desktop">
               {/* Card 1: Direct Email */}
               <VStack gap={2} className="livrea-contact-card is-primary-action">
                 <Text type="code" color="accent" size="sm">
@@ -1608,6 +1647,145 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
                 />
               </VStack>
             </HStack>
+
+            {/* Mobile: Dedicated Ergonomic Contact Action Deck */}
+            <VStack gap={2} width="100%" className="livrea-contact-action-deck">
+              {/* Action 1: Direct Email Transmission with immediate Copied! toast */}
+              <VStack className="livrea-contact-deck-item">
+                <Link
+                  href={`mailto:${CONTACTS.email}`}
+                  onClick={handleCopy}
+                  className="livrea-contact-deck-btn is-primary-deck-action"
+                >
+                  <HStack justify="between" align="center" width="100%">
+                    <VStack gap={1} align="start">
+                      <HStack align="center" gap={2}>
+                        <Text type="code" color="accent" size="sm" weight="bold">
+                          CHANNEL 01 // EMAIL
+                        </Text>
+                        {isCopied && (
+                          <Text as="span" className="livrea-contact-toast">
+                            COPIED ✓
+                          </Text>
+                        )}
+                      </HStack>
+                      <Text weight="bold" color="primary">
+                        {isCopied ? 'EMAIL COPIED TO CLIPBOARD ✓' : 'Direct Email Transmission'}
+                      </Text>
+                      <Text type="code" color="secondary" size="sm">
+                        {CONTACTS.email}
+                      </Text>
+                    </VStack>
+                    <Text type="code" color="accent" size="lg" weight="bold">
+                      {isCopied ? '✓' : 'COPY'}
+                    </Text>
+                  </HStack>
+                </Link>
+              </VStack>
+
+              {/* Action 2: GitHub Profile */}
+              <VStack className="livrea-contact-deck-item">
+                <Link
+                  href={CONTACTS.github}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="livrea-contact-deck-btn"
+                >
+                  <HStack justify="between" align="center" width="100%">
+                    <VStack gap={1} align="start">
+                      <Text type="code" color="secondary" size="sm">
+                        CHANNEL 02 // CODE
+                      </Text>
+                      <Text weight="bold" color="primary">
+                        GitHub Profile
+                      </Text>
+                      <Text type="code" color="secondary" size="sm">
+                        @itsmrma · Repositories, Oxide &amp; commits
+                      </Text>
+                    </VStack>
+                    <Text type="code" color="secondary" size="lg" weight="bold">
+                      ↗
+                    </Text>
+                  </HStack>
+                </Link>
+              </VStack>
+
+              {/* Action 3: LinkedIn Network */}
+              <VStack className="livrea-contact-deck-item">
+                <Link
+                  href={CONTACTS.linkedin}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="livrea-contact-deck-btn"
+                >
+                  <HStack justify="between" align="center" width="100%">
+                    <VStack gap={1} align="start">
+                      <Text type="code" color="secondary" size="sm">
+                        CHANNEL 04 // NETWORK
+                      </Text>
+                      <Text weight="bold" color="primary">
+                        LinkedIn Network
+                      </Text>
+                      <Text type="code" color="secondary" size="sm">
+                        Matteo Benassi · Systems Software &amp; Motorsport
+                      </Text>
+                    </VStack>
+                    <Text type="code" color="secondary" size="lg" weight="bold">
+                      ↗
+                    </Text>
+                  </HStack>
+                </Link>
+              </VStack>
+
+              {/* Action 4: Curriculum Vitae Download */}
+              <VStack className="livrea-contact-deck-item">
+                <HStack gap={2} width="100%">
+                  <Link
+                    href={CONTACTS.cvEn}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="livrea-contact-deck-btn"
+                    style={{ flex: 1 }}
+                  >
+                    <HStack justify="between" align="center" width="100%">
+                      <VStack gap={1} align="start">
+                        <Text type="code" color="secondary" size="sm">
+                          CHANNEL 03 // RESUME
+                        </Text>
+                        <Text weight="bold" color="primary">
+                          CV (English PDF)
+                        </Text>
+                      </VStack>
+                      <Text type="code" color="secondary" size="lg" weight="bold">
+                        ↗
+                      </Text>
+                    </HStack>
+                  </Link>
+
+                  <Link
+                    href={CONTACTS.cvIt}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="livrea-contact-deck-btn"
+                    style={{ flex: 1 }}
+                  >
+                    <HStack justify="between" align="center" width="100%">
+                      <VStack gap={1} align="start">
+                        <Text type="code" color="secondary" size="sm">
+                          CHANNEL 03 // RESUME
+                        </Text>
+                        <Text weight="bold" color="primary">
+                          CV (Italian PDF)
+                        </Text>
+                      </VStack>
+                      <Text type="code" color="secondary" size="lg" weight="bold">
+                        ↗
+                      </Text>
+                    </HStack>
+                  </Link>
+                </HStack>
+              </VStack>
+            </VStack>
           </VStack>
 
           <HStack justify="between" align="center" width="100%" className="livrea-bottom-strip livrea-finish-strip">
