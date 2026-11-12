@@ -33,3 +33,18 @@ RULES:
   docs authoring     build an integration package, and every field it holds
   upgrade --from <old version> --apply   run after a dependency bump
 <!-- ASTRYX:END -->
+
+## Agent skills
+
+### Issue tracker
+
+GitHub issues via `gh` CLI (`itsmrma/benassimatteo.dev`). See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+Canonical 5-role triage vocabulary. See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context (`GLOSSARY.md` and `docs/adr/` at repo root). See `docs/agents/domain.md`.
+
