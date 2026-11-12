@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "vite",
     "typecheck": "tsc --noEmit",
+    "test": "node scripts/test-geometry.mjs && node scripts/test-mobile-adaptation.mjs",
     "test:geometry": "node scripts/test-geometry.mjs",
     "sync:demos": "node scripts/sync-demos.mjs",
     "build": "vite build",

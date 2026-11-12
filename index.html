@@ -102,11 +102,54 @@
         scroll-behavior: smooth;
         background-color: transparent;
       }
-      @media (max-width: 820px) {
+
+      /* Desktop viewports >= 820px with fine pointer retain inner container scroll-snapping */
+      @media (min-width: 820px) and (pointer: fine) {
+        html, body {
+          height: 100%;
+          overflow: hidden;
+        }
         .livrea-snap-container {
-          scroll-snap-type: none;
-          height: 100svh;
+          height: 100vh;
+          overflow-y: scroll;
+          scroll-snap-type: y mandatory;
+        }
+      }
+
+      /* Mobile viewports < 820px or touch-coarse devices: root document handles scrolling */
+      @media (max-width: 819.98px), (pointer: coarse) {
+        html {
+          height: auto;
+          min-height: 100%;
+          overflow-y: auto;
           -webkit-overflow-scrolling: touch;
+        }
+        body {
+          height: auto;
+          min-height: 100%;
+          overflow-y: visible;
+          overflow-x: hidden;
+        }
+        #root {
+          height: auto;
+          min-height: 100%;
+        }
+        .livrea-snap-container {
+          height: auto !important;
+          min-height: 100% !important;
+          overflow: visible !important;
+          overflow-y: visible !important;
+          scroll-snap-type: none !important;
+          -webkit-overflow-scrolling: auto !important;
+        }
+        .livrea-panel {
+          scroll-snap-align: none !important;
+          min-height: 100svh;
+          height: auto !important;
+        }
+        .livrea-panel-inner {
+          min-height: calc(100svh - 24px);
+          height: auto !important;
         }
       }
 

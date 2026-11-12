@@ -22,6 +22,11 @@ import {
   AppPreview,
   type AppPreviewRef,
 } from './desktop';
+import {
+  isMobileViewport,
+  calculateScrollProgress,
+  getActiveSectorFromDOM,
+} from '../utils/mobileAdaptation';
 
 interface LivreaPortfolioProps {
   onCopyEmail?: () => void;
@@ -58,53 +63,87 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
   };
 
   const isCopied = emailCopied ?? copied;
+  const activePanelRef = useRef(activePanel);
+  activePanelRef.current = activePanel;
 
   const scrollToPanel = (id: string) => {
+    if (id === 'panel-1' && typeof window !== 'undefined') {
+      const container = document.querySelector<HTMLElement>('.livrea-snap-container');
+      const isMobile = isMobileViewport();
+      if (isMobile) {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        return;
+      } else if (container && container.scrollHeight > container.clientHeight) {
+        container.scrollTo({ top: 0, behavior: 'smooth' });
+        return;
+      }
+    }
     const el = document.getElementById(id);
     if (el) {
-      el.scrollIntoView({ behavior: 'smooth' });
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   };
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
-    const handleScroll = () => {
-      const container = document.querySelector('.livrea-snap-container');
-      if (container) {
-        const docHeight = container.scrollHeight - container.clientHeight;
-        if (docHeight > 0) {
-          const progress = Math.min(100, Math.max(0, (container.scrollTop / docHeight) * 100));
-          setScrollProgress(progress);
-        }
+    let rafId: number | null = null;
+
+    const updateMetrics = () => {
+      const isMobile = isMobileViewport();
+      const container = document.querySelector<HTMLElement>('.livrea-snap-container');
+
+      let scrollTop = 0;
+      let scrollHeight = 0;
+      let clientHeight = 0;
+
+      if (!isMobile && container && container.scrollHeight > container.clientHeight) {
+        scrollTop = container.scrollTop;
+        scrollHeight = container.scrollHeight;
+        clientHeight = container.clientHeight;
       } else {
-        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-        if (docHeight > 0) {
-          const progress = Math.min(100, Math.max(0, (window.scrollY / docHeight) * 100));
-          setScrollProgress(progress);
-        }
+        scrollTop = window.scrollY || document.documentElement.scrollTop || 0;
+        scrollHeight = document.documentElement.scrollHeight || document.body.scrollHeight || 0;
+        clientHeight = window.innerHeight || document.documentElement.clientHeight || 0;
       }
+
+      const progress = calculateScrollProgress(scrollTop, scrollHeight, clientHeight);
+      setScrollProgress(progress);
+
+      const activeSectorNum = getActiveSectorFromDOM(clientHeight, {
+        scrollTop,
+        scrollHeight,
+      });
+      setActivePanel(activeSectorNum);
     };
 
-    const container = document.querySelector('.livrea-snap-container');
-    const scrollTarget = container || window;
-    scrollTarget.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll();
+    const handleScroll = () => {
+      if (rafId !== null) return;
+      rafId = window.requestAnimationFrame(() => {
+        updateMetrics();
+        rafId = null;
+      });
+    };
 
-    // IntersectionObserver to detect active panel
+    const container = document.querySelector<HTMLElement>('.livrea-snap-container');
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('resize', handleScroll, { passive: true });
+    if (container) {
+      container.addEventListener('scroll', handleScroll, { passive: true });
+    }
+
+    // Initial calculation
+    updateMetrics();
+
+    // Multi-threshold IntersectionObserver for active sector tracking across tall & short panels
     const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            const panelId = entry.target.id;
-            const match = panelId.match(/panel-(\d+)/);
-            if (match) {
-              setActivePanel(parseInt(match[1], 10));
-            }
-          }
-        });
+      () => {
+        updateMetrics();
       },
-      { threshold: 0.45 }
+      {
+        threshold: [0, 0.25, 0.5, 0.75, 1.0],
+      }
     );
 
     document.querySelectorAll('.livrea-panel').forEach((el) => observer.observe(el));
@@ -125,15 +164,16 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
         return;
       }
 
+      const current = activePanelRef.current;
       if (e.key === 'ArrowDown' || e.key === 'PageDown') {
-        if (activePanel < 8) {
+        if (current < PANELS.length) {
           e.preventDefault();
-          scrollToPanel(`panel-${activePanel + 1}`);
+          scrollToPanel(`panel-${current + 1}`);
         }
       } else if (e.key === 'ArrowUp' || e.key === 'PageUp') {
-        if (activePanel > 1) {
+        if (current > 1) {
           e.preventDefault();
-          scrollToPanel(`panel-${activePanel - 1}`);
+          scrollToPanel(`panel-${current - 1}`);
         }
       }
     };
@@ -141,11 +181,18 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
     window.addEventListener('keydown', handleKeyDown);
 
     return () => {
-      scrollTarget.removeEventListener('scroll', handleScroll);
+      if (rafId !== null) {
+        window.cancelAnimationFrame(rafId);
+      }
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', handleScroll);
+      if (container) {
+        container.removeEventListener('scroll', handleScroll);
+      }
       window.removeEventListener('keydown', handleKeyDown);
       observer.disconnect();
     };
-  }, [activePanel]);
+  }, []);
 
   const oxideProj = FEATURED_PROJECTS.find((p) => p.id === 'oxide')!;
   const syncforgeProj = FEATURED_PROJECTS.find((p) => p.id === 'syncforge')!;
