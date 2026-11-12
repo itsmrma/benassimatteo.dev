@@ -141,7 +141,7 @@ Configuration is defined in `wrangler.jsonc`. Security headers (allowing same-or
 - **Email**: [info@benassimatteo.dev](mailto:info@benassimatteo.dev)
 - **Website**: [benassimatteo.dev](https://benassimatteo.dev)
 - **GitHub**: [@itsmrma](https://github.com/itsmrma)
-- **LinkedIn**: [linkedin.com/in/matteo-benassi](https://linkedin.com/in/matteo-benassi)
+- **LinkedIn**: [linkedin.com/in/matteo-benassi-bb47b02b0](https://www.linkedin.com/in/matteo-benassi-bb47b02b0/)
 
 ---
 
