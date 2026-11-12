@@ -1,10 +1,13 @@
 import { useEffect, useRef } from 'react';
+import { TelemetryAnimationController } from '../utils/mobileAdaptation';
 
 // =============================================================================
 // TelemetryBackground - Calibrated Motorsport Blueprint & Live Telemetry Mesh
 // - Technical CAD grid with visible precision crosshairs
 // - Balanced particle constellation: 36 nodes, crisp alphas, delicate linkages
-// - Reactive cursor glow with soft telemetry halo
+// - Reactive cursor glow with soft telemetry halo (fine pointer only)
+// - Touch & scroll throttled: halts animation during active mobile scroll gestures
+// - Strict prefers-reduced-motion: reduce compliance (single static CAD grid)
 // - Single offscreen grid blit + batched line and node passes
 // =============================================================================
 
@@ -32,11 +35,18 @@ export function TelemetryBackground() {
     const ctx = canvas.getContext('2d', { alpha: true });
     if (!ctx) return;
 
-    const prefersReducedMotion = window.matchMedia(
+    const mediaQueryReducedMotion = window.matchMedia(
       '(prefers-reduced-motion: reduce)'
-    ).matches;
+    );
+    const mediaQueryCoarsePointer = window.matchMedia('(pointer: coarse)');
 
-    let animationFrameId: number;
+    const getIsCoarse = () =>
+      mediaQueryCoarsePointer.matches ||
+      ('ontouchstart' in window && window.innerWidth < 820);
+    const getIsMobile = () =>
+      window.innerWidth < 820 || getIsCoarse();
+
+    let animationFrameId: number | null = null;
     let width = 0;
     let height = 0;
     let particles: Particle[] = [];
@@ -46,6 +56,37 @@ export function TelemetryBackground() {
     // Offscreen cached canvases
     let offscreenGrid: HTMLCanvasElement | null = null;
     let glowSprite: HTMLCanvasElement | null = null;
+
+    // Render single static CAD blueprint grid frame (used for reduced motion & resize)
+    const renderStaticFrame = () => {
+      ctx.clearRect(0, 0, width, height);
+      if (offscreenGrid) {
+        ctx.drawImage(offscreenGrid, 0, 0, width, height);
+      }
+    };
+
+    const startAnimationLoop = () => {
+      if (animationFrameId === null) {
+        animationFrameId = requestAnimationFrame(render);
+      }
+    };
+
+    const stopAnimationLoop = () => {
+      if (animationFrameId !== null) {
+        cancelAnimationFrame(animationFrameId);
+        animationFrameId = null;
+      }
+    };
+
+    const controller = new TelemetryAnimationController({
+      isMobile: getIsMobile(),
+      isCoarsePointer: getIsCoarse(),
+      prefersReducedMotion: mediaQueryReducedMotion.matches,
+      documentHidden: document.visibilityState === 'hidden' || document.hidden,
+      onStart: startAnimationLoop,
+      onStop: stopAnimationLoop,
+      onRenderStaticFrame: renderStaticFrame,
+    });
 
     // 240x240 pre-baked interactive cursor glow sprite
     const createGlowSprite = () => {
@@ -114,6 +155,16 @@ export function TelemetryBackground() {
         gridCtx.stroke();
       }
 
+      controller.setDeviceProfile({
+        isMobile: getIsMobile(),
+        isCoarsePointer: getIsCoarse(),
+      });
+
+      if (!controller.shouldAnimate()) {
+        renderStaticFrame();
+        return;
+      }
+
       // Balanced telemetry particle count (clearly visible, not crowded)
       const particleCount = width < 768 ? 20 : 38;
       particles = [];
@@ -137,6 +188,7 @@ export function TelemetryBackground() {
     };
 
     const handleMouseMove = (e: MouseEvent) => {
+      if (!controller.shouldTrackCursor()) return;
       mouseX = e.clientX;
       mouseY = e.clientY;
     };
@@ -146,9 +198,35 @@ export function TelemetryBackground() {
       mouseY = -9999;
     };
 
+    const handleScrollOrTouch = () => {
+      controller.handleScroll();
+    };
+
+    const handleVisibilityChange = () => {
+      controller.handleVisibilityChange(
+        document.visibilityState === 'hidden' || document.hidden
+      );
+    };
+
+    const handleReducedMotionChange = (e: MediaQueryListEvent) => {
+      controller.setReducedMotion(e.matches);
+    };
+
+    const handlePointerChange = () => {
+      controller.setDeviceProfile({
+        isMobile: getIsMobile(),
+        isCoarsePointer: getIsCoarse(),
+      });
+    };
+
     window.addEventListener('resize', resize, { passive: true });
     window.addEventListener('mousemove', handleMouseMove, { passive: true });
     window.addEventListener('mouseleave', handleMouseLeave, { passive: true });
+    window.addEventListener('scroll', handleScrollOrTouch, { passive: true });
+    window.addEventListener('touchmove', handleScrollOrTouch, { passive: true });
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    mediaQueryReducedMotion.addEventListener?.('change', handleReducedMotionChange);
+    mediaQueryCoarsePointer.addEventListener?.('change', handlePointerChange);
 
     resize();
 
@@ -156,6 +234,11 @@ export function TelemetryBackground() {
     const maxLineDistSq = maxLineDist * maxLineDist;
 
     const render = () => {
+      if (!controller.shouldAnimate()) {
+        animationFrameId = null;
+        return;
+      }
+
       ctx.clearRect(0, 0, width, height);
 
       // 1. Blit static technical grid
@@ -163,8 +246,14 @@ export function TelemetryBackground() {
         ctx.drawImage(offscreenGrid, 0, 0, width, height);
       }
 
-      // 2. Cursor glow halo
-      if (glowSprite && mouseX > 0 && mouseY > 0 && width >= 768) {
+      // 2. Cursor glow halo (only when cursor tracking is active and on desktop)
+      if (
+        glowSprite &&
+        controller.shouldTrackCursor() &&
+        mouseX > 0 &&
+        mouseY > 0 &&
+        width >= 768
+      ) {
         ctx.drawImage(glowSprite, mouseX - 120, mouseY - 120, 240, 240);
       }
 
@@ -214,39 +303,35 @@ export function TelemetryBackground() {
       for (let i = 0; i < n; i++) {
         const p = particles[i];
 
-        if (!prefersReducedMotion) {
-          p.x += p.vx;
-          p.y += p.vy;
+        p.x += p.vx;
+        p.y += p.vy;
 
-          if (p.x < -10) p.x = width + 10;
-          else if (p.x > width + 10) p.x = -10;
-          if (p.y < -10) p.y = height + 10;
-          else if (p.y > height + 10) p.y = -10;
+        if (p.x < -10) p.x = width + 10;
+        else if (p.x > width + 10) p.x = -10;
+        if (p.y < -10) p.y = height + 10;
+        else if (p.y > height + 10) p.y = -10;
 
-          // Smooth cursor repulsion
-          if (mouseX > 0 && mouseY > 0) {
-            const dx = p.x - mouseX;
-            const dy = p.y - mouseY;
-            const distSq = dx * dx + dy * dy;
-            if (distSq < 10000 && distSq > 0) {
-              const dist = Math.sqrt(distSq);
-              const force = ((100 - dist) / 100) * 0.35;
-              p.x += (dx / dist) * force;
-              p.y += (dy / dist) * force;
-            }
+        // Smooth cursor repulsion - disabled on touch/coarse devices
+        if (controller.shouldApplyRepulsion() && mouseX > 0 && mouseY > 0) {
+          const dx = p.x - mouseX;
+          const dy = p.y - mouseY;
+          const distSq = dx * dx + dy * dy;
+          if (distSq < 10000 && distSq > 0) {
+            const dist = Math.sqrt(distSq);
+            const force = ((100 - dist) / 100) * 0.35;
+            p.x += (dx / dist) * force;
+            p.y += (dy / dist) * force;
           }
-
-          p.pulsePhase += p.pulseSpeed;
         }
+
+        p.pulsePhase += p.pulseSpeed;
 
         const alpha = p.baseAlpha * (0.85 + 0.15 * Math.sin(p.pulsePhase));
 
         // Radar ping ring on select accent nodes
         if (p.isAccent && p.pingRadius !== undefined) {
-          if (!prefersReducedMotion) {
-            p.pingRadius = (p.pingRadius + 0.3) % 26;
-            p.pingAlpha = Math.max(0, (1 - p.pingRadius / 26) * 0.22);
-          }
+          p.pingRadius = (p.pingRadius + 0.3) % 26;
+          p.pingAlpha = Math.max(0, (1 - p.pingRadius / 26) * 0.22);
           if (p.pingAlpha && p.pingAlpha > 0.02) {
             ctx.beginPath();
             ctx.arc(p.x, p.y, p.pingRadius, 0, Math.PI * 2);
@@ -277,28 +362,25 @@ export function TelemetryBackground() {
         }
       }
 
-      if (!prefersReducedMotion) {
+      if (controller.shouldAnimate()) {
         animationFrameId = requestAnimationFrame(render);
+      } else {
+        animationFrameId = null;
       }
     };
 
-    render();
-
-    const handleVisibilityChange = () => {
-      if (document.hidden) {
-        cancelAnimationFrame(animationFrameId);
-      } else if (!prefersReducedMotion) {
-        animationFrameId = requestAnimationFrame(render);
-      }
-    };
-    document.addEventListener('visibilitychange', handleVisibilityChange);
+    controller.start();
 
     return () => {
       window.removeEventListener('resize', resize);
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('mouseleave', handleMouseLeave);
+      window.removeEventListener('scroll', handleScrollOrTouch);
+      window.removeEventListener('touchmove', handleScrollOrTouch);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
-      cancelAnimationFrame(animationFrameId);
+      mediaQueryReducedMotion.removeEventListener?.('change', handleReducedMotionChange);
+      mediaQueryCoarsePointer.removeEventListener?.('change', handlePointerChange);
+      controller.destroy();
     };
   }, []);
 
