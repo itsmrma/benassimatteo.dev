@@ -394,7 +394,7 @@ export function getHeroTelemetryMetrics(): TelemetryMetric[] {
       value: '2026/27 Ready',
       desktopValue: '2026 / 27',
       detail: 'Summer 2026 / Fall 2026 / 2027 Full-Time',
-      accent: true,
+      accent: false,
     },
   ];
 }
