@@ -11,6 +11,13 @@ import {
   getPodiumHierarchy,
   getStartingGridTimeline,
   shouldShowBottomStrip,
+  SECTOR_WAYPOINTS,
+  getSectorWaypoint,
+  formatSectorTelemetryKicker,
+  getContactSectorId,
+  resolveWaypointScrollTarget,
+  handleWaypointJump,
+  TelemetryAnimationController,
 } from '../src/utils/mobileAdaptation.ts';
 
 test('mobileAdaptation: isMobileViewport correctly detects mobile vs desktop', () => {
@@ -238,4 +245,265 @@ test('mobileAdaptation: shouldShowBottomStrip consolidates repetitive intermedia
   for (const pid of ['panel-2', 'panel-3', 'panel-4', 'panel-5', 'panel-6', 'panel-7', 'panel-8']) {
     assert.equal(shouldShowBottomStrip(pid, true), false, `Mobile consolidates redundant strip on ${pid}`);
   }
+});
+
+test('mobileWaypointHud: SECTOR_WAYPOINTS contains all 9 telemetry sectors', () => {
+  assert.equal(Array.isArray(SECTOR_WAYPOINTS), true);
+  assert.equal(SECTOR_WAYPOINTS.length, 9, 'Must have exactly 9 sectors');
+
+  // Verify each sector structure
+  const expectedSectors = [
+    { num: '01', id: 'panel-1', title: 'CHASSIS' },
+    { num: '02', id: 'panel-2', title: 'PODIUM' },
+    { num: '03', id: 'panel-3', title: 'OXIDE' },
+    { num: '04', id: 'panel-4', title: 'SYNCFORGE' },
+    { num: '05', id: 'panel-5', title: 'SCROBBL' },
+    { num: '06', id: 'panel-6', title: 'EMBEDDED' },
+    { num: '07', id: 'panel-7', title: 'MACHINERY' },
+    { num: '08', id: 'panel-8', title: 'GRID' },
+    { num: '09', id: 'panel-9', title: 'CONTACT' },
+  ];
+
+  expectedSectors.forEach((exp, idx) => {
+    const sector = SECTOR_WAYPOINTS[idx];
+    assert.equal(sector.index, idx + 1);
+    assert.equal(sector.num, exp.num);
+    assert.equal(sector.id, exp.id);
+    assert.equal(sector.title, exp.title);
+    assert.ok(sector.label && sector.label.length > 0, `Sector ${exp.num} has descriptive label`);
+  });
+});
+
+test('mobileWaypointHud: getSectorWaypoint returns correct waypoint by index or id', () => {
+  assert.equal(getSectorWaypoint(1).title, 'CHASSIS');
+  assert.equal(getSectorWaypoint(3).title, 'OXIDE');
+  assert.equal(getSectorWaypoint('panel-3').title, 'OXIDE');
+  assert.equal(getSectorWaypoint('panel-9').title, 'CONTACT');
+  assert.equal(getSectorWaypoint(9).title, 'CONTACT');
+
+  // Edge cases / fallback to 1
+  assert.equal(getSectorWaypoint(99).title, 'CHASSIS', 'Out of bounds index falls back to sector 1');
+  assert.equal(getSectorWaypoint('unknown').title, 'CHASSIS', 'Invalid id falls back to sector 1');
+});
+
+test('mobileWaypointHud: formatSectorTelemetryKicker formats active sector indicator', () => {
+  // Closed state (default)
+  assert.equal(formatSectorTelemetryKicker(1), '[ 01 // CHASSIS ▾ ]');
+  assert.equal(formatSectorTelemetryKicker(3), '[ 03 // OXIDE ▾ ]');
+  assert.equal(formatSectorTelemetryKicker('panel-3'), '[ 03 // OXIDE ▾ ]');
+  assert.equal(formatSectorTelemetryKicker(9), '[ 09 // CONTACT ▾ ]');
+
+  // Open state (arrow flipped up)
+  assert.equal(formatSectorTelemetryKicker(3, true), '[ 03 // OXIDE ▴ ]');
+  assert.equal(formatSectorTelemetryKicker('panel-9', true), '[ 09 // CONTACT ▴ ]');
+
+  // Invalid sector falls back safely
+  assert.equal(formatSectorTelemetryKicker(-1), '[ 01 // CHASSIS ▾ ]');
+});
+
+test('mobileWaypointHud: getContactSectorId returns panel-9 for direct quick action', () => {
+  assert.equal(getContactSectorId(), 'panel-9');
+});
+
+test('mobileWaypointHud: resolveWaypointScrollTarget computes correct scroll target', () => {
+  // Sector 1 scrolls to top on mobile
+  const target1Mobile = resolveWaypointScrollTarget('panel-1', true);
+  assert.equal(target1Mobile.targetId, 'panel-1');
+  assert.equal(target1Mobile.isTop, true);
+
+  // Sector 1 on desktop
+  const target1Desktop = resolveWaypointScrollTarget('panel-1', false);
+  assert.equal(target1Desktop.targetId, 'panel-1');
+  assert.equal(target1Desktop.isTop, true);
+
+  // Sector 3
+  const target3 = resolveWaypointScrollTarget('panel-3', true);
+  assert.equal(target3.targetId, 'panel-3');
+  assert.equal(target3.isTop, false);
+
+  // Contact (Sector 9)
+  const target9 = resolveWaypointScrollTarget('panel-9', true);
+  assert.equal(target9.targetId, 'panel-9');
+  assert.equal(target9.isTop, false);
+
+  // Numeric index input string '3' or 3
+  assert.equal(resolveWaypointScrollTarget(3, true).targetId, 'panel-3');
+});
+
+test('mobileWaypointHud: handleWaypointJump invokes scroll callback and closes menu', () => {
+  let scrolledTo = null;
+  let menuClosed = false;
+
+  const mockScrollTo = (targetId) => {
+    scrolledTo = targetId;
+  };
+  const mockCloseMenu = () => {
+    menuClosed = true;
+  };
+
+  handleWaypointJump('panel-4', mockScrollTo, mockCloseMenu);
+  assert.equal(scrolledTo, 'panel-4', 'Invokes scroll callback with correct panel ID');
+  assert.equal(menuClosed, true, 'Closes waypoint menu upon selection');
+
+  // Contact shortcut jump
+  scrolledTo = null;
+  menuClosed = false;
+  handleWaypointJump(getContactSectorId(), mockScrollTo, mockCloseMenu);
+  assert.equal(scrolledTo, 'panel-9', 'Direct jump to Contact target');
+  assert.equal(menuClosed, true, 'Closes menu upon direct contact jump');
+});
+
+test('telemetryAnimationController: coarse-pointer / touch devices disable cursor tracking & repulsion', () => {
+  // Desktop fine pointer: tracking & repulsion enabled
+  const desktopController = new TelemetryAnimationController({
+    isMobile: false,
+    isCoarsePointer: false,
+  });
+  assert.equal(desktopController.shouldTrackCursor(), true, 'Desktop fine pointer tracks cursor');
+  assert.equal(desktopController.shouldApplyRepulsion(), true, 'Desktop fine pointer applies repulsion');
+
+  // Touch / coarse pointer: tracking & repulsion strictly disabled
+  const touchController = new TelemetryAnimationController({
+    isMobile: true,
+    isCoarsePointer: true,
+  });
+  assert.equal(touchController.shouldTrackCursor(), false, 'Touch device disables cursor tracking');
+  assert.equal(touchController.shouldApplyRepulsion(), false, 'Touch device disables cursor repulsion physics');
+
+  // Dynamically updating device profile (e.g. on orientation/window change)
+  desktopController.setDeviceProfile({ isCoarsePointer: true });
+  assert.equal(desktopController.shouldTrackCursor(), false, 'Dynamically switched to coarse pointer');
+  assert.equal(desktopController.shouldApplyRepulsion(), false, 'Repulsion disabled after switch');
+});
+
+test('telemetryAnimationController: mobile scroll pauses animation loop and resumes when settled', async () => {
+  let startedCount = 0;
+  let stoppedCount = 0;
+
+  const mobileController = new TelemetryAnimationController({
+    isMobile: true,
+    isCoarsePointer: true,
+    scrollSettleTimeoutMs: 20,
+    onStart: () => { startedCount++; },
+    onStop: () => { stoppedCount++; },
+  });
+
+  mobileController.start();
+  assert.equal(mobileController.getIsRunning(), true, 'Controller starts running');
+  assert.equal(startedCount, 1, 'onStart callback fired');
+
+  // Active scroll gesture begins
+  mobileController.handleScroll();
+  assert.equal(mobileController.getIsScrolling(), true, 'isScrolling is true during active scroll');
+  assert.equal(mobileController.shouldAnimate(), false, 'shouldAnimate is false during active scroll');
+  assert.equal(mobileController.getIsRunning(), false, 'Animation loop is paused during active scroll');
+  assert.equal(stoppedCount, 1, 'onStop callback fired when scroll begins');
+
+  // Repeated scroll events during active gesture keep it paused
+  mobileController.handleScroll();
+  mobileController.handleScroll();
+  assert.equal(mobileController.getIsRunning(), false, 'Remains paused during repeated scroll events');
+
+  // Wait for scroll settle timeout
+  await new Promise((resolve) => setTimeout(resolve, 50));
+
+  assert.equal(mobileController.getIsScrolling(), false, 'isScrolling resets to false after settling');
+  assert.equal(mobileController.shouldAnimate(), true, 'shouldAnimate returns to true after settling');
+  assert.equal(mobileController.getIsRunning(), true, 'Animation loop resumed smoothly');
+  assert.equal(startedCount, 2, 'onStart callback fired to resume loop');
+
+  mobileController.destroy();
+});
+
+test('telemetryAnimationController: desktop scroll does NOT throttle or pause animation loop', () => {
+  let stoppedCount = 0;
+
+  const desktopController = new TelemetryAnimationController({
+    isMobile: false,
+    isCoarsePointer: false,
+    onStop: () => { stoppedCount++; },
+  });
+
+  desktopController.start();
+  assert.equal(desktopController.getIsRunning(), true);
+
+  // Desktop scroll event occurs
+  desktopController.handleScroll();
+  assert.equal(desktopController.getIsScrolling(), false, 'Desktop scroll does not engage mobile scroll pause');
+  assert.equal(desktopController.shouldAnimate(), true, 'Desktop shouldAnimate remains true');
+  assert.equal(desktopController.getIsRunning(), true, 'Desktop animation loop stays running');
+  assert.equal(stoppedCount, 0, 'onStop callback never fired on desktop scroll');
+
+  desktopController.destroy();
+});
+
+test('telemetryAnimationController: completely halts animation loop when document visibility is hidden', () => {
+  let startedCount = 0;
+  let stoppedCount = 0;
+
+  const controller = new TelemetryAnimationController({
+    isMobile: false,
+    onStart: () => { startedCount++; },
+    onStop: () => { stoppedCount++; },
+  });
+
+  controller.start();
+  assert.equal(controller.getIsRunning(), true);
+  assert.equal(startedCount, 1);
+
+  // Tab hidden / backgrounded
+  controller.handleVisibilityChange(true);
+  assert.equal(controller.shouldAnimate(), false, 'shouldAnimate false when document hidden');
+  assert.equal(controller.getIsRunning(), false, 'Loop stopped when document hidden');
+  assert.equal(stoppedCount, 1, 'onStop fired on document hidden');
+
+  // Tab returned to visible
+  controller.handleVisibilityChange(false);
+  assert.equal(controller.shouldAnimate(), true, 'shouldAnimate true when document visible');
+  assert.equal(controller.getIsRunning(), true, 'Loop resumed when document visible');
+  assert.equal(startedCount, 2, 'onStart fired on return to visible');
+
+  controller.destroy();
+});
+
+test('telemetryAnimationController: strictly respects prefers-reduced-motion by rendering static frame and halting loop', () => {
+  let startedCount = 0;
+  let stoppedCount = 0;
+  let staticFrameCount = 0;
+
+  const reducedMotionController = new TelemetryAnimationController({
+    prefersReducedMotion: true,
+    onStart: () => { startedCount++; },
+    onStop: () => { stoppedCount++; },
+    onRenderStaticFrame: () => { staticFrameCount++; },
+  });
+
+  assert.equal(reducedMotionController.shouldAnimate(), false, 'shouldAnimate false under reduced motion');
+  assert.equal(reducedMotionController.shouldApplyRepulsion(), false, 'Repulsion disabled under reduced motion');
+
+  reducedMotionController.start();
+  assert.equal(reducedMotionController.getIsRunning(), false, 'Animation loop never starts under reduced motion');
+  assert.equal(startedCount, 0, 'onStart never called');
+  assert.equal(staticFrameCount, 1, 'Single static CAD grid frame rendered');
+
+  // Visibility change while under reduced motion should NOT start animation loop
+  reducedMotionController.handleVisibilityChange(false);
+  assert.equal(reducedMotionController.getIsRunning(), false, 'Visibility change to visible does not start loop');
+  assert.equal(startedCount, 0);
+
+  // Dynamic switch to reduced motion while running halts loop and triggers static frame
+  const normalController = new TelemetryAnimationController({
+    prefersReducedMotion: false,
+    onStart: () => { startedCount++; },
+    onStop: () => { stoppedCount++; },
+    onRenderStaticFrame: () => { staticFrameCount++; },
+  });
+
+  normalController.start();
+  assert.equal(normalController.getIsRunning(), true);
+
+  normalController.setReducedMotion(true);
+  assert.equal(normalController.getIsRunning(), false, 'Loop halted when reduced motion enabled');
+  assert.equal(stoppedCount, 1, 'onStop called when reduced motion enabled');
+  assert.equal(staticFrameCount, 2, 'Static frame rendered on transition to reduced motion');
 });

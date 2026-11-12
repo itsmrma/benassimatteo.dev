@@ -3,6 +3,185 @@
  * and dynamic sector observation across variable and tall section heights.
  */
 
+export interface TelemetryAnimationControllerOptions {
+  isMobile?: boolean;
+  isCoarsePointer?: boolean;
+  prefersReducedMotion?: boolean;
+  documentHidden?: boolean;
+  scrollSettleTimeoutMs?: number;
+  onStart?: () => void;
+  onStop?: () => void;
+  onRenderStaticFrame?: () => void;
+}
+
+export class TelemetryAnimationController {
+  private isMobile: boolean;
+  private isCoarsePointer: boolean;
+  private prefersReducedMotion: boolean;
+  private documentHidden: boolean;
+  private isScrolling: boolean = false;
+  private isRunning: boolean = false;
+  private scrollTimer: ReturnType<typeof setTimeout> | null = null;
+  private scrollSettleTimeoutMs: number;
+  private onStart?: () => void;
+  private onStop?: () => void;
+  private onRenderStaticFrame?: () => void;
+
+  constructor(options: TelemetryAnimationControllerOptions = {}) {
+    this.isMobile = options.isMobile ?? false;
+    this.isCoarsePointer = options.isCoarsePointer ?? false;
+    this.prefersReducedMotion = options.prefersReducedMotion ?? false;
+    this.documentHidden = options.documentHidden ?? false;
+    this.scrollSettleTimeoutMs = options.scrollSettleTimeoutMs ?? 150;
+    this.onStart = options.onStart;
+    this.onStop = options.onStop;
+    this.onRenderStaticFrame = options.onRenderStaticFrame;
+  }
+
+  /**
+   * Evaluates whether the animation loop should actively execute.
+   * Returns false if reduced motion is requested, document is hidden,
+   * or during active mobile scrolling.
+   */
+  public shouldAnimate(): boolean {
+    if (this.prefersReducedMotion) return false;
+    if (this.documentHidden) return false;
+    if (this.isMobile && this.isScrolling) return false;
+    return true;
+  }
+
+  /**
+   * Indicates whether mousemove events and cursor tracking should be active.
+   * Disabled on coarse-pointer / touch devices to conserve power.
+   */
+  public shouldTrackCursor(): boolean {
+    return !this.isCoarsePointer;
+  }
+
+  /**
+   * Indicates whether cursor repulsion physics should be applied to nodes.
+   * Disabled on coarse-pointer / touch devices and when reduced motion is preferred.
+   */
+  public shouldApplyRepulsion(): boolean {
+    return !this.isCoarsePointer && !this.prefersReducedMotion;
+  }
+
+  public getIsScrolling(): boolean {
+    return this.isScrolling;
+  }
+
+  public getIsRunning(): boolean {
+    return this.isRunning;
+  }
+
+  public start(): void {
+    if (this.prefersReducedMotion) {
+      this.isRunning = false;
+      this.onRenderStaticFrame?.();
+      return;
+    }
+    if (this.shouldAnimate() && !this.isRunning) {
+      this.isRunning = true;
+      this.onStart?.();
+    }
+  }
+
+  public stop(): void {
+    if (this.isRunning) {
+      this.isRunning = false;
+      this.onStop?.();
+    }
+  }
+
+  /**
+   * Called during scroll or touchmove gestures.
+   * On mobile devices, throttles/pauses animation during movement to free CPU/GPU
+   * for 60fps scrolling, then automatically resumes once scrolling settles.
+   * On desktop, leaves loop running smoothly.
+   */
+  public handleScroll(): void {
+    if (!this.isMobile) return;
+
+    this.isScrolling = true;
+    if (this.isRunning) {
+      this.stop();
+    }
+
+    if (this.scrollTimer) {
+      clearTimeout(this.scrollTimer);
+    }
+
+    this.scrollTimer = setTimeout(() => {
+      this.settleScroll();
+    }, this.scrollSettleTimeoutMs);
+  }
+
+  /**
+   * Resets scrolling state and resumes animation if conditions are satisfied.
+   */
+  public settleScroll(): void {
+    if (this.scrollTimer) {
+      clearTimeout(this.scrollTimer);
+      this.scrollTimer = null;
+    }
+    this.isScrolling = false;
+    if (this.shouldAnimate()) {
+      this.start();
+    }
+  }
+
+  /**
+   * Handles document visibility changes (tab backgrounded/foregrounded).
+   */
+  public handleVisibilityChange(hidden: boolean): void {
+    this.documentHidden = hidden;
+    if (hidden) {
+      this.stop();
+    } else {
+      if (this.shouldAnimate()) {
+        this.start();
+      }
+    }
+  }
+
+  /**
+   * Updates reduced-motion accessibility preference.
+   */
+  public setReducedMotion(reduced: boolean): void {
+    this.prefersReducedMotion = reduced;
+    if (reduced) {
+      this.stop();
+      this.onRenderStaticFrame?.();
+    } else if (this.shouldAnimate()) {
+      this.start();
+    }
+  }
+
+  /**
+   * Updates mobile / coarse-pointer device profile.
+   */
+  public setDeviceProfile(profile: { isMobile?: boolean; isCoarsePointer?: boolean }): void {
+    if (profile.isMobile !== undefined) this.isMobile = profile.isMobile;
+    if (profile.isCoarsePointer !== undefined) this.isCoarsePointer = profile.isCoarsePointer;
+    if (!this.shouldAnimate() && this.isRunning) {
+      this.stop();
+    } else if (this.shouldAnimate() && !this.isRunning) {
+      this.start();
+    }
+  }
+
+  /**
+   * Cleans up timers and halts animation.
+   */
+  public destroy(): void {
+    if (this.scrollTimer) {
+      clearTimeout(this.scrollTimer);
+      this.scrollTimer = null;
+    }
+    this.stop();
+  }
+}
+
 export interface SectorBounds {
   id: string;
   top: number;
@@ -371,4 +550,150 @@ export function getStartingGridTimeline(): TimelineMilestone[] {
 export function shouldShowBottomStrip(panelId: string, isMobile: boolean): boolean {
   if (!isMobile) return true;
   return panelId === 'panel-1' || panelId === 'panel-9';
+}
+
+export interface SectorWaypoint {
+  id: string;
+  num: string;
+  index: number;
+  title: string;
+  label: string;
+  tagline?: string;
+}
+
+export const SECTOR_WAYPOINTS: readonly SectorWaypoint[] = [
+  {
+    id: 'panel-1',
+    num: '01',
+    index: 1,
+    title: 'CHASSIS',
+    label: 'Identification & Chassis Spec',
+    tagline: 'Bio, philosophy & telemetry metrics',
+  },
+  {
+    id: 'panel-2',
+    num: '02',
+    index: 2,
+    title: 'PODIUM',
+    label: 'Hackathon Podium',
+    tagline: 'Hack4Water, Hack the Code & AI Trophy',
+  },
+  {
+    id: 'panel-3',
+    num: '03',
+    index: 3,
+    title: 'OXIDE',
+    label: 'Oxide Desktop GUI',
+    tagline: 'Flagship worktree concurrent workspace',
+  },
+  {
+    id: 'panel-4',
+    num: '04',
+    index: 4,
+    title: 'SYNCFORGE',
+    label: 'SyncForge Subtitle Sync',
+    tagline: 'Cross-language subtitle sync CLI engine',
+  },
+  {
+    id: 'panel-5',
+    num: '05',
+    index: 5,
+    title: 'SCROBBL',
+    label: 'Scrobbl.rs Audio Daemon',
+    tagline: 'Lightweight Rust daemon for Last.fm/ListenBrainz',
+  },
+  {
+    id: 'panel-6',
+    num: '06',
+    index: 6,
+    title: 'EMBEDDED',
+    label: 'RTOS & Embedded Systems',
+    tagline: 'FreeRTOS & STM32 telemetry logger',
+  },
+  {
+    id: 'panel-7',
+    num: '07',
+    index: 7,
+    title: 'MACHINERY',
+    label: 'Auxiliary Machinery & Lab',
+    tagline: 'Open-source tools, CAD & hardware hacks',
+  },
+  {
+    id: 'panel-8',
+    num: '08',
+    index: 8,
+    title: 'GRID',
+    label: 'Starting Grid & Timeline',
+    tagline: 'UNIMORE Computer Engineering & honors',
+  },
+  {
+    id: 'panel-9',
+    num: '09',
+    index: 9,
+    title: 'CONTACT',
+    label: 'Telemetry Downlink & Contact',
+    tagline: 'Email, GitHub, LinkedIn & CV transmission',
+  },
+] as const;
+
+export function getSectorWaypoint(sectorOrId: number | string): SectorWaypoint {
+  if (typeof sectorOrId === 'number') {
+    const found = SECTOR_WAYPOINTS.find((s) => s.index === sectorOrId);
+    return found ?? SECTOR_WAYPOINTS[0];
+  }
+  const parsedNum = parseSectorNumber(sectorOrId);
+  const found = SECTOR_WAYPOINTS.find((s) => s.id === sectorOrId || s.index === parsedNum);
+  return found ?? SECTOR_WAYPOINTS[0];
+}
+
+export function formatSectorTelemetryKicker(
+  sectorOrId: number | string,
+  isOpen: boolean = false
+): string {
+  const waypoint = getSectorWaypoint(sectorOrId);
+  const chevron = isOpen ? '▴' : '▾';
+  return `[ ${waypoint.num} // ${waypoint.title} ${chevron} ]`;
+}
+
+export function getContactSectorId(): string {
+  return 'panel-9';
+}
+
+export function resolveWaypointScrollTarget(
+  sectorOrId: number | string,
+  _isMobile: boolean = true
+): { targetId: string; isTop: boolean; elementId: string } {
+  let targetId = 'panel-1';
+  if (typeof sectorOrId === 'number') {
+    targetId = getSectorId(sectorOrId);
+  } else if (typeof sectorOrId === 'string') {
+    if (sectorOrId.startsWith('panel-')) {
+      targetId = sectorOrId;
+    } else {
+      const num = parseInt(sectorOrId, 10);
+      targetId = !isNaN(num) ? getSectorId(num) : 'panel-1';
+    }
+  }
+  const isTop = targetId === 'panel-1';
+  return {
+    targetId,
+    isTop,
+    elementId: targetId,
+  };
+}
+
+/**
+ * Handles jumping to a specific waypoint sector:
+ * closes the mobile waypoint menu and triggers smooth scrolling to the target.
+ */
+export function handleWaypointJump(
+  target: number | string,
+  scrollToPanel: (targetId: string) => void,
+  onCloseMenu?: () => void
+): void {
+  const { targetId } = resolveWaypointScrollTarget(target, true);
+  if (onCloseMenu) {
+    onCloseMenu();
+  }
+  scrollToPanel(targetId);
 }
