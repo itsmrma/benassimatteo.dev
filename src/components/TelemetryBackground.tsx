@@ -49,6 +49,7 @@ export function TelemetryBackground() {
     let animationFrameId: number | null = null;
     let width = 0;
     let height = 0;
+    let maxLineDistSq = 95 * 95;
     let particles: Particle[] = [];
     let mouseX = -9999;
     let mouseY = -9999;
@@ -166,6 +167,7 @@ export function TelemetryBackground() {
       }
 
       // Balanced telemetry particle count (clearly visible, not crowded)
+      maxLineDistSq = (width < 768 ? 75 : 95) ** 2;
       const particleCount = width < 768 ? 20 : 38;
       particles = [];
 
@@ -230,11 +232,8 @@ export function TelemetryBackground() {
 
     resize();
 
-    const maxLineDist = width < 768 ? 75 : 95;
-    const maxLineDistSq = maxLineDist * maxLineDist;
-
-    const render = () => {
-      if (!controller.shouldAnimate()) {
+    function render() {
+      if (!ctx || !controller.shouldAnimate()) {
         animationFrameId = null;
         return;
       }
