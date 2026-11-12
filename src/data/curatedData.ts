@@ -53,7 +53,7 @@ export const IDENTITY = {
   role: 'Computer Engineering student · Software & Systems Engineer',
   location: 'Mantova, Italy',
   manifesto:
-    'I build fast, reliable software — from high-performance systems to bare-metal C. Next stop: motorsport.',
+    'Learning by building things close to the metal — mostly systems software, embedded firmware, and tools I actually use.',
   bio:
     "I'm a Computer Engineering student at the University of Modena and Reggio Emilia, Mantova campus. Co-founder of Oxide, 3x hackathon podium winner, open-source systems developer, and aspiring motorsport software engineer.",
   availability: 'Open to a curricular internship in 2026/27.',
