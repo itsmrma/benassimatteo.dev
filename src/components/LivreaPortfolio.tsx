@@ -714,7 +714,7 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
                 <Text type="supporting" color="secondary" size="sm">
                   Official Oxide interface: parallel worktree threads &amp; pre-merge verification
                 </Text>
-                <Text type="code" className="livrea-text-cyan" size="sm">
+                <Text type="code" color="secondary" size="sm">
                   TAURI 2
                 </Text>
               </HStack>
@@ -877,7 +877,7 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
                 <Text type="supporting" color="secondary" size="sm">
                   Official SyncForge application interface: batch tracks alignment &amp; metadata editing
                 </Text>
-                <Text type="code" color="accent" size="sm">
+                <Text type="code" color="secondary" size="sm">
                   FFMPEG + RUST
                 </Text>
               </HStack>
@@ -1043,7 +1043,7 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
                 <Text type="supporting" color="secondary" size="sm">
                   Official scrobbl.rs interface: listening dashboard, history query engine &amp; rankings
                 </Text>
-                <Text type="code" color="accent" size="sm">
+                <Text type="code" color="secondary" size="sm">
                   GPL-3.0
                 </Text>
               </HStack>
