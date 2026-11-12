@@ -5,6 +5,12 @@ import {
   calculateScrollProgress,
   computeActiveSector,
   parseSectorNumber,
+  getHeroTelemetryMetrics,
+  formatCompactTelemetryRibbon,
+  getPodiumFinishes,
+  getPodiumHierarchy,
+  getStartingGridTimeline,
+  shouldShowBottomStrip,
 } from '../src/utils/mobileAdaptation.ts';
 
 test('mobileAdaptation: isMobileViewport correctly detects mobile vs desktop', () => {
@@ -145,4 +151,91 @@ test('mobileAdaptation: computeActiveSector handles edge positions (start and en
     'panel-9',
     'isAtEnd guarantees last panel is active'
   );
+});
+
+test('mobileAdaptation: getHeroTelemetryMetrics and formatCompactTelemetryRibbon produce compact HUD format', () => {
+  const metrics = getHeroTelemetryMetrics();
+  assert.equal(metrics.length, 3, 'Hero metrics must contain exactly 3 KPI items');
+
+  const [m1, m2, m3] = metrics;
+  assert.equal(m1.value, '3x Podiums', 'KPI 01 value formatted for mobile HUD ribbon');
+  assert.equal(m2.value, '27.3/30 avg', 'KPI 02 value formatted for mobile HUD ribbon');
+  assert.equal(m3.value, '2026/27 Ready', 'KPI 03 value formatted for mobile HUD ribbon');
+
+  const ribbon = formatCompactTelemetryRibbon(metrics);
+  assert.equal(
+    ribbon,
+    '3x Podiums | 27.3/30 avg | 2026/27 Ready',
+    'Compact telemetry HUD ribbon matches ticket acceptance criteria'
+  );
+});
+
+test('mobileAdaptation: getPodiumHierarchy prioritizes P1 and compacts P2/P3 finishes', () => {
+  const finishes = getPodiumFinishes();
+  assert.equal(finishes.length, 3, 'Total hackathon podium finishes must be 3 (100% conversion)');
+
+  const { p1Lead, summaryFinishes } = getPodiumHierarchy(finishes);
+
+  // P1 Lead finish
+  assert.equal(p1Lead.position, 'P1', 'P1 must be the top highlight');
+  assert.equal(p1Lead.project, 'Garda Chiese Alert', 'P1 project is Garda Chiese Alert');
+  assert.equal(p1Lead.highlight, true, 'P1 must have full telemetry highlight');
+  assert.ok(p1Lead.githubUrl.includes('alert-app-garda-chiese'), 'P1 contains GitHub repo');
+
+  // Summary finishes (P2 & P3)
+  assert.equal(summaryFinishes.length, 2, 'P2 and P3 must be grouped into summary finishes');
+  assert.equal(summaryFinishes[0].project, 'Smart Beam', 'Second finish is Smart Beam (SCIoTeM 2026)');
+  assert.equal(summaryFinishes[1].project, 'P7M AI Summarizer', 'Third finish is P7M AI Summarizer (SCIoTeM 2025)');
+  assert.equal(summaryFinishes[0].highlight, false, 'Summary finishes do not take full primary highlight');
+});
+
+test('mobileAdaptation: getStartingGridTimeline structures continuous chronological academic trajectory', () => {
+  const timeline = getStartingGridTimeline();
+  assert.equal(timeline.length, 4, 'Starting grid timeline must contain 4 continuous milestones');
+
+  const [p01, p02, p03, p04] = timeline;
+
+  // Milestone P01: UNIMORE
+  assert.equal(p01.position, 'P01');
+  assert.ok(p01.institution.includes('UNIMORE'), 'P01 is UNIMORE');
+  assert.equal(p01.gradeHighlight, '27.3 / 30');
+  assert.equal(p01.isCurrent, true, 'UNIMORE is the current ongoing degree');
+
+  // Milestone P02: Novellini Internship
+  assert.equal(p02.position, 'P02');
+  assert.ok(p02.institution.includes('Novellini'), 'P02 is Novellini internship');
+
+  // Milestone P03: ITIS Fermi
+  assert.equal(p03.position, 'P03');
+  assert.ok(p03.institution.includes('Fermi'), 'P03 is ITIS Fermi');
+  assert.equal(p03.gradeHighlight, '100 / 100');
+
+  // Milestone P04: Certifications
+  assert.equal(p04.position, 'P04');
+  assert.ok(p04.title.includes('Cambridge'), 'P04 is Cambridge certification');
+
+  // Ensure every node has required timeline properties
+  for (const node of timeline) {
+    assert.ok(node.nodeId, 'Timeline node has unique nodeId');
+    assert.ok(node.position, 'Timeline node has telemetry grid position');
+    assert.ok(node.period, 'Timeline node has time period');
+    assert.ok(node.title, 'Timeline node has milestone title');
+  }
+});
+
+test('mobileAdaptation: shouldShowBottomStrip consolidates repetitive intermediate panels on mobile', () => {
+  // On desktop: all panels show their bottom strip
+  const allPanels = ['panel-1', 'panel-2', 'panel-3', 'panel-4', 'panel-5', 'panel-6', 'panel-7', 'panel-8', 'panel-9'];
+  for (const pid of allPanels) {
+    assert.equal(shouldShowBottomStrip(pid, false), true, `Desktop shows bottom strip for ${pid}`);
+  }
+
+  // On mobile: only panel-1 (hero links) and panel-9 (finish lap) show bottom strip
+  assert.equal(shouldShowBottomStrip('panel-1', true), true, 'Mobile shows hero bottom links');
+  assert.equal(shouldShowBottomStrip('panel-9', true), true, 'Mobile shows pit wall finish strip');
+
+  // Intermediate panels (2 to 8) are streamlined to eliminate redundant vertical visual noise
+  for (const pid of ['panel-2', 'panel-3', 'panel-4', 'panel-5', 'panel-6', 'panel-7', 'panel-8']) {
+    assert.equal(shouldShowBottomStrip(pid, true), false, `Mobile consolidates redundant strip on ${pid}`);
+  }
 });

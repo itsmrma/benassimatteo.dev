@@ -299,40 +299,58 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
               </Text>
             </VStack>
 
-            {/* Telemetry KPI Readout (3 Columns) */}
+            {/* Telemetry KPI Readout (3 Columns / Compact Mobile HUD Ribbon) */}
             <HStack justify="between" align="stretch" gap={3} width="100%" className="livrea-kpi-grid">
               <VStack gap={1} className="livrea-kpi-box">
-                <Text type="code" color="secondary" size="sm">
+                <Text type="code" color="secondary" size="sm" className="livrea-kpi-desktop">
                   KPI 01 // COMPETITION
                 </Text>
-                <Heading level={3} color="accent" weight="bold">
+                <Text type="code" color="secondary" size="sm" className="livrea-kpi-mobile livrea-kpi-mobile-label">
+                  PODIUMS
+                </Text>
+                <Heading level={3} color="accent" weight="bold" className="livrea-kpi-desktop">
                   3x Podiums
                 </Heading>
-                <Text type="body" color="secondary">
+                <Text color="accent" className="livrea-kpi-mobile livrea-kpi-mobile-val">
+                  3x Podiums
+                </Text>
+                <Text type="body" color="secondary" className="livrea-kpi-desktop">
                   1st Hack4Water 2026 · 2x SCIoTeM 2026 &amp; 2025
                 </Text>
               </VStack>
 
               <VStack gap={1} className="livrea-kpi-box">
-                <Text type="code" color="secondary" size="sm">
+                <Text type="code" color="secondary" size="sm" className="livrea-kpi-desktop">
                   KPI 02 // ACADEMICS
                 </Text>
-                <Heading level={3} color="primary" weight="bold">
+                <Text type="code" color="secondary" size="sm" className="livrea-kpi-mobile livrea-kpi-mobile-label">
+                  ACADEMIC
+                </Text>
+                <Heading level={3} color="primary" weight="bold" className="livrea-kpi-desktop">
                   27.3 / 30 avg
                 </Heading>
-                <Text type="body" color="secondary">
+                <Text color="primary" className="livrea-kpi-mobile livrea-kpi-mobile-val">
+                  27.3/30 avg
+                </Text>
+                <Text type="body" color="secondary" className="livrea-kpi-desktop">
                   125/180 ECTS · 100/100 High-School Diploma
                 </Text>
               </VStack>
 
               <VStack gap={1} className="livrea-kpi-box">
-                <Text type="code" color="secondary" size="sm">
+                <Text type="code" color="secondary" size="sm" className="livrea-kpi-desktop">
                   KPI 03 // AVAILABILITY
                 </Text>
-                <Heading level={3} color="accent" weight="bold">
+                <Text type="code" color="secondary" size="sm" className="livrea-kpi-mobile livrea-kpi-mobile-label">
+                  STATUS
+                </Text>
+                <Heading level={3} color="accent" weight="bold" className="livrea-kpi-desktop">
                   2026 / 27
                 </Heading>
-                <Text type="body" color="secondary">
+                <Text color="accent" className="livrea-kpi-mobile livrea-kpi-mobile-val">
+                  2026/27 Ready
+                </Text>
+                <Text type="body" color="secondary" className="livrea-kpi-desktop">
                   {IDENTITY.availability}
                 </Text>
               </VStack>
@@ -340,7 +358,7 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
           </VStack>
 
           {/* Bottom Bar */}
-          <HStack justify="between" align="center" width="100%" className="livrea-bottom-strip">
+          <HStack justify="between" align="center" width="100%" className="livrea-bottom-strip livrea-hero-strip">
             <HStack align="center" gap={3} wrap="wrap">
               <Link href={`mailto:${CONTACTS.email}`} onClick={handleCopy} color="accent" weight="bold">
                 {isCopied ? 'EMAIL COPIED ✓' : CONTACTS.email}
@@ -442,8 +460,8 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
                 </Link>
               </VStack>
 
-              {/* P2 — SCIoTeM 2026 */}
-              <VStack gap={2} className="livrea-podium-card">
+              {/* P2 — SCIoTeM 2026 (Compact Summary on Mobile) */}
+              <VStack gap={2} className="livrea-podium-card livrea-podium-summary">
                 <HStack justify="between" align="center">
                   <Text className="livrea-podium-rank" color="primary">
                     P2
@@ -460,16 +478,26 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
                   Smart Beam
                 </Text>
 
-                <Text as="p" type="body" color="secondary">
-                  Predictive maintenance engine for municipal streetlights, shifting repairs from reactive to scheduled proactive intervention.
-                </Text>
-
-                <VStack gap={1} className="livrea-card-specs">
-                  <Text type="code" color="primary" size="sm">
-                    SPECS: Python · scikit-learn · Cox Proportional Hazards · XGBoost
+                {/* Desktop narrative & specs */}
+                <VStack gap={2} className="livrea-podium-full-details">
+                  <Text as="p" type="body" color="secondary">
+                    Predictive maintenance engine for municipal streetlights, shifting repairs from reactive to scheduled proactive intervention.
                   </Text>
-                  <Text type="supporting" color="secondary">
-                    Survival analysis computing failure hazard curves for luminaire fleets with automated technician dispatch.
+
+                  <VStack gap={1} className="livrea-card-specs">
+                    <Text type="code" color="primary" size="sm">
+                      SPECS: Python · scikit-learn · Cox Proportional Hazards · XGBoost
+                    </Text>
+                    <Text type="supporting" color="secondary">
+                      Survival analysis computing failure hazard curves for luminaire fleets with automated technician dispatch.
+                    </Text>
+                  </VStack>
+                </VStack>
+
+                {/* Mobile streamlined summary line */}
+                <VStack gap={1} className="livrea-podium-mobile-summary">
+                  <Text type="code" color="secondary" size="sm">
+                    SPECS: Python · Cox Hazards · XGBoost
                   </Text>
                 </VStack>
 
@@ -484,8 +512,8 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
                 </Link>
               </VStack>
 
-              {/* P2 — SCIoTeM 2025 */}
-              <VStack gap={2} className="livrea-podium-card">
+              {/* P2 (Finisher 3) — SCIoTeM 2025 (Compact Summary on Mobile) */}
+              <VStack gap={2} className="livrea-podium-card livrea-podium-summary">
                 <HStack justify="between" align="center">
                   <Text className="livrea-podium-rank" color="primary">
                     P2
@@ -502,16 +530,26 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
                   P7M AI Summarizer
                 </Text>
 
-                <Text as="p" type="body" color="secondary">
-                  Legal tech ingestion pipeline unwrapping cryptographically signed PKCS#7 envelopes and synthesizing legal digests.
-                </Text>
-
-                <VStack gap={1} className="livrea-card-specs">
-                  <Text type="code" color="primary" size="sm">
-                    SPECS: Python · PKCS#7 Cryptography · Google Gemini LLM
+                {/* Desktop narrative & specs */}
+                <VStack gap={2} className="livrea-podium-full-details">
+                  <Text as="p" type="body" color="secondary">
+                    Legal tech ingestion pipeline unwrapping cryptographically signed PKCS#7 envelopes and synthesizing legal digests.
                   </Text>
-                  <Text type="supporting" color="secondary">
-                    Automated digital envelope verification, embedded content extraction, and structured Italian legal summary.
+
+                  <VStack gap={1} className="livrea-card-specs">
+                    <Text type="code" color="primary" size="sm">
+                      SPECS: Python · PKCS#7 Cryptography · Google Gemini LLM
+                    </Text>
+                    <Text type="supporting" color="secondary">
+                      Automated digital envelope verification, embedded content extraction, and structured Italian legal summary.
+                    </Text>
+                  </VStack>
+                </VStack>
+
+                {/* Mobile streamlined summary line */}
+                <VStack gap={1} className="livrea-podium-mobile-summary">
+                  <Text type="code" color="secondary" size="sm">
+                    SPECS: Python · PKCS#7 · Gemini LLM
                   </Text>
                 </VStack>
 
@@ -528,7 +566,7 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
             </HStack>
           </VStack>
 
-          <HStack justify="between" align="center" width="100%" className="livrea-bottom-strip">
+          <HStack justify="between" align="center" width="100%" className="livrea-bottom-strip livrea-intermediate-strip">
             <Text type="code" color="secondary" size="sm">
               TELEMETRY: 100% PODIUM CONVERSION (3/3)
             </Text>
@@ -696,7 +734,7 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
             </DesktopWindow>
           </DesktopStage>
 
-          <HStack justify="between" align="center" width="100%" className="livrea-bottom-strip">
+          <HStack justify="between" align="center" width="100%" className="livrea-bottom-strip livrea-intermediate-strip">
             <Text type="code" color="secondary" size="sm">
               ENGINEERING: SYSTEMS PROGRAMMING &amp; AGENT ORCHESTRATION
             </Text>
@@ -859,7 +897,7 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
             </VStack>
           </HStack>
 
-          <HStack justify="between" align="center" width="100%" className="livrea-bottom-strip">
+          <HStack justify="between" align="center" width="100%" className="livrea-bottom-strip livrea-intermediate-strip">
             <Text type="code" color="secondary" size="sm">
               DSP PIPELINE: FREQUENCY-DOMAIN CROSS-CORRELATION
             </Text>
@@ -1033,7 +1071,7 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
             </VStack>
           </HStack>
 
-          <HStack justify="between" align="center" width="100%" className="livrea-bottom-strip">
+          <HStack justify="between" align="center" width="100%" className="livrea-bottom-strip livrea-intermediate-strip">
             <Text type="code" color="secondary" size="sm">
               SYSTEMS: ASYNC RUST DAEMON + EMBEDDED SQLITE WAL
             </Text>
@@ -1160,7 +1198,7 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
             </HStack>
           </VStack>
 
-          <HStack justify="between" align="center" width="100%" className="livrea-bottom-strip">
+          <HStack justify="between" align="center" width="100%" className="livrea-bottom-strip livrea-intermediate-strip">
             <Text type="code" color="secondary" size="sm">
               ENGINEERING DISCIPLINES: C FIRMWARE + POSTGRESQL/POSTGIS
             </Text>
@@ -1315,7 +1353,7 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
             </VStack>
           </VStack>
 
-          <HStack justify="between" align="center" width="100%" className="livrea-bottom-strip">
+          <HStack justify="between" align="center" width="100%" className="livrea-bottom-strip livrea-intermediate-strip">
             <Text type="code" color="secondary" size="sm">
               SYSTEMS: RUST, C, PYTHON, POSTGIS, LINUX, ZFS, DOCKER
             </Text>
@@ -1353,10 +1391,10 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
               </Text>
             </VStack>
 
-            {/* 4 Starting Grid Rows */}
-            <VStack gap={3} width="100%" className="livrea-grid-rows">
+            {/* 4 Starting Grid Chronological Timeline Nodes */}
+            <VStack gap={3} width="100%" className="livrea-grid-rows livrea-grid-timeline">
               {/* P01 */}
-              <HStack align="center" gap={4} className="livrea-grid-row">
+              <HStack align="center" gap={4} className="livrea-grid-row livrea-timeline-node is-active-node">
                 <Text className="livrea-grid-pos" color="accent">
                   P01
                 </Text>
@@ -1376,7 +1414,7 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
               </HStack>
 
               {/* P02 */}
-              <HStack align="center" gap={4} className="livrea-grid-row">
+              <HStack align="center" gap={4} className="livrea-grid-row livrea-timeline-node">
                 <Text className="livrea-grid-pos" color="primary">
                   P02
                 </Text>
@@ -1396,7 +1434,7 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
               </HStack>
 
               {/* P03 */}
-              <HStack align="center" gap={4} className="livrea-grid-row">
+              <HStack align="center" gap={4} className="livrea-grid-row livrea-timeline-node">
                 <Text className="livrea-grid-pos" color="primary">
                   P03
                 </Text>
@@ -1416,7 +1454,7 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
               </HStack>
 
               {/* P04 */}
-              <HStack align="center" gap={4} className="livrea-grid-row">
+              <HStack align="center" gap={4} className="livrea-grid-row livrea-timeline-node">
                 <Text className="livrea-grid-pos" color="secondary">
                   P04
                 </Text>
@@ -1437,7 +1475,7 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
             </VStack>
           </VStack>
 
-          <HStack justify="between" align="center" width="100%" className="livrea-bottom-strip">
+          <HStack justify="between" align="center" width="100%" className="livrea-bottom-strip livrea-intermediate-strip">
             <Text type="code" color="secondary" size="sm">
               ACADEMIC VERIFICATION: UNIMORE MANTOVA CAMPUS
             </Text>
@@ -1573,7 +1611,7 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
             </HStack>
           </VStack>
 
-          <HStack justify="between" align="center" width="100%" className="livrea-bottom-strip">
+          <HStack justify="between" align="center" width="100%" className="livrea-bottom-strip livrea-finish-strip">
             <HStack align="center" gap={3} wrap="wrap">
               <Text type="code" color="secondary" size="sm">
                 MATTEO BENASSI · COMPUTER ENGINEERING @ UNIMORE
