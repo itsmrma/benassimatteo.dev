@@ -3,7 +3,6 @@ import {
   Section,
   VStack,
   HStack,
-  Stack,
   Heading,
   Text,
   Link,

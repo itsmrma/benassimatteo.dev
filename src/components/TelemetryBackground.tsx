@@ -97,9 +97,9 @@ export function TelemetryBackground() {
       const sCtx = sprite.getContext('2d');
       if (sCtx) {
         const rad = sCtx.createRadialGradient(120, 120, 0, 120, 120, 120);
-        rad.addColorStop(0, 'rgba(225, 6, 0, 0.08)');
-        rad.addColorStop(0.45, 'rgba(225, 6, 0, 0.025)');
-        rad.addColorStop(1, 'rgba(225, 6, 0, 0)');
+        rad.addColorStop(0, 'rgba(224, 62, 62, 0.04)');
+        rad.addColorStop(0.45, 'rgba(224, 62, 62, 0.01)');
+        rad.addColorStop(1, 'rgba(224, 62, 62, 0)');
         sCtx.fillStyle = rad;
         sCtx.fillRect(0, 0, 240, 240);
       }
@@ -172,7 +172,7 @@ export function TelemetryBackground() {
       particles = [];
 
       for (let i = 0; i < particleCount; i++) {
-        const isAccent = Math.random() < 0.24; // ~24% Ferrari red telemetry markers
+        const isAccent = Math.random() < 0.20; // ~20% calibrated vermilion telemetry markers
         particles.push({
           x: Math.random() * width,
           y: Math.random() * height,
@@ -278,10 +278,10 @@ export function TelemetryBackground() {
       }
       ctx.stroke();
 
-      // Accent red linkages
+      // Accent vermilion linkages
       ctx.beginPath();
-      ctx.strokeStyle = 'rgba(225, 6, 0, 0.12)';
-      ctx.lineWidth = 0.6;
+      ctx.strokeStyle = 'rgba(224, 62, 62, 0.08)';
+      ctx.lineWidth = 0.5;
       for (let i = 0; i < n; i++) {
         const p = particles[i];
         for (let j = i + 1; j < n; j++) {
@@ -330,12 +330,12 @@ export function TelemetryBackground() {
         // Radar ping ring on select accent nodes
         if (p.isAccent && p.pingRadius !== undefined) {
           p.pingRadius = (p.pingRadius + 0.3) % 26;
-          p.pingAlpha = Math.max(0, (1 - p.pingRadius / 26) * 0.22);
+          p.pingAlpha = Math.max(0, (1 - p.pingRadius / 26) * 0.18);
           if (p.pingAlpha && p.pingAlpha > 0.02) {
             ctx.beginPath();
             ctx.arc(p.x, p.y, p.pingRadius, 0, Math.PI * 2);
-            ctx.strokeStyle = `rgba(225, 6, 0, ${p.pingAlpha})`;
-            ctx.lineWidth = 0.6;
+            ctx.strokeStyle = `rgba(224, 62, 62, ${p.pingAlpha})`;
+            ctx.lineWidth = 0.5;
             ctx.stroke();
           }
         }
@@ -345,13 +345,13 @@ export function TelemetryBackground() {
           // Soft outer halo
           ctx.beginPath();
           ctx.arc(p.x, p.y, p.radius * 2, 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(225, 6, 0, ${alpha * 0.18})`;
+          ctx.fillStyle = `rgba(224, 62, 62, ${alpha * 0.12})`;
           ctx.fill();
 
           // Core dot
           ctx.beginPath();
           ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(225, 6, 0, ${alpha})`;
+          ctx.fillStyle = `rgba(224, 62, 62, ${alpha * 0.85})`;
           ctx.fill();
         } else {
           ctx.beginPath();
