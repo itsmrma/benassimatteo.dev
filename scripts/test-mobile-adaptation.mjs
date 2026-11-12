@@ -9,6 +9,7 @@ import {
   calculateWindowDimensions,
   getAppPreviewMode,
   OXIDE_SHOWCASE_PILLARS,
+  TelemetryAnimationController,
 } from '../src/utils/mobileAdaptation.ts';
 
 test('mobileAdaptation: isMobileViewport correctly detects mobile vs desktop', () => {
@@ -218,4 +219,159 @@ test('touchSafePreview: fullscreen web demo modal contract', () => {
   assert.equal(openedState.isModalActive, true, 'Modal is active');
   assert.equal(openedState.hasExitControl, true, 'Modal must have an explicit exit control');
   assert.equal(openedState.trapsPageScroll, false, 'Modal is isolated and does not hijack page scroll');
+});
+
+test('telemetryAnimationController: coarse-pointer / touch devices disable cursor tracking & repulsion', () => {
+  // Desktop fine pointer: tracking & repulsion enabled
+  const desktopController = new TelemetryAnimationController({
+    isMobile: false,
+    isCoarsePointer: false,
+  });
+  assert.equal(desktopController.shouldTrackCursor(), true, 'Desktop fine pointer tracks cursor');
+  assert.equal(desktopController.shouldApplyRepulsion(), true, 'Desktop fine pointer applies repulsion');
+
+  // Touch / coarse pointer: tracking & repulsion strictly disabled
+  const touchController = new TelemetryAnimationController({
+    isMobile: true,
+    isCoarsePointer: true,
+  });
+  assert.equal(touchController.shouldTrackCursor(), false, 'Touch device disables cursor tracking');
+  assert.equal(touchController.shouldApplyRepulsion(), false, 'Touch device disables cursor repulsion physics');
+
+  // Dynamically updating device profile (e.g. on orientation/window change)
+  desktopController.setDeviceProfile({ isCoarsePointer: true });
+  assert.equal(desktopController.shouldTrackCursor(), false, 'Dynamically switched to coarse pointer');
+  assert.equal(desktopController.shouldApplyRepulsion(), false, 'Repulsion disabled after switch');
+});
+
+test('telemetryAnimationController: mobile scroll pauses animation loop and resumes when settled', async () => {
+  let startedCount = 0;
+  let stoppedCount = 0;
+
+  const mobileController = new TelemetryAnimationController({
+    isMobile: true,
+    isCoarsePointer: true,
+    scrollSettleTimeoutMs: 20,
+    onStart: () => { startedCount++; },
+    onStop: () => { stoppedCount++; },
+  });
+
+  mobileController.start();
+  assert.equal(mobileController.getIsRunning(), true, 'Controller starts running');
+  assert.equal(startedCount, 1, 'onStart callback fired');
+
+  // Active scroll gesture begins
+  mobileController.handleScroll();
+  assert.equal(mobileController.getIsScrolling(), true, 'isScrolling is true during active scroll');
+  assert.equal(mobileController.shouldAnimate(), false, 'shouldAnimate is false during active scroll');
+  assert.equal(mobileController.getIsRunning(), false, 'Animation loop is paused during active scroll');
+  assert.equal(stoppedCount, 1, 'onStop callback fired when scroll begins');
+
+  // Repeated scroll events during active gesture keep it paused
+  mobileController.handleScroll();
+  mobileController.handleScroll();
+  assert.equal(mobileController.getIsRunning(), false, 'Remains paused during repeated scroll events');
+
+  // Wait for scroll settle timeout
+  await new Promise((resolve) => setTimeout(resolve, 50));
+
+  assert.equal(mobileController.getIsScrolling(), false, 'isScrolling resets to false after settling');
+  assert.equal(mobileController.shouldAnimate(), true, 'shouldAnimate returns to true after settling');
+  assert.equal(mobileController.getIsRunning(), true, 'Animation loop resumed smoothly');
+  assert.equal(startedCount, 2, 'onStart callback fired to resume loop');
+
+  mobileController.destroy();
+});
+
+test('telemetryAnimationController: desktop scroll does NOT throttle or pause animation loop', () => {
+  let stoppedCount = 0;
+
+  const desktopController = new TelemetryAnimationController({
+    isMobile: false,
+    isCoarsePointer: false,
+    onStop: () => { stoppedCount++; },
+  });
+
+  desktopController.start();
+  assert.equal(desktopController.getIsRunning(), true);
+
+  // Desktop scroll event occurs
+  desktopController.handleScroll();
+  assert.equal(desktopController.getIsScrolling(), false, 'Desktop scroll does not engage mobile scroll pause');
+  assert.equal(desktopController.shouldAnimate(), true, 'Desktop shouldAnimate remains true');
+  assert.equal(desktopController.getIsRunning(), true, 'Desktop animation loop stays running');
+  assert.equal(stoppedCount, 0, 'onStop callback never fired on desktop scroll');
+
+  desktopController.destroy();
+});
+
+test('telemetryAnimationController: completely halts animation loop when document visibility is hidden', () => {
+  let startedCount = 0;
+  let stoppedCount = 0;
+
+  const controller = new TelemetryAnimationController({
+    isMobile: false,
+    onStart: () => { startedCount++; },
+    onStop: () => { stoppedCount++; },
+  });
+
+  controller.start();
+  assert.equal(controller.getIsRunning(), true);
+  assert.equal(startedCount, 1);
+
+  // Tab hidden / backgrounded
+  controller.handleVisibilityChange(true);
+  assert.equal(controller.shouldAnimate(), false, 'shouldAnimate false when document hidden');
+  assert.equal(controller.getIsRunning(), false, 'Loop stopped when document hidden');
+  assert.equal(stoppedCount, 1, 'onStop fired on document hidden');
+
+  // Tab returned to visible
+  controller.handleVisibilityChange(false);
+  assert.equal(controller.shouldAnimate(), true, 'shouldAnimate true when document visible');
+  assert.equal(controller.getIsRunning(), true, 'Loop resumed when document visible');
+  assert.equal(startedCount, 2, 'onStart fired on return to visible');
+
+  controller.destroy();
+});
+
+test('telemetryAnimationController: strictly respects prefers-reduced-motion by rendering static frame and halting loop', () => {
+  let startedCount = 0;
+  let stoppedCount = 0;
+  let staticFrameCount = 0;
+
+  const reducedMotionController = new TelemetryAnimationController({
+    prefersReducedMotion: true,
+    onStart: () => { startedCount++; },
+    onStop: () => { stoppedCount++; },
+    onRenderStaticFrame: () => { staticFrameCount++; },
+  });
+
+  assert.equal(reducedMotionController.shouldAnimate(), false, 'shouldAnimate false under reduced motion');
+  assert.equal(reducedMotionController.shouldApplyRepulsion(), false, 'Repulsion disabled under reduced motion');
+
+  reducedMotionController.start();
+  assert.equal(reducedMotionController.getIsRunning(), false, 'Animation loop never starts under reduced motion');
+  assert.equal(startedCount, 0, 'onStart never called');
+  assert.equal(staticFrameCount, 1, 'Single static CAD grid frame rendered');
+
+  // Visibility change while under reduced motion should NOT start animation loop
+  reducedMotionController.handleVisibilityChange(false);
+  assert.equal(reducedMotionController.getIsRunning(), false, 'Visibility change to visible does not start loop');
+  assert.equal(startedCount, 0);
+
+  // Dynamic switch to reduced motion while running halts loop and triggers static frame
+  const normalController = new TelemetryAnimationController({
+    prefersReducedMotion: false,
+    onStart: () => { startedCount++; },
+    onStop: () => { stoppedCount++; },
+    onRenderStaticFrame: () => { staticFrameCount++; },
+  });
+
+  normalController.start();
+  assert.equal(normalController.getIsRunning(), true);
+
+  normalController.setReducedMotion(true);
+  assert.equal(normalController.getIsRunning(), false, 'Loop halted when reduced motion enabled');
+  assert.equal(stoppedCount, 1, 'onStop called when reduced motion enabled');
+  assert.equal(staticFrameCount, 2, 'Static frame rendered on transition to reduced motion');
 });
