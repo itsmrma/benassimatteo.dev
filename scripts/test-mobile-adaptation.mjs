@@ -5,6 +5,12 @@ import {
   calculateScrollProgress,
   computeActiveSector,
   parseSectorNumber,
+  SECTOR_WAYPOINTS,
+  getSectorWaypoint,
+  formatSectorTelemetryKicker,
+  getContactSectorId,
+  resolveWaypointScrollTarget,
+  handleWaypointJump,
 } from '../src/utils/mobileAdaptation.ts';
 
 test('mobileAdaptation: isMobileViewport correctly detects mobile vs desktop', () => {
@@ -145,4 +151,110 @@ test('mobileAdaptation: computeActiveSector handles edge positions (start and en
     'panel-9',
     'isAtEnd guarantees last panel is active'
   );
+});
+
+test('mobileWaypointHud: SECTOR_WAYPOINTS contains all 9 telemetry sectors', () => {
+  assert.equal(Array.isArray(SECTOR_WAYPOINTS), true);
+  assert.equal(SECTOR_WAYPOINTS.length, 9, 'Must have exactly 9 sectors');
+
+  // Verify each sector structure
+  const expectedSectors = [
+    { num: '01', id: 'panel-1', title: 'CHASSIS' },
+    { num: '02', id: 'panel-2', title: 'PODIUM' },
+    { num: '03', id: 'panel-3', title: 'OXIDE' },
+    { num: '04', id: 'panel-4', title: 'SYNCFORGE' },
+    { num: '05', id: 'panel-5', title: 'SCROBBL' },
+    { num: '06', id: 'panel-6', title: 'EMBEDDED' },
+    { num: '07', id: 'panel-7', title: 'MACHINERY' },
+    { num: '08', id: 'panel-8', title: 'GRID' },
+    { num: '09', id: 'panel-9', title: 'CONTACT' },
+  ];
+
+  expectedSectors.forEach((exp, idx) => {
+    const sector = SECTOR_WAYPOINTS[idx];
+    assert.equal(sector.index, idx + 1);
+    assert.equal(sector.num, exp.num);
+    assert.equal(sector.id, exp.id);
+    assert.equal(sector.title, exp.title);
+    assert.ok(sector.label && sector.label.length > 0, `Sector ${exp.num} has descriptive label`);
+  });
+});
+
+test('mobileWaypointHud: getSectorWaypoint returns correct waypoint by index or id', () => {
+  assert.equal(getSectorWaypoint(1).title, 'CHASSIS');
+  assert.equal(getSectorWaypoint(3).title, 'OXIDE');
+  assert.equal(getSectorWaypoint('panel-3').title, 'OXIDE');
+  assert.equal(getSectorWaypoint('panel-9').title, 'CONTACT');
+  assert.equal(getSectorWaypoint(9).title, 'CONTACT');
+
+  // Edge cases / fallback to 1
+  assert.equal(getSectorWaypoint(99).title, 'CHASSIS', 'Out of bounds index falls back to sector 1');
+  assert.equal(getSectorWaypoint('unknown').title, 'CHASSIS', 'Invalid id falls back to sector 1');
+});
+
+test('mobileWaypointHud: formatSectorTelemetryKicker formats active sector indicator', () => {
+  // Closed state (default)
+  assert.equal(formatSectorTelemetryKicker(1), '[ 01 // CHASSIS ▾ ]');
+  assert.equal(formatSectorTelemetryKicker(3), '[ 03 // OXIDE ▾ ]');
+  assert.equal(formatSectorTelemetryKicker('panel-3'), '[ 03 // OXIDE ▾ ]');
+  assert.equal(formatSectorTelemetryKicker(9), '[ 09 // CONTACT ▾ ]');
+
+  // Open state (arrow flipped up)
+  assert.equal(formatSectorTelemetryKicker(3, true), '[ 03 // OXIDE ▴ ]');
+  assert.equal(formatSectorTelemetryKicker('panel-9', true), '[ 09 // CONTACT ▴ ]');
+
+  // Invalid sector falls back safely
+  assert.equal(formatSectorTelemetryKicker(-1), '[ 01 // CHASSIS ▾ ]');
+});
+
+test('mobileWaypointHud: getContactSectorId returns panel-9 for direct quick action', () => {
+  assert.equal(getContactSectorId(), 'panel-9');
+});
+
+test('mobileWaypointHud: resolveWaypointScrollTarget computes correct scroll target', () => {
+  // Sector 1 scrolls to top on mobile
+  const target1Mobile = resolveWaypointScrollTarget('panel-1', true);
+  assert.equal(target1Mobile.targetId, 'panel-1');
+  assert.equal(target1Mobile.isTop, true);
+
+  // Sector 1 on desktop
+  const target1Desktop = resolveWaypointScrollTarget('panel-1', false);
+  assert.equal(target1Desktop.targetId, 'panel-1');
+  assert.equal(target1Desktop.isTop, true);
+
+  // Sector 3
+  const target3 = resolveWaypointScrollTarget('panel-3', true);
+  assert.equal(target3.targetId, 'panel-3');
+  assert.equal(target3.isTop, false);
+
+  // Contact (Sector 9)
+  const target9 = resolveWaypointScrollTarget('panel-9', true);
+  assert.equal(target9.targetId, 'panel-9');
+  assert.equal(target9.isTop, false);
+
+  // Numeric index input string '3' or 3
+  assert.equal(resolveWaypointScrollTarget(3, true).targetId, 'panel-3');
+});
+
+test('mobileWaypointHud: handleWaypointJump invokes scroll callback and closes menu', () => {
+  let scrolledTo = null;
+  let menuClosed = false;
+
+  const mockScrollTo = (targetId) => {
+    scrolledTo = targetId;
+  };
+  const mockCloseMenu = () => {
+    menuClosed = true;
+  };
+
+  handleWaypointJump('panel-4', mockScrollTo, mockCloseMenu);
+  assert.equal(scrolledTo, 'panel-4', 'Invokes scroll callback with correct panel ID');
+  assert.equal(menuClosed, true, 'Closes waypoint menu upon selection');
+
+  // Contact shortcut jump
+  scrolledTo = null;
+  menuClosed = false;
+  handleWaypointJump(getContactSectorId(), mockScrollTo, mockCloseMenu);
+  assert.equal(scrolledTo, 'panel-9', 'Direct jump to Contact target');
+  assert.equal(menuClosed, true, 'Closes menu upon direct contact jump');
 });

@@ -165,3 +165,149 @@ export function getActiveSectorFromDOM(
   const activeId = computeActiveSector(bounds, vh, options);
   return activeId ? parseSectorNumber(activeId) : 1;
 }
+
+export interface SectorWaypoint {
+  id: string;
+  num: string;
+  index: number;
+  title: string;
+  label: string;
+  tagline?: string;
+}
+
+export const SECTOR_WAYPOINTS: readonly SectorWaypoint[] = [
+  {
+    id: 'panel-1',
+    num: '01',
+    index: 1,
+    title: 'CHASSIS',
+    label: 'Identification & Chassis Spec',
+    tagline: 'Bio, philosophy & telemetry metrics',
+  },
+  {
+    id: 'panel-2',
+    num: '02',
+    index: 2,
+    title: 'PODIUM',
+    label: 'Hackathon Podium',
+    tagline: 'Hack4Water, Hack the Code & AI Trophy',
+  },
+  {
+    id: 'panel-3',
+    num: '03',
+    index: 3,
+    title: 'OXIDE',
+    label: 'Oxide Desktop GUI',
+    tagline: 'Flagship worktree concurrent workspace',
+  },
+  {
+    id: 'panel-4',
+    num: '04',
+    index: 4,
+    title: 'SYNCFORGE',
+    label: 'SyncForge Subtitle Sync',
+    tagline: 'Cross-language subtitle sync CLI engine',
+  },
+  {
+    id: 'panel-5',
+    num: '05',
+    index: 5,
+    title: 'SCROBBL',
+    label: 'Scrobbl.rs Audio Daemon',
+    tagline: 'Lightweight Rust daemon for Last.fm/ListenBrainz',
+  },
+  {
+    id: 'panel-6',
+    num: '06',
+    index: 6,
+    title: 'EMBEDDED',
+    label: 'RTOS & Embedded Systems',
+    tagline: 'FreeRTOS & STM32 telemetry logger',
+  },
+  {
+    id: 'panel-7',
+    num: '07',
+    index: 7,
+    title: 'MACHINERY',
+    label: 'Auxiliary Machinery & Lab',
+    tagline: 'Open-source tools, CAD & hardware hacks',
+  },
+  {
+    id: 'panel-8',
+    num: '08',
+    index: 8,
+    title: 'GRID',
+    label: 'Starting Grid & Timeline',
+    tagline: 'UNIMORE Computer Engineering & honors',
+  },
+  {
+    id: 'panel-9',
+    num: '09',
+    index: 9,
+    title: 'CONTACT',
+    label: 'Telemetry Downlink & Contact',
+    tagline: 'Email, GitHub, LinkedIn & CV transmission',
+  },
+] as const;
+
+export function getSectorWaypoint(sectorOrId: number | string): SectorWaypoint {
+  if (typeof sectorOrId === 'number') {
+    const found = SECTOR_WAYPOINTS.find((s) => s.index === sectorOrId);
+    return found ?? SECTOR_WAYPOINTS[0];
+  }
+  const parsedNum = parseSectorNumber(sectorOrId);
+  const found = SECTOR_WAYPOINTS.find((s) => s.id === sectorOrId || s.index === parsedNum);
+  return found ?? SECTOR_WAYPOINTS[0];
+}
+
+export function formatSectorTelemetryKicker(
+  sectorOrId: number | string,
+  isOpen: boolean = false
+): string {
+  const waypoint = getSectorWaypoint(sectorOrId);
+  const chevron = isOpen ? '▴' : '▾';
+  return `[ ${waypoint.num} // ${waypoint.title} ${chevron} ]`;
+}
+
+export function getContactSectorId(): string {
+  return 'panel-9';
+}
+
+export function resolveWaypointScrollTarget(
+  sectorOrId: number | string,
+  _isMobile: boolean = true
+): { targetId: string; isTop: boolean; elementId: string } {
+  let targetId = 'panel-1';
+  if (typeof sectorOrId === 'number') {
+    targetId = getSectorId(sectorOrId);
+  } else if (typeof sectorOrId === 'string') {
+    if (sectorOrId.startsWith('panel-')) {
+      targetId = sectorOrId;
+    } else {
+      const num = parseInt(sectorOrId, 10);
+      targetId = !isNaN(num) ? getSectorId(num) : 'panel-1';
+    }
+  }
+  const isTop = targetId === 'panel-1';
+  return {
+    targetId,
+    isTop,
+    elementId: targetId,
+  };
+}
+
+/**
+ * Handles jumping to a specific waypoint sector:
+ * closes the mobile waypoint menu and triggers smooth scrolling to the target.
+ */
+export function handleWaypointJump(
+  target: number | string,
+  scrollToPanel: (targetId: string) => void,
+  onCloseMenu?: () => void
+): void {
+  const { targetId } = resolveWaypointScrollTarget(target, true);
+  if (onCloseMenu) {
+    onCloseMenu();
+  }
+  scrollToPanel(targetId);
+}

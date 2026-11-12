@@ -26,24 +26,16 @@ import {
   isMobileViewport,
   calculateScrollProgress,
   getActiveSectorFromDOM,
+  SECTOR_WAYPOINTS,
 } from '../utils/mobileAdaptation';
+import { MobileWaypointHud } from './MobileWaypointHud';
 
 interface LivreaPortfolioProps {
   onCopyEmail?: () => void;
   emailCopied?: boolean;
 }
 
-const PANELS = [
-  { id: 'panel-1', num: '01', title: 'CHASSIS' },
-  { id: 'panel-2', num: '02', title: 'PODIUM' },
-  { id: 'panel-3', num: '03', title: 'OXIDE' },
-  { id: 'panel-4', num: '04', title: 'SYNCFORGE' },
-  { id: 'panel-5', num: '05', title: 'SCROBBL' },
-  { id: 'panel-6', num: '06', title: 'EMBEDDED' },
-  { id: 'panel-7', num: '07', title: 'MACHINERY' },
-  { id: 'panel-8', num: '08', title: 'GRID' },
-  { id: 'panel-9', num: '09', title: 'CONTACT' },
-];
+const PANELS = SECTOR_WAYPOINTS;
 
 export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioProps) {
   const [activePanel, setActivePanel] = useState(1);
@@ -217,7 +209,14 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
         </Text>
       </HStack>
 
-      {/* 2. Floating Quick-Jump Checkpoints on Right Margin (Desktop) */}
+      {/* 2. Sticky Mobile Telemetry Waypoint HUD & Quick-Jump Navigation (Mobile) */}
+      <MobileWaypointHud
+        activeSector={activePanel}
+        onScrollToSector={scrollToPanel}
+        scrollProgress={scrollProgress}
+      />
+
+      {/* 3. Floating Quick-Jump Checkpoints on Right Margin (Desktop) */}
       <VStack gap={1} className="livrea-quick-nav" aria-label="Circuit checkpoint navigation">
         {PANELS.map((p, idx) => {
           const isActive = activePanel === idx + 1;

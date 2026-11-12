@@ -146,10 +146,14 @@
           scroll-snap-align: none !important;
           min-height: 100svh;
           height: auto !important;
+          scroll-margin-top: 54px;
         }
         .livrea-panel-inner {
           min-height: calc(100svh - 24px);
           height: auto !important;
+        }
+        .livrea-panel-01 {
+          padding-top: 54px;
         }
       }
 
@@ -184,7 +188,12 @@
         padding: 8px 6px;
         backdrop-filter: blur(12px);
       }
-      @media (max-width: 1024px) {
+      @media (min-width: 820px) and (pointer: fine) {
+        .livrea-quick-nav {
+          display: flex !important;
+        }
+      }
+      @media (max-width: 819.98px), (pointer: coarse) {
         .livrea-quick-nav {
           display: none !important;
         }
@@ -202,6 +211,168 @@
       .livrea-nav-dot.is-active {
         background: rgba(225, 6, 0, 0.25);
         border: 1px solid #E10600;
+      }
+
+      /* Mobile Telemetry Waypoint HUD & Quick-Jump Navigation */
+      .livrea-mobile-hud {
+        position: fixed;
+        top: 3px;
+        left: 0;
+        right: 0;
+        z-index: 998;
+        background: rgba(10, 10, 14, 0.94);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+      }
+      @media (min-width: 820px) and (pointer: fine) {
+        .livrea-mobile-hud {
+          display: none !important;
+        }
+      }
+      .livrea-mobile-hud-bar {
+        min-height: 48px;
+        padding: 4px 12px;
+      }
+      .livrea-hud-kicker-btn {
+        min-height: 44px;
+        min-width: 44px;
+        background: transparent !important;
+        border: none !important;
+        padding: 4px 8px !important;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      .livrea-hud-kicker-btn:active,
+      .livrea-hud-kicker-btn:focus-visible {
+        background: rgba(255, 255, 255, 0.08) !important;
+      }
+      .livrea-hud-kicker-badge {
+        background: rgba(225, 6, 0, 0.2);
+        border: 1px solid rgba(225, 6, 0, 0.45);
+        border-radius: 3px;
+        padding: 2px 6px;
+        letter-spacing: 0.05em;
+      }
+      .livrea-hud-kicker-title {
+        letter-spacing: 0.08em;
+      }
+      .livrea-hud-kicker-chevron {
+        font-size: 13px;
+        margin-left: 2px;
+      }
+      .livrea-hud-actions {
+        flex-shrink: 0;
+      }
+      .livrea-hud-lap-counter {
+        opacity: 0.6;
+        min-width: 32px;
+        text-align: right;
+      }
+      .livrea-hud-contact-shortcut {
+        min-height: 44px;
+        min-width: 44px;
+        padding: 6px 10px !important;
+        background: rgba(225, 6, 0, 0.16) !important;
+        border: 1px solid rgba(225, 6, 0, 0.65) !important;
+        border-radius: 4px;
+        transition: all 0.15s ease;
+      }
+      .livrea-hud-contact-shortcut:hover,
+      .livrea-hud-contact-shortcut:active {
+        background: rgba(225, 6, 0, 0.3) !important;
+        border-color: #E10600 !important;
+      }
+
+      /* Waypoint Drawer / Dropdown Ribbon */
+      .livrea-hud-drawer {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: rgba(12, 13, 17, 0.98);
+        backdrop-filter: blur(24px);
+        -webkit-backdrop-filter: blur(24px);
+        border-bottom: 2px solid #E10600;
+        box-shadow: 0 16px 36px rgba(0, 0, 0, 0.85);
+        padding: 12px 14px 18px 14px;
+        max-height: calc(100svh - 58px);
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+      .livrea-hud-drawer-header {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        padding-bottom: 8px;
+        margin-bottom: 4px;
+      }
+      .livrea-hud-close-btn {
+        min-height: 44px;
+        min-width: 44px;
+        padding: 4px 8px !important;
+      }
+      .livrea-hud-sector-list {
+        display: flex;
+        flex-direction: column;
+      }
+      .livrea-hud-sector-btn {
+        width: 100%;
+        min-height: 48px;
+        padding: 8px 12px !important;
+        border-radius: 5px;
+        border: 1px solid rgba(255, 255, 255, 0.08) !important;
+        background: rgba(255, 255, 255, 0.03) !important;
+        text-align: left;
+        cursor: pointer;
+        transition: all 0.12s ease;
+      }
+      .livrea-hud-sector-btn:active,
+      .livrea-hud-sector-btn:hover {
+        background: rgba(255, 255, 255, 0.08) !important;
+        border-color: rgba(255, 255, 255, 0.2) !important;
+      }
+      .livrea-hud-sector-btn.is-active {
+        background: rgba(225, 6, 0, 0.18) !important;
+        border-color: #E10600 !important;
+      }
+      .livrea-hud-sector-pill {
+        display: inline-block;
+        padding: 3px 6px;
+        border-radius: 3px;
+        background: rgba(255, 255, 255, 0.06);
+        font-weight: 700;
+      }
+      .livrea-hud-sector-btn.is-active .livrea-hud-sector-pill {
+        background: #E10600;
+        color: #FFFFFF !important;
+      }
+      .livrea-hud-sector-name {
+        letter-spacing: 0.06em;
+      }
+      .livrea-hud-sector-desc {
+        opacity: 0.7;
+        font-size: 11px;
+      }
+      .livrea-hud-active-flag {
+        letter-spacing: 0.05em;
+        font-weight: 700;
+      }
+      .livrea-hud-jump-arrow {
+        opacity: 0.5;
+        font-size: 14px;
+      }
+      .livrea-hud-bottom-contact {
+        width: 100%;
+        min-height: 48px;
+        margin-top: 6px;
+        background: linear-gradient(135deg, #E10600 0%, #b30500 100%) !important;
+        border: none !important;
+        border-radius: 5px;
+        box-shadow: 0 4px 14px rgba(225, 6, 0, 0.4);
+      }
+      .livrea-hud-bottom-contact:hover,
+      .livrea-hud-bottom-contact:active {
+        background: linear-gradient(135deg, #f00700 0%, #c40500 100%) !important;
       }
 
       /* Common Panel Anatomy */
