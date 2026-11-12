@@ -82,17 +82,17 @@
       /* ========================================================================= */
 
       :root {
-        --color-tech-cyan: #00E5FF;
-        --color-tech-cyan-dim: rgba(0, 229, 255, 0.12);
-        --color-tech-cyan-border: rgba(0, 229, 255, 0.35);
+        --color-tech-cyan: #38BDF8;
+        --color-tech-cyan-dim: rgba(56, 189, 248, 0.12);
+        --color-tech-cyan-border: rgba(56, 189, 248, 0.3);
       }
       .livrea-text-cyan {
-        color: #00E5FF !important;
+        color: var(--color-tech-cyan, #38BDF8) !important;
       }
       .livrea-badge-cyan {
-        background: rgba(0, 229, 255, 0.1) !important;
-        border: 1px solid rgba(0, 229, 255, 0.35) !important;
-        color: #00E5FF !important;
+        background: var(--color-tech-cyan-dim, rgba(56, 189, 248, 0.12)) !important;
+        border: 1px solid var(--color-tech-cyan-border, rgba(56, 189, 248, 0.3)) !important;
+        color: var(--color-tech-cyan, #38BDF8) !important;
       }
 
       /* Dynamic Lightweight Telemetry Canvas Background */
@@ -304,18 +304,23 @@
         text-align: right;
       }
       .livrea-hud-contact-shortcut {
-        min-height: 44px;
-        min-width: 44px;
-        padding: 6px 10px !important;
-        background: rgba(225, 6, 0, 0.16) !important;
-        border: 1px solid rgba(225, 6, 0, 0.65) !important;
-        border-radius: 4px;
+        height: 28px !important;
+        min-height: 28px !important;
+        min-width: auto !important;
+        padding: 2px 8px !important;
+        background: rgba(255, 255, 255, 0.05) !important;
+        border: 1px solid rgba(255, 255, 255, 0.14) !important;
+        border-radius: 3px !important;
+        font-family: var(--font-mono);
+        font-size: 0.68rem !important;
+        letter-spacing: 0.04em;
+        line-height: 1;
         transition: all 0.15s ease;
       }
       .livrea-hud-contact-shortcut:hover,
       .livrea-hud-contact-shortcut:active {
-        background: rgba(225, 6, 0, 0.3) !important;
-        border-color: #E10600 !important;
+        background: rgba(255, 255, 255, 0.12) !important;
+        border-color: rgba(255, 255, 255, 0.28) !important;
       }
 
       /* Waypoint Drawer / Dropdown Ribbon */
@@ -457,6 +462,19 @@
           justify-content: flex-start !important;
           gap: 12px !important;
         }
+        /* Eliminate mid-page hero footer strip */
+        .livrea-hero-strip {
+          display: none !important;
+        }
+        /* Eliminate unwanted empty gaps inside sections */
+        .livrea-hero-center,
+        .livrea-podium-container,
+        .livrea-detail-block,
+        .livrea-project-split-layout,
+        .sf-hub-center,
+        .livrea-contact-center {
+          margin-block: 4px 10px !important;
+        }
       }
       @media (max-width: 480px) {
         .livrea-panel {
@@ -466,47 +484,79 @@
           padding-top: calc(48px + 16px) !important;
         }
       }
-          gap: 1rem;
-        }
-      }
 
-      /* Technical Livery Header */
+      /* Technical Livery Header — Strictly Single Line Everywhere */
       .livrea-telemetry-header {
         border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         padding-bottom: 6px;
         margin-bottom: 4px;
         min-height: 24px;
+        display: flex !important;
+        flex-direction: row !important;
+        flex-wrap: nowrap !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        gap: 8px !important;
+        width: 100% !important;
+        box-sizing: border-box;
       }
       @media (max-width: 640px) {
         .livrea-telemetry-header {
-          padding-bottom: 5px;
-          gap: 6px;
-          flex-wrap: wrap;
-          align-items: flex-start;
+          padding-bottom: 4px;
+          gap: 6px !important;
+          flex-wrap: nowrap !important;
+          align-items: center !important;
         }
+      }
+      .livrea-telemetry-left {
+        min-width: 0 !important;
+        overflow: hidden !important;
+        flex: 1 1 auto !important;
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        gap: 8px !important;
       }
       .livrea-red-indicator {
         display: inline-block;
         width: 6px;
-        height: 18px;
+        height: 16px;
         background-color: #E10600;
         border-radius: 1px;
+        flex-shrink: 0;
       }
       .livrea-kicker {
-        letter-spacing: 0.12em;
+        letter-spacing: 0.08em;
         text-transform: uppercase;
         font-family: var(--font-mono);
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        min-width: 0 !important;
+        font-size: 0.78rem;
       }
       @media (max-width: 640px) {
         .livrea-kicker {
-          font-size: 0.72rem;
-          letter-spacing: 0.05em;
+          font-size: 0.68rem !important;
+          letter-spacing: 0.04em !important;
+          white-space: nowrap !important;
+          overflow: hidden !important;
+          text-overflow: ellipsis !important;
           max-width: 100%;
-          white-space: normal;
-          word-break: break-word;
-          overflow: visible;
-          text-overflow: clip;
-          line-height: 1.35;
+        }
+      }
+      .livrea-telemetry-badge {
+        flex-shrink: 0 !important;
+        white-space: nowrap !important;
+        font-family: var(--font-mono);
+        font-size: 0.72rem;
+        letter-spacing: 0.04em;
+        color: #9A9EA8 !important;
+        font-weight: 600;
+      }
+      @media (max-width: 640px) {
+        .livrea-telemetry-badge {
+          font-size: 0.65rem !important;
         }
       }
       .livrea-badge-num {
@@ -604,7 +654,12 @@
       @media (max-width: 640px) {
         .livrea-role-strip {
           font-size: 0.78rem;
-          gap: 0.35rem 0.6rem !important;
+          flex-direction: column !important;
+          align-items: flex-start !important;
+          gap: 3px !important;
+        }
+        .livrea-role-separator {
+          display: none !important;
         }
       }
       .livrea-manifesto-card {
@@ -1894,6 +1949,14 @@
       .livrea-grid-row:hover {
         border-color: rgba(225, 6, 0, 0.4);
       }
+      .livrea-grid-node-header {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 12px;
+        flex-shrink: 0;
+        min-width: 175px;
+      }
       .livrea-grid-pos {
         font-family: var(--font-mono);
         font-weight: 900;
@@ -1946,6 +2009,15 @@
           align-items: flex-start !important;
           gap: 6px !important;
           padding: 14px 16px !important;
+        }
+        .livrea-grid-node-header {
+          min-width: auto !important;
+          width: 100% !important;
+          justify-content: flex-start !important;
+          gap: 8px !important;
+        }
+        .livrea-grid-node-body {
+          width: 100% !important;
         }
         .livrea-grid-pos {
           width: auto;
@@ -2077,6 +2149,17 @@
           padding-top: 6px !important;
           padding-bottom: 2px !important;
           margin-top: 8px !important;
+        }
+        .livrea-finish-strip {
+          flex-direction: row !important;
+          justify-content: center !important;
+          align-items: center !important;
+          text-align: center;
+          padding-top: 10px !important;
+          margin-top: 10px !important;
+        }
+        .livrea-finish-strip > * {
+          text-align: center;
         }
         .livrea-bottom-strip a,
         .livrea-hero-strip a {

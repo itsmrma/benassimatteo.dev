@@ -557,7 +557,9 @@ export function getStartingGridTimeline(): TimelineMilestone[] {
  */
 export function shouldShowBottomStrip(panelId: string, isMobile: boolean): boolean {
   if (!isMobile) return true;
-  return panelId === 'panel-1' || panelId === 'panel-9';
+  // On mobile continuous vertical scroll, only the final Pit Wall (panel-9) shows the finish strip.
+  // panel-1 hero strip is hidden on mobile to avoid an awkward mid-page footer.
+  return panelId === 'panel-9';
 }
 
 export interface SectorWaypoint {
@@ -1072,15 +1074,16 @@ export interface TelemetryKickerConfig {
 
 /**
  * Returns typography wrapping configuration for telemetry kickers.
- * On narrow mobile screens (320px–375px), kickers wrap gracefully without ellipses or clipping.
+ * Telemetry headers must maintain a clean single-line layout without line wrapping,
+ * using ellipsis on narrow mobile viewports (<640px) to prevent pushing right-hand badges.
  */
 export function getTelemetryKickerConfig(viewportWidth: number): TelemetryKickerConfig {
   if (viewportWidth < 640) {
     return {
-      wrap: true,
-      allowEllipsis: false,
-      maxLines: 2,
-      overflow: 'visible',
+      wrap: false,
+      allowEllipsis: true,
+      maxLines: 1,
+      overflow: 'hidden',
     };
   }
   return {

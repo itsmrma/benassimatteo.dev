@@ -254,8 +254,8 @@ test('mobileAdaptation: shouldShowBottomStrip consolidates repetitive intermedia
     assert.equal(shouldShowBottomStrip(pid, false), true, `Desktop shows bottom strip for ${pid}`);
   }
 
-  // On mobile: only panel-1 (hero links) and panel-9 (finish lap) show bottom strip
-  assert.equal(shouldShowBottomStrip('panel-1', true), true, 'Mobile shows hero bottom links');
+  // On mobile: only panel-9 (finish lap) shows bottom strip; panel-1 hero strip is hidden to avoid mid-page footer
+  assert.equal(shouldShowBottomStrip('panel-1', true), false, 'Mobile consolidates hero bottom links to prevent mid-page footer');
   assert.equal(shouldShowBottomStrip('panel-9', true), true, 'Mobile shows pit wall finish strip');
 
   // Intermediate panels (2 to 8) are streamlined to eliminate redundant vertical visual noise
@@ -705,17 +705,17 @@ test('contactActionDeck: provides dedicated >= 48px direct action buttons with i
   assert.match(copiedEmail.label, /COPIED/i, 'Label changes immediately to show copied feedback');
 });
 
-test('telemetryKicker: wraps gracefully without ellipses or clipping on narrow phone viewports (320px–375px)', () => {
+test('telemetryKicker: maintains single-line layout without line-wrapping on narrow phone viewports (320px–375px)', () => {
   // Narrow phone viewports
   const config320 = getTelemetryKickerConfig(320);
-  assert.equal(config320.wrap, true, '320px viewport kickers must wrap');
-  assert.equal(config320.allowEllipsis, false, '320px viewport kickers must NOT use ellipses');
-  assert.equal(config320.overflow, 'visible', '320px viewport kickers overflow must be visible (no clipping)');
+  assert.equal(config320.wrap, false, '320px viewport kickers must remain single line');
+  assert.equal(config320.allowEllipsis, true, '320px viewport kickers allow ellipsis');
+  assert.equal(config320.overflow, 'hidden', '320px viewport kickers overflow must be hidden');
 
   const config375 = getTelemetryKickerConfig(375);
-  assert.equal(config375.wrap, true, '375px viewport kickers must wrap');
-  assert.equal(config375.allowEllipsis, false, '375px viewport kickers must NOT use ellipses');
-  assert.equal(config375.overflow, 'visible', '375px viewport kickers overflow must be visible (no clipping)');
+  assert.equal(config375.wrap, false, '375px viewport kickers must remain single line');
+  assert.equal(config375.allowEllipsis, true, '375px viewport kickers allow ellipsis');
+  assert.equal(config375.overflow, 'hidden', '375px viewport kickers overflow must be hidden');
 
   // Desktop viewport
   const configDesktop = getTelemetryKickerConfig(1280);

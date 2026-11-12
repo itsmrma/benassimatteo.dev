@@ -107,14 +107,14 @@ export function MobileWaypointHud({
             {Math.round(scrollProgress)}%
           </Text>
           <Button
-            variant="secondary"
+            variant="ghost"
             size="sm"
             onClick={handleContactDirect}
             className="livrea-hud-contact-shortcut"
             aria-label="Jump directly to Contact sector"
             label="CONTACT ↗"
           >
-            <Text type="code" size="xsm" weight="bold" color="primary">
+            <Text type="code" size="xsm" weight="bold" color="secondary">
               CONTACT ↗
             </Text>
           </Button>

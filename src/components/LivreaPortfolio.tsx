@@ -249,7 +249,7 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
         <VStack justify="between" height="100%" width="100%" className="livrea-panel-inner">
           {/* Top Bar */}
           <HStack justify="between" align="center" width="100%" className="livrea-telemetry-header">
-            <HStack align="center" gap={2}>
+            <HStack align="center" gap={2} className="livrea-telemetry-left">
               <Text as="span" className="livrea-red-indicator">{'\u00A0'}</Text>
               <Text weight="bold" color="secondary" size="sm" className="livrea-kicker">
                 BENASSIMATTEO.DEV // <Text as="span" className="livrea-text-cyan">MONOPOSTO SPEC 2026</Text>
@@ -274,11 +274,11 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
               <Text type="code" weight="bold" className="livrea-text-cyan">
                 COMPUTER ENGINEERING @ UNIMORE
               </Text>
-              <Text color="secondary">·</Text>
+              <Text color="secondary" className="livrea-role-separator">·</Text>
               <Text type="code" color="primary">
                 SOFTWARE &amp; SYSTEMS ENGINEER
               </Text>
-              <Text color="secondary">·</Text>
+              <Text color="secondary" className="livrea-role-separator">·</Text>
               <Text type="code" color="secondary">
                 MANTOVA, ITALY
               </Text>
@@ -375,13 +375,13 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
       <VStack as="section" id="panel-2" className="livrea-panel livrea-panel-02">
         <VStack justify="between" height="100%" width="100%" className="livrea-panel-inner">
           <HStack justify="between" align="center" width="100%" className="livrea-telemetry-header">
-            <HStack align="center" gap={2}>
+            <HStack align="center" gap={2} className="livrea-telemetry-left">
               <Text as="span" className="livrea-red-indicator">{'\u00A0'}</Text>
               <Text weight="bold" color="secondary" size="sm" className="livrea-kicker">
                 SECTOR 02 // COMPETITIVE PODIUM RECORD
               </Text>
             </HStack>
-            <Text type="code" className="livrea-text-cyan" size="sm" weight="bold">
+            <Text type="code" className="livrea-telemetry-badge" size="sm">
               3/3 PODIUMS
             </Text>
           </HStack>
@@ -563,13 +563,13 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
       <VStack as="section" id="panel-3" className="livrea-panel livrea-panel-03">
         <VStack justify="between" height="100%" width="100%" className="livrea-panel-inner">
           <HStack justify="between" align="center" width="100%" className="livrea-telemetry-header">
-            <HStack align="center" gap={2}>
+            <HStack align="center" gap={2} className="livrea-telemetry-left">
               <Text as="span" className="livrea-red-indicator">{'\u00A0'}</Text>
               <Text weight="bold" color="secondary" size="sm" className="livrea-kicker">
                 SECTOR 03 // MULTI-AGENT WORKTREE ARCHITECTURE
               </Text>
             </HStack>
-            <Text type="code" className="livrea-text-cyan" size="sm" weight="bold">
+            <Text type="code" className="livrea-telemetry-badge" size="sm">
               TAURI 2 · RUST
             </Text>
           </HStack>
@@ -738,13 +738,13 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
       <VStack as="section" id="panel-4" className="livrea-panel livrea-panel-04">
         <VStack justify="between" height="100%" width="100%" className="livrea-panel-inner">
           <HStack justify="between" align="center" width="100%" className="livrea-telemetry-header">
-            <HStack align="center" gap={2}>
+            <HStack align="center" gap={2} className="livrea-telemetry-left">
               <Text as="span" className="livrea-red-indicator">{'\u00A0'}</Text>
               <Text weight="bold" color="secondary" size="sm" className="livrea-kicker">
                 SECTOR 04 // DIGITAL SIGNAL PROCESSING &amp; MCP
               </Text>
             </HStack>
-            <Text type="code" className="livrea-text-cyan" size="sm" weight="bold">
+            <Text type="code" className="livrea-telemetry-badge" size="sm">
               RUST FFT + TAURI 2
             </Text>
           </HStack>
@@ -901,13 +901,13 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
       <VStack as="section" id="panel-5" className="livrea-panel livrea-panel-05">
         <VStack justify="between" height="100%" width="100%" className="livrea-panel-inner">
           <HStack justify="between" align="center" width="100%" className="livrea-telemetry-header">
-            <HStack align="center" gap={2}>
+            <HStack align="center" gap={2} className="livrea-telemetry-left">
               <Text as="span" className="livrea-red-indicator">{'\u00A0'}</Text>
               <Text weight="bold" color="secondary" size="sm" className="livrea-kicker">
                 SECTOR 05 // SELF-HOSTED ARCHIVE &amp; SYSTEMS DAEMON
               </Text>
             </HStack>
-            <Text type="code" className="livrea-text-cyan" size="sm" weight="bold">
+            <Text type="code" className="livrea-telemetry-badge" size="sm">
               RUST + SQLITE
             </Text>
           </HStack>
@@ -1067,13 +1067,13 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
       <VStack as="section" id="panel-6" className="livrea-panel livrea-panel-06">
         <VStack justify="between" height="100%" width="100%" className="livrea-panel-inner">
           <HStack justify="between" align="center" width="100%" className="livrea-telemetry-header">
-            <HStack align="center" gap={2}>
+            <HStack align="center" gap={2} className="livrea-telemetry-left">
               <Text as="span" className="livrea-red-indicator">{'\u00A0'}</Text>
               <Text weight="bold" color="secondary" size="sm" className="livrea-kicker">
                 SECTOR 06 // LOW-LEVEL EMBEDDED &amp; DISTRIBUTED GIS
               </Text>
             </HStack>
-            <Text type="code" className="livrea-text-cyan" size="sm" weight="bold">
+            <Text type="code" className="livrea-telemetry-badge" size="sm">
               C + POSTGIS
             </Text>
           </HStack>
@@ -1194,13 +1194,13 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
       <VStack as="section" id="panel-7" className="livrea-panel livrea-panel-07">
         <VStack justify="between" height="100%" width="100%" className="livrea-panel-inner">
           <HStack justify="between" align="center" width="100%" className="livrea-telemetry-header">
-            <HStack align="center" gap={2}>
+            <HStack align="center" gap={2} className="livrea-telemetry-left">
               <Text as="span" className="livrea-red-indicator">{'\u00A0'}</Text>
               <Text weight="bold" color="secondary" size="sm" className="livrea-kicker">
                 SECTOR 07 // AUXILIARY MACHINERY &amp; HOME LAB
               </Text>
             </HStack>
-            <Text type="code" className="livrea-text-cyan" size="sm" weight="bold">
+            <Text type="code" className="livrea-telemetry-badge" size="sm">
               SYSTEMS &amp; INFRASTRUCTURE
             </Text>
           </HStack>
@@ -1296,13 +1296,13 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
       <VStack as="section" id="panel-8" className="livrea-panel livrea-panel-08">
         <VStack justify="between" height="100%" width="100%" className="livrea-panel-inner">
           <HStack justify="between" align="center" width="100%" className="livrea-telemetry-header">
-            <HStack align="center" gap={2}>
+            <HStack align="center" gap={2} className="livrea-telemetry-left">
               <Text as="span" className="livrea-red-indicator">{'\u00A0'}</Text>
               <Text weight="bold" color="secondary" size="sm" className="livrea-kicker">
                 SECTOR 08 // ACADEMIC &amp; SYSTEMS TRAJECTORY
               </Text>
             </HStack>
-            <Text type="code" className="livrea-text-cyan" size="sm" weight="bold">
+            <Text type="code" className="livrea-telemetry-badge" size="sm">
               2019 → 2027
             </Text>
           </HStack>
@@ -1321,15 +1321,15 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
             <VStack gap={3} width="100%" className="livrea-grid-rows livrea-grid-timeline">
               {/* P01 */}
               <HStack align="center" gap={4} className="livrea-grid-row livrea-timeline-node is-active-node">
-                <Text className="livrea-grid-pos" color="accent">
-                  P01
-                </Text>
-                <Stack width={140}>
+                <HStack align="center" gap={2} className="livrea-grid-node-header">
+                  <Text className="livrea-grid-pos" color="accent">
+                    P01
+                  </Text>
                   <Text type="code" color="primary" weight="bold">
                     2024 – PRESENT
                   </Text>
-                </Stack>
-                <VStack gap={0.5} width="100%">
+                </HStack>
+                <VStack gap={0.5} width="100%" className="livrea-grid-node-body">
                   <Heading level={3} weight="bold" color="primary">
                     B.Sc. Computer Engineering — UNIMORE (Mantova Campus)
                   </Heading>
@@ -1341,15 +1341,15 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
 
               {/* P02 */}
               <HStack align="center" gap={4} className="livrea-grid-row livrea-timeline-node">
-                <Text className="livrea-grid-pos" color="primary">
-                  P02
-                </Text>
-                <Stack width={140}>
+                <HStack align="center" gap={2} className="livrea-grid-node-header">
+                  <Text className="livrea-grid-pos" color="primary">
+                    P02
+                  </Text>
                   <Text type="code" color="primary" weight="bold">
                     2023
                   </Text>
-                </Stack>
-                <VStack gap={0.5} width="100%">
+                </HStack>
+                <VStack gap={0.5} width="100%" className="livrea-grid-node-body">
                   <Heading level={3} weight="bold" color="primary">
                     IT Systems Internship — Novellini S.p.A.
                   </Heading>
@@ -1361,15 +1361,15 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
 
               {/* P03 */}
               <HStack align="center" gap={4} className="livrea-grid-row livrea-timeline-node">
-                <Text className="livrea-grid-pos" color="primary">
-                  P03
-                </Text>
-                <Stack width={140}>
+                <HStack align="center" gap={2} className="livrea-grid-node-header">
+                  <Text className="livrea-grid-pos" color="primary">
+                    P03
+                  </Text>
                   <Text type="code" color="primary" weight="bold">
                     2019 – 2024
                   </Text>
-                </Stack>
-                <VStack gap={0.5} width="100%">
+                </HStack>
+                <VStack gap={0.5} width="100%" className="livrea-grid-node-body">
                   <Heading level={3} weight="bold" color="primary">
                     Diploma in Computer Science — ITIS "E. Fermi" Mantova
                   </Heading>
@@ -1381,15 +1381,15 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
 
               {/* P04 */}
               <HStack align="center" gap={4} className="livrea-grid-row livrea-timeline-node">
-                <Text className="livrea-grid-pos" color="secondary">
-                  P04
-                </Text>
-                <Stack width={140}>
+                <HStack align="center" gap={2} className="livrea-grid-node-header">
+                  <Text className="livrea-grid-pos" color="secondary">
+                    P04
+                  </Text>
                   <Text type="code" color="primary" weight="bold">
                     CERTIFICATIONS
                   </Text>
-                </Stack>
-                <VStack gap={0.5} width="100%">
+                </HStack>
+                <VStack gap={0.5} width="100%" className="livrea-grid-node-body">
                   <Heading level={3} weight="bold" color="primary">
                     Cambridge B2 First &amp; Language Competencies
                   </Heading>
@@ -1418,13 +1418,13 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
       <VStack as="section" id="panel-9" className="livrea-panel livrea-panel-09">
         <VStack justify="between" height="100%" width="100%" className="livrea-panel-inner">
           <HStack justify="between" align="center" width="100%" className="livrea-telemetry-header">
-            <HStack align="center" gap={2}>
+            <HStack align="center" gap={2} className="livrea-telemetry-left">
               <Text as="span" className="livrea-red-indicator">{'\u00A0'}</Text>
               <Text weight="bold" color="secondary" size="sm" className="livrea-kicker">
                 SECTOR 09 // PIT WALL &amp; CONTACT TRANSMISSION
               </Text>
             </HStack>
-            <Text type="code" className="livrea-text-cyan" size="sm" weight="bold">
+            <Text type="code" className="livrea-telemetry-badge" size="sm">
               OPEN TO CONNECT
             </Text>
           </HStack>
@@ -1658,22 +1658,9 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
             </VStack>
           </VStack>
 
-          <HStack justify="between" align="center" width="100%" className="livrea-bottom-strip livrea-finish-strip">
-            <HStack align="center" gap={2} wrap="wrap">
-              <Text type="code" color="secondary" size="sm">
-                MATTEO BENASSI · UNIMORE
-              </Text>
-              <Text color="secondary">·</Text>
-              <Link href={CONTACTS.linkedin} target="_blank" rel="noopener noreferrer" color="secondary">
-                LinkedIn ↗
-              </Link>
-              <Text color="secondary">·</Text>
-              <Link href={CONTACTS.github} target="_blank" rel="noopener noreferrer" color="secondary">
-                GitHub ↗
-              </Link>
-            </HStack>
+          <HStack justify="center" align="center" width="100%" className="livrea-bottom-strip livrea-finish-strip">
             <Text type="code" color="secondary" size="sm">
-              MANTOVA, ITALY · 2026
+              © 2026 MATTEO BENASSI // MANTOVA, ITALY
             </Text>
           </HStack>
         </VStack>
