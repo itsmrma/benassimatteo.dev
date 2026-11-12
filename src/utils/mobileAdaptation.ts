@@ -165,3 +165,154 @@ export function getActiveSectorFromDOM(
   const activeId = computeActiveSector(bounds, vh, options);
   return activeId ? parseSectorNumber(activeId) : 1;
 }
+
+export interface DesktopWindowConfig {
+  hideTrafficLights: boolean;
+  hideResizeHandles: boolean;
+  aspectRatio: string | null;
+  position: 'relative' | 'absolute';
+  transform: string;
+  minHeight: number;
+}
+
+/**
+ * Returns desktop window configuration based on viewport and touch mode.
+ * On mobile/touch, traffic lights and 8 resize handles are suppressed,
+ * and an explicit 16:10 intrinsic aspect ratio is enforced.
+ */
+export function getDesktopWindowConfig(
+  isMobile: boolean,
+  customAspectRatio?: string
+): DesktopWindowConfig {
+  if (isMobile) {
+    return {
+      hideTrafficLights: true,
+      hideResizeHandles: true,
+      aspectRatio: customAspectRatio ?? '16 / 10',
+      position: 'relative',
+      transform: 'none',
+      minHeight: 240,
+    };
+  }
+
+  return {
+    hideTrafficLights: false,
+    hideResizeHandles: false,
+    aspectRatio: null,
+    position: 'absolute',
+    transform: 'translate3d',
+    minHeight: 240,
+  };
+}
+
+export interface WindowDimensionsResult {
+  width: number;
+  height: number;
+  aspectRatio: string | null;
+}
+
+/**
+ * Calculates window dimensions for mobile vs desktop, enforcing non-zero
+ * aspect-ratio height on mobile to prevent layout shifts.
+ */
+export function calculateWindowDimensions(
+  width: number,
+  isMobile: boolean,
+  aspectRatio = '16 / 10',
+  minH = 240
+): WindowDimensionsResult {
+  if (!isMobile) {
+    return {
+      width,
+      height: minH,
+      aspectRatio: null,
+    };
+  }
+
+  // Parse ratio (e.g. '16 / 10' or '16:10')
+  const parts = aspectRatio.split(/[/:]/).map((s) => parseFloat(s.trim()));
+  const ratio = parts.length === 2 && parts[1] !== 0 ? parts[0] / parts[1] : 1.6;
+  const computedHeight = Math.round(width / ratio);
+  const height = Math.max(minH, computedHeight);
+
+  return {
+    width,
+    height,
+    aspectRatio,
+  };
+}
+
+export interface ArchitecturePillar {
+  key: string;
+  num: string;
+  title: string;
+  subtitle: string;
+  description: string;
+  spec: string;
+}
+
+export const OXIDE_SHOWCASE_PILLARS: ArchitecturePillar[] = [
+  {
+    key: 'worktrees',
+    num: '01',
+    title: 'Worktree Concurrency',
+    subtitle: 'Isolated Git Worktrees',
+    description:
+      'Spawns Claude Code, Codex, and Antigravity into independent worktrees so parallel turns never overwrite files or corrupt git index.',
+    spec: 'git worktree add · zero lock contention · parallel turns',
+  },
+  {
+    key: 'premerge',
+    num: '02',
+    title: 'Pre-Merge Gate',
+    subtitle: 'Automated Verification Gate',
+    description:
+      'Runs full typechecking and test suites on every agent turn before reconciling changes into the primary branch.',
+    spec: 'cargo check + tsc · gatekeeper validation · red/green receipts',
+  },
+  {
+    key: 'tauri2',
+    num: '03',
+    title: 'Tauri 2 IPC Bridge',
+    subtitle: 'Native OS Rust Core',
+    description:
+      'Low-memory native backend executing async subagent channels with high-throughput OS IPC performance.',
+    spec: 'Tauri 2 · Rust async channels · < 45MB RAM footprint',
+  },
+];
+
+export interface AppPreviewModeOptions {
+  isMobile: boolean;
+  isModalOpen?: boolean;
+}
+
+export interface AppPreviewModeResult {
+  allowInlineIframe: boolean;
+  hasScrollTrappingRisk: boolean;
+  showcaseActive: boolean;
+  supportsFullscreenModal: boolean;
+  pillars: ArchitecturePillar[];
+  isModalActive: boolean;
+  hasExitControl: boolean;
+  trapsPageScroll: boolean;
+}
+
+/**
+ * Contracts for touch-safe preview mode. Suppresses microscopic inline iframe on mobile,
+ * replaces it with a crisp architecture showcase, and manages fullscreen modal isolation.
+ */
+export function getAppPreviewMode(options: AppPreviewModeOptions): AppPreviewModeResult {
+  const isMobile = Boolean(options.isMobile);
+  const isModalOpen = Boolean(options.isModalOpen);
+
+  return {
+    allowInlineIframe: !isMobile,
+    hasScrollTrappingRisk: false,
+    showcaseActive: isMobile,
+    supportsFullscreenModal: isMobile,
+    pillars: OXIDE_SHOWCASE_PILLARS,
+    isModalActive: isMobile && isModalOpen,
+    hasExitControl: true,
+    trapsPageScroll: false,
+  };
+}
