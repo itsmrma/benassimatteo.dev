@@ -166,13 +166,13 @@ export const AppPreview = forwardRef<AppPreviewRef, AppPreviewProps>(
       return (
         <VStack
           ref={containerRef}
+          width="100%"
+          height="100%"
           className={`livrea-app-preview livrea-app-preview-mobile ${className}`}
           style={{
             position: 'relative',
-            width: '100%',
-            height: '100%',
             overflow: 'hidden',
-            backgroundColor: '#090A0E',
+            backgroundColor: 'var(--color-canvas)',
             touchAction: 'pan-y',
           }}
         >
@@ -201,13 +201,14 @@ export const AppPreview = forwardRef<AppPreviewRef, AppPreviewProps>(
             height="100%"
             width="100%"
             gap={1.5}
+            paddingBlock={1.5}
+            paddingInline={1.5}
+            minHeight={200}
             className="livrea-showcase-content"
             style={{
               position: 'relative',
               zIndex: 1,
-              padding: '10px 12px',
               boxSizing: 'border-box',
-              minHeight: '200px',
             }}
           >
             {/* Top Telemetry Header & Pillar Tabs */}
@@ -316,13 +317,13 @@ export const AppPreview = forwardRef<AppPreviewRef, AppPreviewProps>(
               role="dialog"
               aria-modal="true"
               aria-label="Oxide Interactive Web Demo"
+              width="100vw"
+              height="100vh"
               style={{
                 position: 'fixed',
                 inset: 0,
                 zIndex: 99999,
-                backgroundColor: '#090A0E',
-                width: '100vw',
-                height: '100vh',
+                backgroundColor: 'var(--color-canvas)',
               }}
             >
               {/* Modal Header Bar with Explicit Exit Control */}
@@ -330,11 +331,13 @@ export const AppPreview = forwardRef<AppPreviewRef, AppPreviewProps>(
                 justify="between"
                 align="center"
                 width="100%"
+                gap={2}
+                paddingBlock={1.5}
+                paddingInline={2}
                 className="livrea-modal-header"
                 style={{
-                  padding: '12px 16px',
-                  backgroundColor: '#0E0F14',
-                  borderBottom: '1px solid rgba(255, 255, 255, 0.12)',
+                  backgroundColor: 'var(--color-surface)',
+                  borderBottom: '1px solid var(--color-border-subtle, rgba(255, 255, 255, 0.12))',
                   boxSizing: 'border-box',
                   flexShrink: 0,
                 }}
@@ -368,7 +371,7 @@ export const AppPreview = forwardRef<AppPreviewRef, AppPreviewProps>(
                   flex: 1,
                   minHeight: 0,
                   position: 'relative',
-                  backgroundColor: '#1C1C1E',
+                  backgroundColor: 'var(--color-surface)',
                 }}
               >
                 <iframe
@@ -393,13 +396,13 @@ export const AppPreview = forwardRef<AppPreviewRef, AppPreviewProps>(
     return (
       <VStack
         ref={containerRef}
+        width="100%"
+        height="100%"
         className={`livrea-app-preview ${className}`}
         style={{
           position: 'relative',
-          width: '100%',
-          height: '100%',
           overflow: 'hidden',
-          backgroundColor: '#1C1C1E',
+          backgroundColor: 'var(--color-surface)',
         }}
       >
         {/* Poster Image */}

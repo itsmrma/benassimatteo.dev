@@ -47,6 +47,12 @@ test('mobileAdaptation: isMobileViewport correctly detects mobile vs desktop', (
   assert.equal(isMobileViewport(1024, false), false, '1024px fine pointer is desktop');
   assert.equal(isMobileViewport(1440, false), false, '1440px desktop is desktop');
   assert.equal(isMobileViewport(1920, false), false, '1920px desktop is desktop');
+
+  // Breakpoint override (e.g. 1024px stage breakpoint)
+  assert.equal(isMobileViewport(1023, false, 1024), true, '1023px is mobile with 1024px breakpoint');
+  assert.equal(isMobileViewport(1024, false, 1024), false, '1024px is desktop with 1024px breakpoint');
+  assert.equal(isMobileViewport(1280, false, 1024), false, '1280px is desktop with 1024px breakpoint');
+  assert.equal(isMobileViewport(1280, true, 1024), true, '1280px touch is mobile with 1024px breakpoint');
 });
 
 test('mobileAdaptation: calculateScrollProgress handles bounds and progress accurately', () => {
@@ -674,18 +680,22 @@ test('contactActionDeck: provides dedicated >= 48px direct action buttons with i
   const emailAction = initialActions.find((a) => a.id === 'email');
   assert.ok(emailAction, 'Email direct action exists');
   assert.equal(emailAction.instantFeedback, true, 'Email action supports instant feedback indicator');
+  assert.equal(emailAction.channelLabel, 'CHANNEL 01 // DIRECT', 'Email is Channel 01 Direct');
   assert.match(emailAction.label, /EMAIL/i);
 
   const githubAction = initialActions.find((a) => a.id === 'github');
   assert.ok(githubAction, 'GitHub action exists');
+  assert.equal(githubAction.channelLabel, 'CHANNEL 02 // CODE', 'GitHub is Channel 02 Code');
   assert.equal(githubAction.href, 'https://github.com/itsmrma');
 
   const linkedinAction = initialActions.find((a) => a.id === 'linkedin');
   assert.ok(linkedinAction, 'LinkedIn action exists');
+  assert.equal(linkedinAction.channelLabel, 'CHANNEL 03 // NETWORK', 'LinkedIn is Channel 03 Network');
   assert.equal(linkedinAction.href, 'https://www.linkedin.com/in/matteo-benassi/');
 
   const cvAction = initialActions.find((a) => a.id === 'cv');
   assert.ok(cvAction, 'CV download action exists');
+  assert.equal(cvAction.channelLabel, 'CHANNEL 04 // CREDENTIALS', 'CV is Channel 04 Credentials');
   assert.ok(cvAction.href.includes('cv.pdf'), 'CV action points to CV PDF');
 
   // Test copied state

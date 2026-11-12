@@ -199,11 +199,15 @@ export interface ActiveSectorOptions {
 
 /**
  * Determines whether mobile adaptation rules apply.
- * Mobile adaptation is active when viewport width is below 820px,
+ * Mobile adaptation is active when viewport width is below the breakpoint (defaults to 820px),
  * or when the user is on a touch / coarse-pointer device.
- * Desktop viewports (>= 820px) with fine pointer return false.
+ * Desktop viewports (>= breakpoint) with fine pointer return false.
  */
-export function isMobileViewport(width?: number, isCoarsePointer?: boolean): boolean {
+export function isMobileViewport(
+  width?: number,
+  isCoarsePointer?: boolean,
+  breakpoint: number = 820,
+): boolean {
   if (typeof window !== 'undefined') {
     const w = width ?? window.innerWidth;
     const coarse =
@@ -211,10 +215,10 @@ export function isMobileViewport(width?: number, isCoarsePointer?: boolean): boo
       (typeof window.matchMedia === 'function'
         ? window.matchMedia('(pointer: coarse)').matches
         : false);
-    return w < 820 || coarse;
+    return w < breakpoint || coarse;
   }
   const w = width ?? 1024;
-  return w < 820 || Boolean(isCoarsePointer);
+  return w < breakpoint || Boolean(isCoarsePointer);
 }
 
 /**
@@ -353,6 +357,7 @@ export interface TelemetryMetric {
   label: string;
   shortLabel: string;
   value: string;
+  desktopValue?: string;
   detail?: string;
   accent?: boolean;
 }
@@ -367,24 +372,27 @@ export function getHeroTelemetryMetrics(): TelemetryMetric[] {
     {
       id: 'kpi-podiums',
       label: 'KPI 01 // COMPETITION',
-      shortLabel: 'COMPETITION',
+      shortLabel: 'PODIUMS',
       value: '3x Podiums',
+      desktopValue: '3x Podiums',
       detail: '1st Hack4Water 2026 · 2x SCIoTeM 2026 & 2025',
       accent: true,
     },
     {
       id: 'kpi-academics',
       label: 'KPI 02 // ACADEMICS',
-      shortLabel: 'ACADEMICS',
+      shortLabel: 'ACADEMIC',
       value: '27.3/30 avg',
+      desktopValue: '27.3 / 30 avg',
       detail: '125/180 ECTS · 100/100 High-School Diploma',
       accent: false,
     },
     {
       id: 'kpi-availability',
       label: 'KPI 03 // AVAILABILITY',
-      shortLabel: 'AVAILABILITY',
+      shortLabel: 'STATUS',
       value: '2026/27 Ready',
+      desktopValue: '2026 / 27',
       detail: 'Summer 2026 / Fall 2026 / 2027 Full-Time',
       accent: true,
     },
@@ -992,6 +1000,7 @@ export function getMachineryGridConfig(isMobile: boolean): MachineryGridConfig {
 export interface ContactDeckAction {
   id: 'email' | 'github' | 'linkedin' | 'cv';
   action: 'email' | 'github' | 'linkedin' | 'cv';
+  channelLabel: string;
   label: string;
   subtitle: string;
   iconType: string;
@@ -1010,6 +1019,7 @@ export function getContactDeckActions(isCopied: boolean = false): ContactDeckAct
     {
       id: 'email',
       action: 'email',
+      channelLabel: 'CHANNEL 01 // DIRECT',
       label: isCopied ? 'EMAIL COPIED ✓' : 'EMAIL MATTEO',
       subtitle: isCopied ? 'Copied to clipboard' : 'm.benassi30@gmail.com',
       iconType: 'email',
@@ -1020,6 +1030,7 @@ export function getContactDeckActions(isCopied: boolean = false): ContactDeckAct
     {
       id: 'github',
       action: 'github',
+      channelLabel: 'CHANNEL 02 // CODE',
       label: 'GITHUB PROFILE ↗',
       subtitle: '@itsmrma · Repositories & Oxide',
       iconType: 'github',
@@ -1030,6 +1041,7 @@ export function getContactDeckActions(isCopied: boolean = false): ContactDeckAct
     {
       id: 'linkedin',
       action: 'linkedin',
+      channelLabel: 'CHANNEL 03 // NETWORK',
       label: 'LINKEDIN NETWORK ↗',
       subtitle: 'Matteo Benassi · Systems Engineer',
       iconType: 'linkedin',
@@ -1040,6 +1052,7 @@ export function getContactDeckActions(isCopied: boolean = false): ContactDeckAct
     {
       id: 'cv',
       action: 'cv',
+      channelLabel: 'CHANNEL 04 // CREDENTIALS',
       label: 'DOWNLOAD CV (PDF) ↗',
       subtitle: 'Academic & technical resume',
       iconType: 'cv',

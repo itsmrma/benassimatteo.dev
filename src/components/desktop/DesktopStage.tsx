@@ -23,26 +23,32 @@ export interface DesktopStageProps {
   children: React.ReactNode;
   height?: string | number;
   className?: string;
+  mobileBreakpoint?: number;
 }
 
 export function DesktopStage({
   children,
   height,
   className = '',
+  mobileBreakpoint = 1024,
 }: DesktopStageProps) {
   const stageRef = useRef<HTMLElement | null>(null);
   const [dimensions, setDimensions] = useState({ stageW: 0, stageH: 0 });
-  const [isMobile, setIsMobile] = useState(false);
+  const [isMobile, setIsMobile] = useState(() =>
+    typeof window !== 'undefined'
+      ? isMobileViewport(undefined, undefined, mobileBreakpoint)
+      : false,
+  );
 
   useEffect(() => {
     const checkMobile = () => {
-      setIsMobile(isMobileViewport());
+      setIsMobile(isMobileViewport(undefined, undefined, mobileBreakpoint));
     };
 
     checkMobile();
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
-  }, []);
+  }, [mobileBreakpoint]);
 
   useEffect(() => {
     const el = stageRef.current;
