@@ -31,7 +31,7 @@ import {
   getTelemetryKickerConfig,
   CONTACT_LINKS,
 } from '../src/utils/mobileAdaptation.ts';
-import { CONTACTS } from '../src/data/curatedData.ts';
+import { CONTACTS, IDENTITY } from '../src/data/curatedData.ts';
 
 test('mobileAdaptation: isMobileViewport correctly detects mobile vs desktop', () => {
   // Mobile widths (< 820px) should return true regardless of pointer type
@@ -731,4 +731,10 @@ test('contactActionDeck: mobile contact links match the desktop CONTACTS source 
   }
   const actions = getContactDeckActions(false);
   assert.equal(actions.find((a) => a.id === 'email').subtitle, CONTACTS.email, 'Mobile shows the same email the copy button writes');
+});
+
+test('identity: bio names the Oxide co-founder so the hero can link it', () => {
+  assert.ok(IDENTITY.bio.includes(IDENTITY.cofounder.name), 'bio contains the co-founder name exactly once');
+  assert.equal(IDENTITY.bio.split(IDENTITY.cofounder.name).length, 2);
+  assert.match(IDENTITY.cofounder.url, /^https:\/\/cavallinilorenzo\.com/);
 });

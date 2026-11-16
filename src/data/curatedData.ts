@@ -55,8 +55,9 @@ export const IDENTITY = {
   manifesto:
     'Learning by building things close to the metal — mostly systems software, embedded firmware, and tools I actually use.',
   bio:
-    "I study Computer Engineering at the University of Modena and Reggio Emilia, Mantova campus. I co-founded Oxide, write small open-source tools in Rust and C, and I'd like to work on motorsport software one day.",
+    "I study Computer Engineering at the University of Modena and Reggio Emilia, Mantova campus. I co-founded Oxide with Lorenzo Cavallini, write small open-source tools in Rust and C, and I'd like to work on motorsport software one day.",
   availability: 'Open to a curricular internship in 2026/27.',
+  cofounder: { name: 'Lorenzo Cavallini', url: 'https://cavallinilorenzo.com' },
   lastUpdated: 'November 2026',
 };
 

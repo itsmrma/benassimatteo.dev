@@ -284,6 +284,12 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
   const scrobblProj = FEATURED_PROJECTS.find((p) => p.id === 'scrobbl')!;
 
   const availability = IDENTITY.availability.replace(/\.$/, '');
+  const cofounderLink = (
+    <Link href={IDENTITY.cofounder.url} {...external} color="primary" className="livrea-inline-link">
+      {IDENTITY.cofounder.name}
+    </Link>
+  );
+  const [bioBefore, bioAfter] = IDENTITY.bio.split(IDENTITY.cofounder.name);
 
   return (
     <Section
@@ -358,7 +364,9 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
                 {IDENTITY.manifesto}
               </Text>
               <Text as="p" color="secondary" className="livrea-manifesto-bio">
-                {IDENTITY.bio}
+                {bioBefore}
+                {cofounderLink}
+                {bioAfter}
               </Text>
             </VStack>
 
@@ -506,7 +514,9 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
                 </HStack>
                 <HStack align="center" gap={2} wrap="wrap">
                   <Text type="code" size="sm" className="livrea-role-badge">Co-founder</Text>
-                  <Text size="sm" color="secondary">Pre-release · in active development</Text>
+                  <Text size="sm" color="secondary">
+                    with {cofounderLink} · pre-release, in active development
+                  </Text>
                 </HStack>
                 <Text as="p" color="primary" className="livrea-project-lead">{oxideProj.description}</Text>
                 <Text type="code" size="sm" color="secondary">{oxideProj.stack} · Git worktrees</Text>
