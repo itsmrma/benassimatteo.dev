@@ -134,7 +134,7 @@ Settings required in the dashboard (Workers & Pages → benassimatteo-dev → Se
 |---|---|
 | Build command | `npm run build` |
 | Deploy command (production) | `npx wrangler deploy` |
-| Non-production branch deploy command | `npx wrangler versions upload` |
+| Non-production branch deploy command | `npx wrangler preview` (richiede `"previews": {}` in `wrangler.jsonc`) |
 
 Every PR gets a preview version; `npm run deploy` / `npm run versions:upload` do the same locally. CI (`.github/workflows/ci.yml`) runs typecheck, tests, build and a wrangler dry-run. Security headers are in `public/_headers`.
 
