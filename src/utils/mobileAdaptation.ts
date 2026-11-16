@@ -371,8 +371,8 @@ export function getHeroTelemetryMetrics(): TelemetryMetric[] {
   return [
     {
       id: 'kpi-podiums',
-      label: 'KPI 01 // COMPETITION',
-      shortLabel: 'PODIUMS',
+      label: 'Competitions',
+      shortLabel: 'Competitions',
       value: '3x Podiums',
       desktopValue: '3x Podiums',
       detail: '1st Hack4Water 2026 · 2x SCIoTeM 2026 & 2025',
@@ -380,20 +380,20 @@ export function getHeroTelemetryMetrics(): TelemetryMetric[] {
     },
     {
       id: 'kpi-academics',
-      label: 'KPI 02 // ACADEMICS',
-      shortLabel: 'ACADEMIC',
+      label: 'Academics',
+      shortLabel: 'Academics',
       value: '27.3/30 avg',
       desktopValue: '27.3 / 30 avg',
-      detail: '125/180 ECTS · 100/100 High-School Diploma',
+      detail: '125/180 ECTS · 100/100 high-school diploma',
       accent: false,
     },
     {
       id: 'kpi-availability',
-      label: 'KPI 03 // AVAILABILITY',
-      shortLabel: 'STATUS',
+      label: 'Availability',
+      shortLabel: 'Availability',
       value: '2026/27 Ready',
       desktopValue: '2026 / 27',
-      detail: 'Summer 2026 / Fall 2026 / 2027 Full-Time',
+      detail: 'Summer 2026 · Fall 2026 · 2027 full-time',
       accent: false,
     },
   ];
@@ -568,82 +568,18 @@ export interface SectorWaypoint {
   index: number;
   title: string;
   label: string;
-  tagline?: string;
 }
 
 export const SECTOR_WAYPOINTS: readonly SectorWaypoint[] = [
-  {
-    id: 'panel-1',
-    num: '01',
-    index: 1,
-    title: 'CHASSIS',
-    label: 'Identification & Chassis Spec',
-    tagline: 'Bio, philosophy & telemetry metrics',
-  },
-  {
-    id: 'panel-2',
-    num: '02',
-    index: 2,
-    title: 'PODIUM',
-    label: 'Hackathon Podium',
-    tagline: 'Hack4Water, Hack the Code & AI Trophy',
-  },
-  {
-    id: 'panel-3',
-    num: '03',
-    index: 3,
-    title: 'OXIDE',
-    label: 'Oxide Desktop GUI',
-    tagline: 'Flagship worktree concurrent workspace',
-  },
-  {
-    id: 'panel-4',
-    num: '04',
-    index: 4,
-    title: 'SYNCFORGE',
-    label: 'SyncForge Subtitle Sync',
-    tagline: 'Cross-language subtitle sync CLI engine',
-  },
-  {
-    id: 'panel-5',
-    num: '05',
-    index: 5,
-    title: 'SCROBBL',
-    label: 'Scrobbl.rs Audio Daemon',
-    tagline: 'Lightweight Rust daemon for Last.fm/ListenBrainz',
-  },
-  {
-    id: 'panel-6',
-    num: '06',
-    index: 6,
-    title: 'EMBEDDED',
-    label: 'RTOS & Embedded Systems',
-    tagline: 'FreeRTOS & STM32 telemetry logger',
-  },
-  {
-    id: 'panel-7',
-    num: '07',
-    index: 7,
-    title: 'MACHINERY',
-    label: 'Auxiliary Machinery & Lab',
-    tagline: 'Open-source tools, CAD & hardware hacks',
-  },
-  {
-    id: 'panel-8',
-    num: '08',
-    index: 8,
-    title: 'GRID',
-    label: 'Starting Grid & Timeline',
-    tagline: 'UNIMORE Computer Engineering & honors',
-  },
-  {
-    id: 'panel-9',
-    num: '09',
-    index: 9,
-    title: 'CONTACT',
-    label: 'Telemetry Downlink & Contact',
-    tagline: 'Email, GitHub, LinkedIn & CV transmission',
-  },
+  { id: 'panel-1', num: '01', index: 1, title: 'About', label: 'Profile, highlights and links' },
+  { id: 'panel-2', num: '02', index: 2, title: 'Hackathons', label: 'Three podiums, 2025–2026' },
+  { id: 'panel-3', num: '03', index: 3, title: 'Oxide', label: 'Coding agents in parallel Git worktrees' },
+  { id: 'panel-4', num: '04', index: 4, title: 'SyncForge', label: 'Audio and subtitle sync in Rust' },
+  { id: 'panel-5', num: '05', index: 5, title: 'scrobbl.rs', label: 'Self-hosted listening archive' },
+  { id: 'panel-6', num: '06', index: 6, title: 'Embedded & GIS', label: 'STM32 firmware and PostGIS platform' },
+  { id: 'panel-7', num: '07', index: 7, title: 'More projects', label: 'Tools, home lab and side projects' },
+  { id: 'panel-8', num: '08', index: 8, title: 'Education', label: 'UNIMORE, internship, diploma' },
+  { id: 'panel-9', num: '09', index: 9, title: 'Contact', label: 'Email, GitHub, LinkedIn and CV' },
 ] as const;
 
 export function getSectorWaypoint(sectorOrId: number | string): SectorWaypoint {
@@ -661,8 +597,7 @@ export function formatSectorTelemetryKicker(
   isOpen: boolean = false
 ): string {
   const waypoint = getSectorWaypoint(sectorOrId);
-  const chevron = isOpen ? '▴' : '▾';
-  return `[ ${waypoint.num} // ${waypoint.title} ${chevron} ]`;
+  return `${waypoint.num} ${waypoint.title}, ${isOpen ? 'close' : 'open'} section menu`;
 }
 
 export function getContactSectorId(): string {
@@ -916,7 +851,7 @@ export function getAuxiliaryMachineryProjects(): MachineryProject[] {
     {
       id: 'amd-fan-control',
       title: 'AMD Fan Control',
-      tech: 'RUST FFI',
+      tech: 'Rust FFI',
       category: 'SYSTEMS UTILITY',
       description:
         'Low-level GPU fan curve utility built with Rust FFI binding to Linux sysfs hardware sensor monitors.',
@@ -925,16 +860,16 @@ export function getAuxiliaryMachineryProjects(): MachineryProject[] {
     {
       id: 'truenas-homelab',
       title: 'TrueNAS Home Lab',
-      tech: 'ZFS / LINUX',
+      tech: 'ZFS / Linux',
       category: 'INFRASTRUCTURE',
       description:
         'Dedicated home lab with ZFS RAIDZ storage pools, automated snapshot replication, Docker microservices, and network monitoring.',
-      statusNote: 'PRIVATE ON-PREM INFRASTRUCTURE',
+      statusNote: 'Private on-prem infrastructure',
     },
     {
       id: 'viessmann-dashboard',
       title: 'Viessmann Dashboard',
-      tech: 'HOME ASSISTANT',
+      tech: 'Home Assistant',
       category: 'ENERGY TELEMETRY',
       description:
         'Custom Home Assistant telemetry integration for monitoring heat pump COP modulation and energy efficiency curves.',
@@ -943,7 +878,7 @@ export function getAuxiliaryMachineryProjects(): MachineryProject[] {
     {
       id: 'uni-musiclib',
       title: 'UNIMORE Music Library',
-      tech: 'PYTHON / UV',
+      tech: 'Python / uv',
       category: 'CATALOG SERVICE',
       description:
         'Academic music archive catalog service built with Python, Django, uv dependency management, and MusicBrainz API integration.',
@@ -952,7 +887,7 @@ export function getAuxiliaryMachineryProjects(): MachineryProject[] {
     {
       id: 'music-history-analyzer',
       title: 'Music History Analyzer',
-      tech: 'LIVE APP',
+      tech: 'Live app',
       category: 'ANALYTICS ENGINE',
       description:
         'Interactive streaming history explorer importing multiple years of Spotify account JSON archives.',
@@ -962,11 +897,11 @@ export function getAuxiliaryMachineryProjects(): MachineryProject[] {
     {
       id: 'language-credentials',
       title: 'Cambridge B2 First',
-      tech: 'PROFICIENCY',
+      tech: 'Proficiency',
       category: 'COMMUNICATION',
       description:
         'Professional working English proficiency · Native Italian speaker. Technical documentation & international team communication.',
-      statusNote: 'TECHNICAL SPECIFICATIONS & TEAMS',
+      statusNote: 'Technical specifications & teams',
     },
   ];
 }
@@ -999,6 +934,18 @@ export function getMachineryGridConfig(isMobile: boolean): MachineryGridConfig {
   };
 }
 
+/**
+ * Contact endpoints, mirrored from CONTACTS in data/curatedData.ts so this
+ * module stays import-free for the node test runner.
+ */
+export const CONTACT_LINKS = {
+  email: 'info@benassimatteo.dev',
+  github: 'https://github.com/itsmrma',
+  linkedin: 'https://www.linkedin.com/in/matteo-benassi-bb47b02b0/',
+  cvEn: '/cv/CV_Matteo_Benassi_EN.pdf',
+  cvIt: '/cv/CV_Matteo_Benassi_IT.pdf',
+} as const;
+
 export interface ContactDeckAction {
   id: 'email' | 'github' | 'linkedin' | 'cv';
   action: 'email' | 'github' | 'linkedin' | 'cv';
@@ -1021,9 +968,9 @@ export function getContactDeckActions(isCopied: boolean = false): ContactDeckAct
     {
       id: 'email',
       action: 'email',
-      channelLabel: 'CHANNEL 01 // DIRECT',
-      label: isCopied ? 'EMAIL COPIED ✓' : 'EMAIL MATTEO',
-      subtitle: isCopied ? 'Copied to clipboard' : 'm.benassi30@gmail.com',
+      channelLabel: 'Email',
+      label: isCopied ? 'Email copied' : 'Copy email address',
+      subtitle: isCopied ? 'Copied to clipboard' : CONTACT_LINKS.email,
       iconType: 'email',
       minHeight: CONTACT_ACTION_MIN_HEIGHT,
       instantFeedback: true,
@@ -1032,34 +979,34 @@ export function getContactDeckActions(isCopied: boolean = false): ContactDeckAct
     {
       id: 'github',
       action: 'github',
-      channelLabel: 'CHANNEL 02 // CODE',
-      label: 'GITHUB PROFILE ↗',
-      subtitle: '@itsmrma · Repositories & Oxide',
+      channelLabel: 'GitHub',
+      label: 'GitHub',
+      subtitle: '@itsmrma · repositories and Oxide',
       iconType: 'github',
       minHeight: CONTACT_ACTION_MIN_HEIGHT,
-      href: 'https://github.com/itsmrma',
+      href: CONTACT_LINKS.github,
       variant: 'secondary',
     },
     {
       id: 'linkedin',
       action: 'linkedin',
-      channelLabel: 'CHANNEL 03 // NETWORK',
-      label: 'LINKEDIN NETWORK ↗',
-      subtitle: 'Matteo Benassi · Systems Engineer',
+      channelLabel: 'LinkedIn',
+      label: 'LinkedIn',
+      subtitle: 'Matteo Benassi',
       iconType: 'linkedin',
       minHeight: CONTACT_ACTION_MIN_HEIGHT,
-      href: 'https://www.linkedin.com/in/matteo-benassi/',
+      href: CONTACT_LINKS.linkedin,
       variant: 'secondary',
     },
     {
       id: 'cv',
       action: 'cv',
-      channelLabel: 'CHANNEL 04 // CREDENTIALS',
-      label: 'DOWNLOAD CV (PDF) ↗',
-      subtitle: 'Academic & technical resume',
+      channelLabel: 'CV',
+      label: 'CV',
+      subtitle: 'PDF in English and Italian',
       iconType: 'cv',
       minHeight: CONTACT_ACTION_MIN_HEIGHT,
-      href: 'https://benassimatteo.dev/cv.pdf',
+      href: CONTACT_LINKS.cvEn,
       variant: 'secondary',
     },
   ];

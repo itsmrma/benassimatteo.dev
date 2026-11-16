@@ -1,10 +1,7 @@
-import { useState, useEffect, useCallback } from 'react';
-import {
-  HStack,
-  VStack,
-  Button,
-  Text,
-} from '@astryxdesign/core';
+import { useState, useRef } from 'react';
+import { HStack, VStack, Button, Text, Link } from '@astryxdesign/core';
+import { BottomSheet } from '@astryxdesign/core/BottomSheet';
+import { Icon } from '@astryxdesign/core/Icon';
 import {
   SECTOR_WAYPOINTS,
   formatSectorTelemetryKicker,
@@ -19,234 +16,109 @@ export interface MobileWaypointHudProps {
   scrollProgress?: number;
 }
 
+// The sheet locks body scroll while open; wait for it to release before
+// scrolling, otherwise the jump is swallowed by the scroll restore.
+const SHEET_EXIT_MS = 260;
+
 export function MobileWaypointHud({
   activeSector,
   onScrollToSector,
-  scrollProgress = 0,
 }: MobileWaypointHudProps) {
   const [isOpen, setIsOpen] = useState(false);
-
-  const toggleMenu = useCallback(() => {
-    setIsOpen((prev) => !prev);
-  }, []);
-
-  const closeMenu = useCallback(() => {
-    setIsOpen(false);
-  }, []);
-
-  // Close on Escape key
-  useEffect(() => {
-    if (!isOpen) return;
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        closeMenu();
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, closeMenu]);
+  const pendingJump = useRef<number | null>(null);
 
   const currentWaypoint = getSectorWaypoint(activeSector);
-  const kickerLabel = formatSectorTelemetryKicker(activeSector, isOpen);
   const contactId = getContactSectorId();
 
-  const handleSectorSelect = (targetId: string) => {
-    handleWaypointJump(targetId, onScrollToSector, closeMenu);
-  };
-
-  const handleContactDirect = () => {
-    handleWaypointJump(contactId, onScrollToSector, closeMenu);
+  const jumpTo = (targetId: string) => {
+    if (pendingJump.current !== null) window.clearTimeout(pendingJump.current);
+    if (!isOpen) {
+      handleWaypointJump(targetId, onScrollToSector);
+      return;
+    }
+    setIsOpen(false);
+    pendingJump.current = window.setTimeout(() => {
+      pendingJump.current = null;
+      handleWaypointJump(targetId, onScrollToSector);
+    }, SHEET_EXIT_MS);
   };
 
   return (
-    <VStack
-      className="livrea-mobile-hud"
-      gap={0}
-      aria-label="Mobile Telemetry Waypoint Navigation"
-    >
-      {/* Sticky Telemetry HUD Bar */}
-      <HStack
-        align="center"
-        justify="between"
-        width="100%"
-        className="livrea-mobile-hud-bar"
-      >
-        {/* Active Sector Kicker Dropdown Trigger */}
+    <VStack className="livrea-mobile-hud" gap={0} aria-label="Section navigation">
+      <HStack align="center" justify="between" width="100%" className="livrea-mobile-hud-bar">
         <Button
           variant="ghost"
-          size="sm"
-          onClick={toggleMenu}
-          className="livrea-hud-kicker-btn"
-          aria-expanded={isOpen}
+          size="md"
+          onClick={() => setIsOpen(true)}
+          className="livrea-hud-trigger"
           aria-haspopup="dialog"
-          aria-label={`Current sector: ${currentWaypoint.num} ${currentWaypoint.title}. Tap to open sector waypoint menu.`}
-          label={kickerLabel}
+          aria-expanded={isOpen}
+          label={formatSectorTelemetryKicker(activeSector, isOpen)}
         >
-          <HStack align="center" gap={1} className="livrea-hud-kicker-content">
-            <Text type="code" size="xsm" color="accent" className="livrea-hud-kicker-badge">
-              SEC {currentWaypoint.num}
+          <HStack align="center" gap={2}>
+            <Text type="code" size="sm" className="livrea-hud-trigger-num">
+              {currentWaypoint.num}
             </Text>
-            <Text type="code" size="sm" weight="bold" color="primary" className="livrea-hud-kicker-title">
+            <Text size="base" weight="medium" color="primary" className="livrea-hud-trigger-title">
               {currentWaypoint.title}
             </Text>
-            <Text type="code" size="xsm" color="secondary" className="livrea-hud-kicker-chevron">
-              {isOpen ? '▴' : '▾'}
-            </Text>
+            <Icon icon="chevronDown" size="sm" color="secondary" />
           </HStack>
         </Button>
 
-        {/* Telemetry Progress & Direct Contact Action */}
-        <HStack align="center" gap={2} className="livrea-hud-actions">
-          <Text
-            type="code"
-            size="xsm"
-            color="secondary"
-            className="livrea-hud-lap-counter"
-            aria-hidden="true"
-          >
-            {Math.round(scrollProgress)}%
-          </Text>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleContactDirect}
-            className="livrea-hud-contact-shortcut"
-            aria-label="Jump directly to Contact sector"
-            label="CONTACT ↗"
-          >
-            <Text type="code" size="xsm" weight="bold" color="secondary">
-              CONTACT ↗
-            </Text>
-          </Button>
-        </HStack>
+        <Button
+          variant="secondary"
+          size="sm"
+          onClick={() => jumpTo(contactId)}
+          className="livrea-hud-contact"
+          label="Contact"
+        />
       </HStack>
 
-      {/* Quick-Jump Waypoint Drawer / Dropdown Ribbon */}
-      {isOpen && (
-        <VStack
-          className="livrea-hud-drawer"
-          gap={2}
-          role="dialog"
-          aria-modal="true"
-          aria-label="Sector Waypoint Quick-Jump"
-        >
-          {/* Drawer Header */}
-          <HStack
-            align="center"
-            justify="between"
-            width="100%"
-            className="livrea-hud-drawer-header"
-          >
-            <HStack align="center" gap={1}>
-              <Text type="code" size="xsm" color="accent">
-                [ WAYPOINTS
-              </Text>
-              <Text type="code" size="xsm" color="secondary">
-                // 9 SECTORS ]
-              </Text>
-            </HStack>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={closeMenu}
-              className="livrea-hud-close-btn"
-              aria-label="Close waypoint navigation menu"
-              label="CLOSE ✕"
-            >
-              <Text type="code" size="xsm" color="secondary">
-                CLOSE ✕
-              </Text>
-            </Button>
+      <BottomSheet isOpen={isOpen} onOpenChange={setIsOpen} label="Sections" height="hug" padding={0}>
+        <VStack gap={0} width="100%" className="livrea-sheet">
+          <HStack align="center" justify="between" className="livrea-sheet-head">
+            <Text size="sm" color="secondary">
+              Sections
+            </Text>
+            <Text type="code" size="sm" color="secondary">
+              {currentWaypoint.num} / {String(SECTOR_WAYPOINTS.length).padStart(2, '0')}
+            </Text>
           </HStack>
 
-          {/* 9 Sector Waypoint Buttons */}
-          <VStack gap={1} width="100%" className="livrea-hud-sector-list">
+          <VStack as="nav" gap={0} width="100%" aria-label="Page sections">
             {SECTOR_WAYPOINTS.map((sector) => {
               const isActive = activeSector === sector.index;
               return (
-                <Button
+                <Link
                   key={sector.id}
-                  variant={isActive ? 'primary' : 'ghost'}
-                  size="md"
-                  onClick={() => handleSectorSelect(sector.id)}
-                  className={`livrea-hud-sector-btn ${isActive ? 'is-active' : ''}`}
+                  href={`#${sector.id}`}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    jumpTo(sector.id);
+                  }}
                   aria-current={isActive ? 'location' : undefined}
-                  label={`Sector ${sector.num}: ${sector.title} - ${sector.label}`}
+                  className={`livrea-sheet-row${isActive ? ' is-active' : ''}`}
                 >
-                  <HStack
-                    align="center"
-                    justify="between"
-                    width="100%"
-                    className="livrea-hud-sector-row"
-                  >
-                    <HStack align="center" gap={2}>
-                      <Text
-                        type="code"
-                        size="xsm"
-                        color={isActive ? 'accent' : 'secondary'}
-                        className="livrea-hud-sector-pill"
-                      >
-                        {sector.num}
+                  <HStack align="center" gap={3} width="100%">
+                    <Text type="code" size="sm" className="livrea-sheet-num">
+                      {sector.num}
+                    </Text>
+                    <VStack gap={0} className="livrea-sheet-text">
+                      <Text size="base" weight="medium" color="primary">
+                        {sector.title}
                       </Text>
-                      <VStack align="start" gap={0} className="livrea-hud-sector-meta">
-                        <Text
-                          size="sm"
-                          weight="bold"
-                          color={isActive ? 'accent' : 'primary'}
-                          className="livrea-hud-sector-name"
-                        >
-                          {sector.title}
-                        </Text>
-                        <Text
-                          size="xsm"
-                          color="secondary"
-                          className="livrea-hud-sector-desc"
-                        >
-                          {sector.label}
-                        </Text>
-                      </VStack>
-                    </HStack>
-                    {isActive ? (
-                      <Text
-                        type="code"
-                        size="xsm"
-                        color="accent"
-                        className="livrea-hud-active-flag"
-                      >
-                        [ CURRENT ]
+                      <Text size="sm" color="secondary">
+                        {sector.label}
                       </Text>
-                    ) : (
-                      <Text
-                        type="code"
-                        size="xsm"
-                        color="secondary"
-                        className="livrea-hud-jump-arrow"
-                      >
-                        →
-                      </Text>
-                    )}
+                    </VStack>
                   </HStack>
-                </Button>
+                </Link>
               );
             })}
           </VStack>
-
-          {/* Direct Shortcut to Contact Downlink */}
-          <Button
-            variant="primary"
-            size="md"
-            onClick={handleContactDirect}
-            className="livrea-hud-bottom-contact"
-            label="JUMP TO CONTACT DOWNLINK [ 09 ] ↗"
-          >
-            <HStack align="center" justify="center" gap={1} width="100%">
-              <Text type="code" size="sm" weight="bold" color="primary">
-                TRANSMIT MESSAGE // CONTACT [ 09 ] ↗
-              </Text>
-            </HStack>
-          </Button>
         </VStack>
-      )}
+      </BottomSheet>
     </VStack>
   );
 }

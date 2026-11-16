@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, type ReactNode } from 'react';
 import {
   Section,
   VStack,
@@ -9,6 +9,7 @@ import {
   Button,
   AspectRatio,
 } from '@astryxdesign/core';
+import { Icon } from '@astryxdesign/core/Icon';
 import {
   IDENTITY,
   FEATURED_PROJECTS,
@@ -33,6 +34,97 @@ interface LivreaPortfolioProps {
 }
 
 const PANELS = SECTOR_WAYPOINTS;
+
+const external = { target: '_blank', rel: 'noopener noreferrer' } as const;
+const extIcon = <Icon icon="externalLink" size="sm" />;
+
+/** Section header: livery tick, sector number, section name, quiet meta on the right. */
+function SectorHeader({ num, label, meta }: { num: string; label: string; meta?: ReactNode }) {
+  return (
+    <HStack justify="between" align="center" width="100%" className="livrea-telemetry-header">
+      <HStack align="center" gap={2} className="livrea-telemetry-left">
+        <Text as="span" className="livrea-red-indicator" aria-hidden="true">
+          {' '}
+        </Text>
+        <Text type="code" size="sm" color="primary" className="livrea-kicker-num">
+          {num}
+        </Text>
+        <Text size="sm" color="secondary" className="livrea-kicker">
+          {label}
+        </Text>
+      </HStack>
+      {meta && (
+        <Text type="code" size="sm" className="livrea-telemetry-badge">
+          {meta}
+        </Text>
+      )}
+    </HStack>
+  );
+}
+
+/** Numbered architecture point used by the three flagship projects. */
+function Pillar({ n, title, children }: { n: string; title: string; children: ReactNode }) {
+  return (
+    <HStack align="start" gap={3} className="livrea-pillar-item">
+      <Text type="code" size="sm" color="secondary" className="livrea-pillar-num">
+        {n}
+      </Text>
+      <VStack gap={0.5}>
+        <Text weight="medium" color="primary">
+          {title}
+        </Text>
+        <Text type="body" color="secondary">
+          {children}
+        </Text>
+      </VStack>
+    </HStack>
+  );
+}
+
+/** Window frame around a real product capture. */
+function ProductWindow({
+  title,
+  src,
+  alt,
+  ratio,
+  caption,
+  meta,
+}: {
+  title: string;
+  src: string;
+  alt: string;
+  ratio: number;
+  caption: string;
+  meta: string;
+}) {
+  return (
+    <VStack gap={2} width="100%" className="livrea-split-right-col">
+      <VStack width="100%" className="livrea-mockup-frame">
+        <HStack align="center" gap={3} width="100%" className="livrea-mockup-titlebar">
+          <HStack align="center" gap={1.5} className="livrea-win-controls" aria-hidden="true">
+            <Text as="span" className="livrea-win-dot">{' '}</Text>
+            <Text as="span" className="livrea-win-dot">{' '}</Text>
+            <Text as="span" className="livrea-win-dot">{' '}</Text>
+          </HStack>
+          <Text type="code" size="sm" color="secondary" className="livrea-win-title-text">
+            {title}
+          </Text>
+        </HStack>
+        <AspectRatio ratio={ratio} fit="cover">
+          <img src={src} alt={alt} className="livrea-app-screenshot" loading="lazy" />
+        </AspectRatio>
+      </VStack>
+      <HStack justify="between" align="start" gap={3} width="100%" className="livrea-stage-caption">
+        <Text size="sm" color="secondary" className="livrea-stage-caption-text">
+          {caption}
+        </Text>
+        <Text type="code" size="sm" color="secondary" className="livrea-stage-caption-meta">
+          {meta}
+        </Text>
+      </HStack>
+    </VStack>
+  );
+}
 
 export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioProps) {
   const [activePanel, setActivePanel] = useState(1);
@@ -125,10 +217,8 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
       container.addEventListener('scroll', handleScroll, { passive: true });
     }
 
-    // Initial calculation
     updateMetrics();
 
-    // Multi-threshold IntersectionObserver for active sector tracking across tall & short panels
     const observer = new IntersectionObserver(
       () => {
         updateMetrics();
@@ -149,6 +239,7 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
         activeTag === 'input' ||
         activeTag === 'textarea' ||
         activeTag === 'iframe' ||
+        activeEl.closest('dialog') ||
         activeEl.closest('.livrea-desktop-window') ||
         activeEl.closest('.livrea-desktop-stage') ||
         activeEl.closest('.livrea-os-window')
@@ -192,6 +283,8 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
   const stm32Proj = FEATURED_PROJECTS.find((p) => p.id === 'stm32')!;
   const scrobblProj = FEATURED_PROJECTS.find((p) => p.id === 'scrobbl')!;
 
+  const availability = IDENTITY.availability.replace(/\.$/, '');
+
   return (
     <Section
       variant="transparent"
@@ -199,25 +292,24 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
       paddingInline={0}
       className="livrea-snap-container"
     >
-      {/* Dynamic Lightweight Telemetry Background Animation */}
       <TelemetryBackground />
 
-      {/* 1. Thin Red Lap Progress Bar at Top */}
+      {/* Scroll progress: the one live livery line */}
       <HStack className="livrea-progress-track" aria-hidden="true">
         <Text as="span" className="livrea-progress-bar" style={{ width: `${scrollProgress}%` }}>
-          {'\u00A0'}
+          {' '}
         </Text>
       </HStack>
 
-      {/* 2. Sticky Mobile Telemetry Waypoint HUD & Quick-Jump Navigation (Mobile) */}
+      {/* Mobile: section bar + bottom sheet picker */}
       <MobileWaypointHud
         activeSector={activePanel}
         onScrollToSector={scrollToPanel}
         scrollProgress={scrollProgress}
       />
 
-      {/* 3. Floating Quick-Jump Checkpoints on Right Margin (Desktop) */}
-      <VStack gap={1} className="livrea-quick-nav" aria-label="Circuit checkpoint navigation">
+      {/* Desktop: section rail */}
+      <VStack as="nav" gap={0} className="livrea-quick-nav" aria-label="Page sections">
         {PANELS.map((p, idx) => {
           const isActive = activePanel === idx + 1;
           return (
@@ -228,993 +320,426 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
                 e.preventDefault();
                 scrollToPanel(p.id);
               }}
-              color={isActive ? 'accent' : 'secondary'}
+              color={isActive ? 'primary' : 'secondary'}
+              aria-current={isActive ? 'location' : undefined}
+              aria-label={`${p.num} ${p.title}`}
               className={`livrea-nav-dot ${isActive ? 'is-active' : ''}`}
             >
-              <HStack align="center" gap={1}>
-                <Text type="code" size="sm" color={isActive ? 'accent' : 'secondary'}>
-                  {p.num}
-                </Text>
-              </HStack>
+              <Text type="code" size="sm" color="inherit">
+                {p.num}
+              </Text>
+              <Text size="sm" color="inherit" className="livrea-nav-label">
+                {p.title}
+              </Text>
             </Link>
           );
         })}
       </VStack>
 
-      {/* ========================================================================= */}
-      {/* 01 — IDENTIFICATION & CHASSIS SPEC (01) */}
-      {/* ========================================================================= */}
+      {/* 01 — About */}
       <VStack as="section" id="panel-1" className="livrea-panel livrea-panel-01">
         <VStack justify="between" height="100%" width="100%" className="livrea-panel-inner">
-          {/* Top Bar */}
-          <HStack justify="between" align="center" width="100%" className="livrea-telemetry-header">
-            <HStack align="center" gap={2} className="livrea-telemetry-left">
-              <Text as="span" className="livrea-red-indicator">{'\u00A0'}</Text>
-              <Text weight="bold" color="secondary" size="sm" className="livrea-kicker">
-                BENASSIMATTEO.DEV // <Text as="span" className="livrea-text-cyan">MONOPOSTO SPEC 2026</Text>
-              </Text>
-            </HStack>
-          </HStack>
+          <SectorHeader num="01" label="About" meta={`Updated ${IDENTITY.lastUpdated}`} />
 
-          {/* Hero Content Block */}
-          <VStack gap={4} width="100%" className="livrea-hero-center">
-            {/* Massive Typographic Livery Name */}
-            <VStack gap={0} width="100%" className="livrea-title-group">
+          <VStack gap={6} width="100%" className="livrea-hero-center">
+            <VStack gap={3} width="100%">
               <Heading level={1} className="livrea-huge-name">
-                MATTEO
+                Matteo
+                <br />
+                Benassi
               </Heading>
-              <Heading level={1} className="livrea-huge-name">
-                BENASSI
-              </Heading>
+              <HStack align="center" gap={2} wrap="wrap" className="livrea-role-strip">
+                <Text color="primary">Computer Engineering at UNIMORE</Text>
+                <Text color="secondary" className="livrea-role-separator" aria-hidden="true">·</Text>
+                <Text color="secondary">Software &amp; systems engineer</Text>
+                <Text color="secondary" className="livrea-role-separator" aria-hidden="true">·</Text>
+                <Text color="secondary">Mantova, Italy</Text>
+              </HStack>
             </VStack>
 
-            {/* Technical Subtitle Bar */}
-            <HStack align="center" gap={3} wrap="wrap" className="livrea-role-strip">
-              <Text type="code" weight="bold" className="livrea-text-cyan">
-                COMPUTER ENGINEERING @ UNIMORE
-              </Text>
-              <Text color="secondary" className="livrea-role-separator">·</Text>
-              <Text type="code" color="primary">
-                SOFTWARE &amp; SYSTEMS ENGINEER
-              </Text>
-              <Text color="secondary" className="livrea-role-separator">·</Text>
-              <Text type="code" color="secondary">
-                MANTOVA, ITALY
-              </Text>
-            </HStack>
-
-            {/* Manifesto Box with Red Racing Stripe */}
             <VStack gap={2} className="livrea-manifesto-card">
-              <Text as="p" type="large" color="primary" className="livrea-manifesto-text">
-                "{IDENTITY.manifesto}"
+              <Text as="p" color="primary" className="livrea-manifesto-text">
+                {IDENTITY.manifesto}
               </Text>
-              <Text type="supporting" color="secondary">
+              <Text as="p" color="secondary" className="livrea-manifesto-bio">
                 {IDENTITY.bio}
               </Text>
             </VStack>
 
-            {/* Telemetry KPI Readout (3 Columns / Compact Mobile HUD Ribbon) */}
-            <HStack justify="between" align="stretch" gap={3} width="100%" className="livrea-kpi-grid">
-              {heroMetrics.map((kpi) => {
-                const isPodium = kpi.id === 'kpi-podiums';
-                const isAcademic = kpi.id === 'kpi-academics';
-                const valClass = isPodium
-                  ? 'livrea-kpi-val-podium'
-                  : isAcademic
-                    ? 'livrea-kpi-val-academic'
-                    : 'livrea-kpi-val-status';
-                return (
-                  <VStack key={kpi.id} gap={1} className="livrea-kpi-box">
-                    <Text type="code" color="secondary" size="sm" className="livrea-kpi-desktop">
-                      {kpi.label}
+            <HStack align="stretch" gap={0} width="100%" className="livrea-kpi-grid">
+              {heroMetrics.map((kpi) => (
+                <VStack key={kpi.id} gap={1} className="livrea-kpi-box">
+                  <Text size="sm" color="secondary">
+                    {kpi.label}
+                  </Text>
+                  <Text color="primary" className="livrea-kpi-value">
+                    {kpi.desktopValue || kpi.value}
+                  </Text>
+                  {kpi.detail && (
+                    <Text size="sm" color="secondary">
+                      {kpi.detail}
                     </Text>
-                    <Text type="code" color="secondary" size="sm" className="livrea-kpi-mobile livrea-kpi-mobile-label">
-                      {kpi.shortLabel}
-                    </Text>
-                    <Heading
-                      level={3}
-                      color={isPodium ? 'accent' : 'primary'}
-                      weight="bold"
-                      className={`livrea-kpi-desktop ${isAcademic ? 'livrea-text-cyan' : ''}`}
-                    >
-                      {kpi.desktopValue || kpi.value}
-                    </Heading>
-                    <Text
-                      color={isPodium ? 'accent' : 'primary'}
-                      className={`livrea-kpi-mobile livrea-kpi-mobile-val ${valClass}`}
-                    >
-                      {kpi.value}
-                    </Text>
-                    {kpi.detail && (
-                      <Text type="body" color="secondary" className="livrea-kpi-desktop">
-                        {kpi.detail}
-                      </Text>
-                    )}
-                  </VStack>
-                );
-              })}
+                  )}
+                </VStack>
+              ))}
             </HStack>
           </VStack>
 
-          {/* Bottom Bar */}
           <HStack justify="between" align="center" width="100%" className="livrea-bottom-strip livrea-hero-strip">
-            <HStack align="center" gap={2} wrap="wrap" className="livrea-hero-links">
-              <Link href={`mailto:${CONTACTS.email}`} onClick={handleCopy} color="primary" weight="bold" className="livrea-email-link">
-                {isCopied ? 'EMAIL COPIED ✓' : CONTACTS.email}
+            <HStack align="center" gap={1} wrap="wrap" className="livrea-hero-links">
+              <Link href={`mailto:${CONTACTS.email}`} onClick={handleCopy} color="primary" className="livrea-email-link">
+                {isCopied ? 'Email copied' : CONTACTS.email}
               </Link>
-              <Text color="secondary">·</Text>
-              <Link href={CONTACTS.github} target="_blank" rel="noopener noreferrer" color="secondary">
-                GitHub ↗
-              </Link>
-              <Text color="secondary">·</Text>
-              <Link href={CONTACTS.linkedin} target="_blank" rel="noopener noreferrer" color="secondary">
-                LinkedIn ↗
-              </Link>
-              <Text color="secondary">·</Text>
-              <Link href={CONTACTS.cvEn} target="_blank" rel="noopener noreferrer" color="secondary">
-                CV (EN)
-              </Link>
-              <Text color="secondary">/</Text>
-              <Link href={CONTACTS.cvIt} target="_blank" rel="noopener noreferrer" color="secondary">
-                (IT)
-              </Link>
+              <Link href={CONTACTS.github} {...external} color="secondary">GitHub</Link>
+              <Link href={CONTACTS.linkedin} {...external} color="secondary">LinkedIn</Link>
+              <Link href={CONTACTS.cvEn} {...external} color="secondary">CV (EN)</Link>
+              <Link href={CONTACTS.cvIt} {...external} color="secondary">CV (IT)</Link>
             </HStack>
-            <HStack align="center" gap={2} className="livrea-scroll-hint-wrap">
-              <Text type="code" color="accent" weight="bold" className="livrea-scroll-hint">
-                SCROLL TO TELEMETRY ↓
-              </Text>
-            </HStack>
+            <Text type="code" size="sm" color="secondary" className="livrea-scroll-hint">
+              Scroll ↓
+            </Text>
           </HStack>
         </VStack>
       </VStack>
 
-      {/* ========================================================================= */}
-      {/* 02 — THE PODIUM: 3 HACKATHON PODIUMS (02) */}
-      {/* ========================================================================= */}
+      {/* 02 — Hackathons */}
       <VStack as="section" id="panel-2" className="livrea-panel livrea-panel-02">
         <VStack justify="between" height="100%" width="100%" className="livrea-panel-inner">
-          <HStack justify="between" align="center" width="100%" className="livrea-telemetry-header">
-            <HStack align="center" gap={2} className="livrea-telemetry-left">
-              <Text as="span" className="livrea-red-indicator">{'\u00A0'}</Text>
-              <Text weight="bold" color="secondary" size="sm" className="livrea-kicker">
-                SECTOR 02 // COMPETITIVE PODIUM RECORD
-              </Text>
-            </HStack>
-            <Text type="code" className="livrea-telemetry-badge" size="sm">
-              3/3 PODIUMS
-            </Text>
-          </HStack>
+          <SectorHeader num="02" label="Hackathons" meta="3 entries · 3 podiums" />
 
-          <VStack gap={4} width="100%" className="livrea-podium-container">
-            <VStack gap={1}>
+          <VStack gap={6} width="100%" className="livrea-podium-container">
+            <VStack gap={2}>
               <Heading level={2} className="livrea-section-head">
-                THE PODIUM
+                Three hackathons, three podiums
               </Heading>
-              <Text type="large" color="secondary">
-                3 competitions entered, 3 consecutive podiums in systems architecture, GIS engineering, and applied AI.
+              <Text color="secondary" className="livrea-section-lead">
+                Systems architecture, GIS engineering and applied AI, built with the UNIMORE team.
               </Text>
             </VStack>
 
-            {/* 3 Detailed Podium Finish Cards */}
-            <HStack justify="between" align="stretch" gap={4} width="100%" className="livrea-podium-cards">
-              {/* P1 — Hack4Water 2026 */}
-              <VStack gap={2} className="livrea-podium-card livrea-podium-p1">
+            <HStack justify="between" align="stretch" gap={3} width="100%" className="livrea-podium-cards">
+              <VStack gap={3} className="livrea-podium-card livrea-podium-p1">
                 <HStack justify="between" align="center">
-                  <Text className="livrea-podium-rank" color="accent">
-                    P1
-                  </Text>
-                  <Text type="code" color="accent" weight="bold" size="sm">
-                    1ST PLACE · 2026
-                  </Text>
+                  <Text className="livrea-podium-rank is-winner">P1</Text>
+                  <Text type="code" size="sm" color="secondary">1st place · 2026</Text>
                 </HStack>
-
-                <Heading level={3} weight="bold" color="primary">
-                  Hack4Water 2026
-                </Heading>
-                <Text type="large" color="accent" weight="bold">
-                  Garda Chiese Alert
-                </Text>
-
+                <VStack gap={0.5}>
+                  <Heading level={3} className="livrea-card-title">Garda Chiese Alert</Heading>
+                  <Text size="sm" color="secondary">Hack4Water 2026</Text>
+                </VStack>
                 <Text as="p" type="body" color="secondary">
                   Citizen incident reporting platform for a 76,645-hectare water basin across 33 municipalities, built in 72 hours.
                 </Text>
-
                 <VStack gap={1} className="livrea-card-specs">
-                  <Text type="code" color="primary" size="sm">
-                    SPECS: Django REST · PostGIS GIST · React · Gemini AI
-                  </Text>
-                  <Text type="supporting" color="secondary">
-                    Sub-millisecond PostGIS polygon checks &amp; automated Gemini multimodal voice triage.
+                  <Text type="code" size="sm" color="primary">Django REST · PostGIS GIST · React · Gemini AI</Text>
+                  <Text size="sm" color="secondary">
+                    Sub-millisecond PostGIS polygon checks and automated Gemini multimodal voice triage.
                   </Text>
                 </VStack>
-
-                <Link
-                  href="https://github.com/cavallinilorenzo/alert-app-garda-chiese"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  color="accent"
-                  weight="bold"
-                >
-                  GitHub Repository ↗
+                <Link href="https://github.com/cavallinilorenzo/alert-app-garda-chiese" {...external} color="primary" className="livrea-card-link">
+                  View on GitHub ↗
                 </Link>
               </VStack>
 
-              {/* P2 — SCIoTeM 2026 (Compact Summary on Mobile) */}
-              <VStack gap={2} className="livrea-podium-card livrea-podium-summary">
+              <VStack gap={3} className="livrea-podium-card">
                 <HStack justify="between" align="center">
-                  <Text className="livrea-podium-rank" color="primary">
-                    P2
-                  </Text>
-                  <Text type="code" color="secondary" weight="bold" size="sm">
-                    2ND PLACE · 2026
-                  </Text>
+                  <Text className="livrea-podium-rank">P2</Text>
+                  <Text type="code" size="sm" color="secondary">2nd place · 2026</Text>
                 </HStack>
-
-                <Heading level={3} weight="bold" color="primary">
-                  SCIoTeM 2026
-                </Heading>
-                <Text type="large" color="primary" weight="bold">
-                  Smart Beam
+                <VStack gap={0.5}>
+                  <Heading level={3} className="livrea-card-title">Smart Beam</Heading>
+                  <Text size="sm" color="secondary">SCIoTeM 2026</Text>
+                </VStack>
+                <Text as="p" type="body" color="secondary">
+                  Predictive maintenance engine for municipal streetlights, shifting repairs from reactive to scheduled intervention.
                 </Text>
-
-                {/* Desktop narrative & specs */}
-                <VStack gap={2} className="livrea-podium-full-details">
-                  <Text as="p" type="body" color="secondary">
-                    Predictive maintenance engine for municipal streetlights, shifting repairs from reactive to scheduled proactive intervention.
-                  </Text>
-
-                  <VStack gap={1} className="livrea-card-specs">
-                    <Text type="code" color="primary" size="sm">
-                      SPECS: Python · scikit-learn · Cox Proportional Hazards · XGBoost
-                    </Text>
-                    <Text type="supporting" color="secondary">
-                      Survival analysis computing failure hazard curves for luminaire fleets with automated technician dispatch.
-                    </Text>
-                  </VStack>
-                </VStack>
-
-                {/* Mobile streamlined summary line */}
-                <VStack gap={1} className="livrea-podium-mobile-summary">
-                  <Text type="code" color="secondary" size="sm">
-                    SPECS: Python · Cox Hazards · XGBoost
+                <VStack gap={1} className="livrea-card-specs">
+                  <Text type="code" size="sm" color="primary">Python · scikit-learn · Cox proportional hazards · XGBoost</Text>
+                  <Text size="sm" color="secondary">
+                    Survival analysis computing failure hazard curves for luminaire fleets, with automated technician dispatch.
                   </Text>
                 </VStack>
-
-                <Link
-                  href="https://github.com/cavallinilorenzo/street-lighting-predictive-maintenance"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  color="accent"
-                  weight="bold"
-                >
-                  GitHub Repository ↗
+                <Link href="https://github.com/cavallinilorenzo/street-lighting-predictive-maintenance" {...external} color="primary" className="livrea-card-link">
+                  View on GitHub ↗
                 </Link>
               </VStack>
 
-              {/* P2 (Finisher 3) — SCIoTeM 2025 (Compact Summary on Mobile) */}
-              <VStack gap={2} className="livrea-podium-card livrea-podium-summary">
+              <VStack gap={3} className="livrea-podium-card">
                 <HStack justify="between" align="center">
-                  <Text className="livrea-podium-rank" color="primary">
-                    P2
-                  </Text>
-                  <Text type="code" color="secondary" weight="bold" size="sm">
-                    2ND PLACE · 2025
-                  </Text>
+                  <Text className="livrea-podium-rank">P2</Text>
+                  <Text type="code" size="sm" color="secondary">2nd place · 2025</Text>
                 </HStack>
-
-                <Heading level={3} weight="bold" color="primary">
-                  SCIoTeM 2025
-                </Heading>
-                <Text type="large" color="primary" weight="bold">
-                  P7M AI Summarizer
+                <VStack gap={0.5}>
+                  <Heading level={3} className="livrea-card-title">P7M AI Summarizer</Heading>
+                  <Text size="sm" color="secondary">SCIoTeM 2025</Text>
+                </VStack>
+                <Text as="p" type="body" color="secondary">
+                  Legal tech ingestion pipeline unwrapping cryptographically signed PKCS#7 envelopes and producing legal digests.
                 </Text>
-
-                {/* Desktop narrative & specs */}
-                <VStack gap={2} className="livrea-podium-full-details">
-                  <Text as="p" type="body" color="secondary">
-                    Legal tech ingestion pipeline unwrapping cryptographically signed PKCS#7 envelopes and synthesizing legal digests.
-                  </Text>
-
-                  <VStack gap={1} className="livrea-card-specs">
-                    <Text type="code" color="primary" size="sm">
-                      SPECS: Python · PKCS#7 Cryptography · Google Gemini LLM
-                    </Text>
-                    <Text type="supporting" color="secondary">
-                      Automated digital envelope verification, embedded content extraction, and structured Italian legal summary.
-                    </Text>
-                  </VStack>
-                </VStack>
-
-                {/* Mobile streamlined summary line */}
-                <VStack gap={1} className="livrea-podium-mobile-summary">
-                  <Text type="code" color="secondary" size="sm">
-                    SPECS: Python · PKCS#7 · Gemini LLM
+                <VStack gap={1} className="livrea-card-specs">
+                  <Text type="code" size="sm" color="primary">Python · PKCS#7 · Google Gemini</Text>
+                  <Text size="sm" color="secondary">
+                    Envelope verification, embedded content extraction and structured Italian legal summaries.
                   </Text>
                 </VStack>
-
-                <Link
-                  href="https://github.com/itsmrma/hackathon-p7m-ai-summarizer"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  color="accent"
-                  weight="bold"
-                >
-                  GitHub Repository ↗
+                <Link href="https://github.com/itsmrma/hackathon-p7m-ai-summarizer" {...external} color="primary" className="livrea-card-link">
+                  View on GitHub ↗
                 </Link>
               </VStack>
             </HStack>
           </VStack>
 
           <HStack justify="between" align="center" width="100%" className="livrea-bottom-strip livrea-intermediate-strip">
-            <Text type="code" color="secondary" size="sm">
-              TELEMETRY: 100% PODIUM CONVERSION (3/3)
-            </Text>
-            <Text type="code" color="secondary" size="sm">
-              UNIMORE TEAM
-            </Text>
+            <Text type="code" size="sm" color="secondary">Hack4Water · SCIoTeM</Text>
+            <Text type="code" size="sm" color="secondary">2025 – 2026</Text>
           </HStack>
         </VStack>
       </VStack>
 
-      {/* ========================================================================= */}
-      {/* 03 — OXIDE: FLAGSHIP WORKTREE ORCHESTRATION WITH SCREENSHOT & LOGO (03) */}
-      {/* ========================================================================= */}
+      {/* 03 — Oxide */}
       <VStack as="section" id="panel-3" className="livrea-panel livrea-panel-03">
         <VStack justify="between" height="100%" width="100%" className="livrea-panel-inner">
-          <HStack justify="between" align="center" width="100%" className="livrea-telemetry-header">
-            <HStack align="center" gap={2} className="livrea-telemetry-left">
-              <Text as="span" className="livrea-red-indicator">{'\u00A0'}</Text>
-              <Text weight="bold" color="secondary" size="sm" className="livrea-kicker">
-                SECTOR 03 // MULTI-AGENT WORKTREE ARCHITECTURE
-              </Text>
-            </HStack>
-            <Text type="code" className="livrea-telemetry-badge" size="sm">
-              TAURI 2 · RUST
-            </Text>
-          </HStack>
+          <SectorHeader num="03" label="Oxide" meta="Tauri 2 · Rust" />
 
-          {/* Two-Column Layout: Technical Specs on Left, Framed App Tour on Right */}
           <HStack justify="between" align="center" gap={6} width="100%" className="livrea-project-split-layout">
-            {/* Left Column: Details & Pillars */}
-            <VStack gap={2} className="livrea-split-left-col">
-              <VStack gap={1}>
-                {/* Oxide Logo + Massive Title */}
+            <VStack gap={5} className="livrea-split-left-col">
+              <VStack gap={3}>
                 <HStack align="center" gap={3}>
-                  <img
-                    src="/oxide-icon.svg"
-                    alt="Oxide Logo"
-                    className="livrea-project-logo"
-                  />
-                  <Heading level={2} className="livrea-massive-title">
-                    {oxideProj.title.toUpperCase()}
-                  </Heading>
+                  <img src="/oxide-icon.svg" alt="" className="livrea-project-logo" />
+                  <Heading level={2} className="livrea-massive-title">{oxideProj.title}</Heading>
                 </HStack>
-
-                <HStack align="center" gap={2} paddingBlockStart={1} wrap="wrap">
-                  <Text type="code" className="livrea-role-badge">
-                    CO-FOUNDER
-                  </Text>
-                  <Text type="code" color="secondary" size="sm">
-                    Pre-Release · Active Development
-                  </Text>
+                <HStack align="center" gap={2} wrap="wrap">
+                  <Text type="code" size="sm" className="livrea-role-badge">Co-founder</Text>
+                  <Text size="sm" color="secondary">Pre-release · in active development</Text>
                 </HStack>
-
-                <Text as="p" type="large" color="primary" className="livrea-project-lead">
-                  {oxideProj.description}
-                </Text>
-                <Text type="code" color="secondary" size="sm">
-                  STACK: <Text as="span" color="primary">{oxideProj.stack} · Git Worktrees</Text>
-                </Text>
+                <Text as="p" color="primary" className="livrea-project-lead">{oxideProj.description}</Text>
+                <Text type="code" size="sm" color="secondary">{oxideProj.stack} · Git worktrees</Text>
               </VStack>
 
-              {/* 3 Architecture Pillars */}
-              <VStack gap={1} width="100%" className="livrea-pillars-list">
-                <HStack align="start" gap={3} className="livrea-pillar-item">
-                  <Text type="code" className="livrea-text-cyan" weight="bold">
-                    01.
-                  </Text>
-                  <VStack gap={0.5}>
-                    <Text weight="bold" color="primary">
-                      Isolated Git Worktrees Concurrency
-                    </Text>
-                    <Text type="body" color="secondary">
-                      Spawns Claude Code, Codex, and Antigravity into independent worktrees so parallel turns never overwrite files.
-                    </Text>
-                  </VStack>
-                </HStack>
-
-                <HStack align="start" gap={3} className="livrea-pillar-item">
-                  <Text type="code" className="livrea-text-cyan" weight="bold">
-                    02.
-                  </Text>
-                  <VStack gap={0.5}>
-                    <Text weight="bold" color="primary">
-                      Pre-Merge Verification Gate
-                    </Text>
-                    <Text type="body" color="secondary">
-                      Runs typechecking and test suites on every agent turn before reconciling into the primary branch.
-                    </Text>
-                  </VStack>
-                </HStack>
-
-                <HStack align="start" gap={3} className="livrea-pillar-item">
-                  <Text type="code" className="livrea-text-cyan" weight="bold">
-                    03.
-                  </Text>
-                  <VStack gap={0.5}>
-                    <Text weight="bold" color="primary">
-                      Rust &amp; Tauri 2 Native Performance
-                    </Text>
-                    <Text type="body" color="secondary">
-                      Low-memory backend executing async subagent channels with native OS performance.
-                    </Text>
-                  </VStack>
-                </HStack>
+              <VStack gap={0} width="100%" className="livrea-pillars-list">
+                <Pillar n="01" title="Isolated Git worktrees">
+                  Spawns Claude Code, Codex and Antigravity into independent worktrees so parallel turns never overwrite files.
+                </Pillar>
+                <Pillar n="02" title="Pre-merge verification gate">
+                  Runs typechecking and test suites on every agent turn before reconciling into the primary branch.
+                </Pillar>
+                <Pillar n="03" title="Native Rust and Tauri 2 backend">
+                  Low-memory backend executing async subagent channels with native OS performance.
+                </Pillar>
               </VStack>
 
-              <HStack paddingBlockStart={1} gap={2} wrap="wrap">
-                <Button
-                  label="Inspect on GitHub ↗"
-                  variant="primary"
-                  href={oxideProj.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="livrea-primary-action-btn"
-                />
+              <HStack gap={2} wrap="wrap">
+                <Button label="View on GitHub" variant="primary" href={oxideProj.href} {...external} endContent={extIcon} />
                 {oxideProj.website && (
-                  <Button
-                    label="Website ↗"
-                    variant="secondary"
-                    href={oxideProj.website}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  />
+                  <Button label="Website" variant="secondary" href={oxideProj.website} {...external} endContent={extIcon} />
                 )}
               </HStack>
             </VStack>
 
-            {/* Right Column: Framed Real Desktop App Tour */}
-            <VStack gap={2} className="livrea-split-right-col">
-              <VStack width="100%" className="livrea-mockup-frame">
-                {/* Desktop Window Title Bar */}
-                <HStack
-                  justify="between"
-                  align="center"
-                  width="100%"
-                  className="livrea-mockup-titlebar"
-                >
-                  <HStack align="center" gap={2}>
-                    <HStack align="center" gap={1.5} className="livrea-win-controls">
-                      <Text as="span" className="livrea-win-dot dot-reset" aria-hidden="true">{'\u00A0'}</Text>
-                      <Text as="span" className="livrea-win-dot dot-compact" aria-hidden="true">{'\u00A0'}</Text>
-                      <Text as="span" className="livrea-win-dot dot-fill" aria-hidden="true">{'\u00A0'}</Text>
-                    </HStack>
-                    <Text type="code" size="sm" className="livrea-win-title-text">
-                      Oxide // Worktree Workspace
-                    </Text>
-                  </HStack>
-
-                  <Text type="code" size="xsm" className="livrea-win-tag-badge">
-                    TAURI 2
-                  </Text>
-                </HStack>
-
-                {/* Real Preview Screenshot */}
-                <AspectRatio ratio={16 / 10} fit="cover">
-                  <img
-                    src="/oxide-thread.png"
-                    alt="Oxide desktop interface with Claude Code thread in the center and pre-merge diff surface on the right"
-                    className="livrea-app-screenshot"
-                  />
-                </AspectRatio>
-              </VStack>
-
-              <HStack justify="between" align="center" width="100%" className="livrea-stage-caption">
-                <Text type="supporting" color="secondary" size="sm">
-                  Official Oxide interface: parallel worktree threads &amp; pre-merge verification
-                </Text>
-                <Text type="code" color="secondary" size="sm">
-                  TAURI 2
-                </Text>
-              </HStack>
-            </VStack>
+            <ProductWindow
+              title="Oxide — worktree workspace"
+              src="/oxide-thread.png"
+              alt="Oxide desktop interface with a Claude Code thread in the center and the pre-merge diff surface on the right"
+              ratio={16 / 10}
+              caption="Parallel worktree threads and pre-merge verification"
+              meta="Pre-release"
+            />
           </HStack>
 
           <HStack justify="between" align="center" width="100%" className="livrea-bottom-strip livrea-intermediate-strip">
-            <Text type="code" color="secondary" size="sm">
-              ENGINEERING: SYSTEMS PROGRAMMING &amp; AGENT ORCHESTRATION
-            </Text>
-            <Text type="code" color="secondary" size="sm">
-              2026 · ONGOING
-            </Text>
+            <Text type="code" size="sm" color="secondary">Systems programming · agent orchestration</Text>
+            <Text type="code" size="sm" color="secondary">2026 · ongoing</Text>
           </HStack>
         </VStack>
       </VStack>
 
-      {/* ========================================================================= */}
-      {/* 04 — SYNCFORGE: AUDIO/SUBTITLE DSP WITH LOGO & PREVIEW (04) */}
-      {/* ========================================================================= */}
+      {/* 04 — SyncForge */}
       <VStack as="section" id="panel-4" className="livrea-panel livrea-panel-04">
         <VStack justify="between" height="100%" width="100%" className="livrea-panel-inner">
-          <HStack justify="between" align="center" width="100%" className="livrea-telemetry-header">
-            <HStack align="center" gap={2} className="livrea-telemetry-left">
-              <Text as="span" className="livrea-red-indicator">{'\u00A0'}</Text>
-              <Text weight="bold" color="secondary" size="sm" className="livrea-kicker">
-                SECTOR 04 // DIGITAL SIGNAL PROCESSING &amp; MCP
-              </Text>
-            </HStack>
-            <Text type="code" className="livrea-telemetry-badge" size="sm">
-              RUST FFT + TAURI 2
-            </Text>
-          </HStack>
+          <SectorHeader num="04" label="SyncForge" meta="Rust FFT · Tauri 2" />
 
-          {/* Two-Column Layout: Technical Specs on Left, Interactive App on Right */}
           <HStack justify="between" align="center" gap={6} width="100%" className="livrea-project-split-layout">
-            {/* Left Column: Details & Pillars */}
-            <VStack gap={2} className="livrea-split-left-col">
-              <VStack gap={1}>
-                {/* SyncForge Logo + Massive Title */}
+            <VStack gap={5} className="livrea-split-left-col">
+              <VStack gap={3}>
                 <HStack align="center" gap={3}>
-                  <img
-                    src="/syncforge-icon.svg"
-                    alt="SyncForge Logo"
-                    className="livrea-project-logo"
-                  />
-                  <Heading level={2} className="livrea-massive-title">
-                    {syncforgeProj.title.toUpperCase()}
-                  </Heading>
+                  <img src="/syncforge-icon.svg" alt="" className="livrea-project-logo" />
+                  <Heading level={2} className="livrea-massive-title">{syncforgeProj.title}</Heading>
                 </HStack>
-
-                <HStack align="center" gap={2} paddingBlockStart={1}>
-                  <Text type="code" className="livrea-role-badge">
-                    DSP ENGINE · TAURI 2 + CLI + MCP
-                  </Text>
+                <HStack align="center" gap={2} wrap="wrap">
+                  <Text type="code" size="sm" className="livrea-role-badge">Creator</Text>
+                  <Text size="sm" color="secondary">Desktop app, CLI and MCP server</Text>
                 </HStack>
-
-                <Text as="p" type="large" color="primary" className="livrea-project-lead">
-                  {syncforgeProj.description}
-                </Text>
-                <Text type="code" color="secondary" size="sm">
-                  STACK: <Text as="span" color="primary">{syncforgeProj.stack} · MCP Server</Text>
-                </Text>
+                <Text as="p" color="primary" className="livrea-project-lead">{syncforgeProj.description}</Text>
+                <Text type="code" size="sm" color="secondary">{syncforgeProj.stack} · MCP server</Text>
               </VStack>
 
-              {/* 3 Architecture Pillars */}
-              <VStack gap={1} width="100%" className="livrea-pillars-list">
-                <HStack align="start" gap={3} className="livrea-pillar-item">
-                  <Text type="code" className="livrea-text-cyan" weight="bold">
-                    01.
-                  </Text>
-                  <VStack gap={0.5}>
-                    <Text weight="bold" color="primary">
-                      FFT Waveform Cross-Correlation
-                    </Text>
-                    <Text type="body" color="secondary">
-                      Computes sub-millisecond audio stream offsets natively in Rust without external audio dependencies.
-                    </Text>
-                  </VStack>
-                </HStack>
-
-                <HStack align="start" gap={3} className="livrea-pillar-item">
-                  <Text type="code" className="livrea-text-cyan" weight="bold">
-                    02.
-                  </Text>
-                  <VStack gap={0.5}>
-                    <Text weight="bold" color="primary">
-                      Lossless MKV Stream Pipeline
-                    </Text>
-                    <Text type="body" color="secondary">
-                      Extracts and shifts subtitle/audio tracks without any lossy video re-encoding or generational degradation.
-                    </Text>
-                  </VStack>
-                </HStack>
-
-                <HStack align="start" gap={3} className="livrea-pillar-item">
-                  <Text type="code" className="livrea-text-cyan" weight="bold">
-                    03.
-                  </Text>
-                  <VStack gap={0.5}>
-                    <Text weight="bold" color="primary">
-                      Model Context Protocol (MCP) Server
-                    </Text>
-                    <Text type="body" color="secondary">
-                      Ships with an embedded MCP server exposing 20 autonomous media tools to Claude Code and Cursor.
-                    </Text>
-                  </VStack>
-                </HStack>
+              <VStack gap={0} width="100%" className="livrea-pillars-list">
+                <Pillar n="01" title="FFT waveform cross-correlation">
+                  Computes sub-millisecond audio stream offsets natively in Rust without external audio dependencies.
+                </Pillar>
+                <Pillar n="02" title="Lossless MKV stream pipeline">
+                  Extracts and shifts subtitle and audio tracks without lossy video re-encoding.
+                </Pillar>
+                <Pillar n="03" title="Model Context Protocol server">
+                  Ships with an embedded MCP server exposing 20 media tools to Claude Code and Cursor.
+                </Pillar>
               </VStack>
 
-              <HStack paddingBlockStart={1}>
-                <Button
-                  label="Inspect SyncForge on GitHub ↗"
-                  variant="primary"
-                  href={syncforgeProj.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="livrea-primary-action-btn"
-                />
+              <HStack gap={2} wrap="wrap">
+                <Button label="View on GitHub" variant="primary" href={syncforgeProj.href} {...external} endContent={extIcon} />
               </HStack>
             </VStack>
 
-            {/* Right Column: Framed Real Desktop App Animated Preview */}
-            <VStack gap={2} width="100%" className="livrea-split-right-col">
-              <VStack width="100%" className="livrea-mockup-frame">
-                {/* Desktop Window Title Bar */}
-                <HStack
-                  justify="between"
-                  align="center"
-                  width="100%"
-                  className="livrea-mockup-titlebar"
-                >
-                  <HStack align="center" gap={2}>
-                    <HStack align="center" gap={1.5} className="livrea-win-controls">
-                      <Text as="span" className="livrea-win-dot dot-reset" aria-hidden="true">{'\u00A0'}</Text>
-                      <Text as="span" className="livrea-win-dot dot-compact" aria-hidden="true">{'\u00A0'}</Text>
-                      <Text as="span" className="livrea-win-dot dot-fill" aria-hidden="true">{'\u00A0'}</Text>
-                    </HStack>
-                    <Text type="code" size="sm" className="livrea-win-title-text">
-                      SyncForge // Waveform &amp; Audio DSP
-                    </Text>
-                  </HStack>
-
-                  <Text type="code" size="xsm" className="livrea-win-tag-badge">
-                    RUST FFT
-                  </Text>
-                </HStack>
-
-                {/* Real Preview */}
-                <AspectRatio ratio={16 / 9} fit="cover">
-                  <img
-                    src="/syncforge-preview.gif"
-                    alt="SyncForge desktop preview and waveform analysis"
-                    className="livrea-app-screenshot"
-                  />
-                </AspectRatio>
-              </VStack>
-
-              <HStack justify="between" align="center" width="100%" className="livrea-stage-caption">
-                <Text type="supporting" color="secondary" size="sm">
-                  Official SyncForge application interface: batch tracks alignment &amp; metadata editing
-                </Text>
-                <Text type="code" color="secondary" size="sm">
-                  FFMPEG + RUST
-                </Text>
-              </HStack>
-            </VStack>
+            <ProductWindow
+              title="SyncForge — waveform and audio DSP"
+              src="/syncforge-preview.gif"
+              alt="SyncForge desktop preview with waveform analysis"
+              ratio={16 / 9}
+              caption="Batch track alignment and metadata editing"
+              meta="FFmpeg + Rust"
+            />
           </HStack>
 
           <HStack justify="between" align="center" width="100%" className="livrea-bottom-strip livrea-intermediate-strip">
-            <Text type="code" color="secondary" size="sm">
-              DSP PIPELINE: FREQUENCY-DOMAIN CROSS-CORRELATION
-            </Text>
-            <Text type="code" color="secondary" size="sm">
-              2026 · RUST / TAURI 2
-            </Text>
+            <Text type="code" size="sm" color="secondary">Frequency-domain cross-correlation</Text>
+            <Text type="code" size="sm" color="secondary">2026 · Rust / Tauri 2</Text>
           </HStack>
         </VStack>
       </VStack>
 
-      {/* ========================================================================= */}
-      {/* 05 — SCROBBL.RS: SELF-HOSTED LISTENING ARCHIVE & DAEMON (05) */}
-      {/* ========================================================================= */}
+      {/* 05 — scrobbl.rs */}
       <VStack as="section" id="panel-5" className="livrea-panel livrea-panel-05">
         <VStack justify="between" height="100%" width="100%" className="livrea-panel-inner">
-          <HStack justify="between" align="center" width="100%" className="livrea-telemetry-header">
-            <HStack align="center" gap={2} className="livrea-telemetry-left">
-              <Text as="span" className="livrea-red-indicator">{'\u00A0'}</Text>
-              <Text weight="bold" color="secondary" size="sm" className="livrea-kicker">
-                SECTOR 05 // SELF-HOSTED ARCHIVE &amp; SYSTEMS DAEMON
-              </Text>
-            </HStack>
-            <Text type="code" className="livrea-telemetry-badge" size="sm">
-              RUST + SQLITE
-            </Text>
-          </HStack>
+          <SectorHeader num="05" label="scrobbl.rs" meta="Rust · SQLite" />
 
-          {/* Two-Column Layout: Technical Specs on Left, Interactive App on Right */}
           <HStack justify="between" align="center" gap={6} width="100%" className="livrea-project-split-layout">
-            {/* Left Column: Details & Pillars */}
-            <VStack gap={2} className="livrea-split-left-col">
-              <VStack gap={1}>
-                {/* scrobbl Logo + Massive Title */}
+            <VStack gap={5} className="livrea-split-left-col">
+              <VStack gap={3}>
                 <HStack align="center" gap={3}>
-                  <img
-                    src="/scrobbl-icon.svg"
-                    alt="scrobbl.rs Logo"
-                    className="livrea-project-logo"
-                  />
-                  <Heading level={2} className="livrea-massive-title">
-                    SCROBBL.RS
-                  </Heading>
+                  <img src="/scrobbl-icon.svg" alt="" className="livrea-project-logo" />
+                  <Heading level={2} className="livrea-massive-title">scrobbl.rs</Heading>
                 </HStack>
-
-                <HStack align="center" gap={2} paddingBlockStart={1} wrap="wrap">
-                  <Text type="code" className="livrea-role-badge">
-                    CREATOR
-                  </Text>
-                  <Text type="code" color="secondary" size="sm">
-                    Active Development (Pre-Release)
-                  </Text>
+                <HStack align="center" gap={2} wrap="wrap">
+                  <Text type="code" size="sm" className="livrea-role-badge">Creator</Text>
+                  <Text size="sm" color="secondary">Pre-release · in active development</Text>
                 </HStack>
-
-                <Text as="p" type="large" color="primary" className="livrea-project-lead">
-                  {scrobblProj.description}
-                </Text>
-                <Text type="code" color="secondary" size="sm">
-                  STACK: <Text as="span" color="primary">{scrobblProj.stack} · Spotify Web API</Text>
-                </Text>
+                <Text as="p" color="primary" className="livrea-project-lead">{scrobblProj.description}</Text>
+                <Text type="code" size="sm" color="secondary">{scrobblProj.stack} · Spotify Web API</Text>
               </VStack>
 
-              {/* 3 Architecture Pillars */}
-              <VStack gap={1} width="100%" className="livrea-pillars-list">
-                <HStack align="start" gap={3} className="livrea-pillar-item">
-                  <Text type="code" className="livrea-text-cyan" weight="bold">
-                    01.
-                  </Text>
-                  <VStack gap={0.5}>
-                    <Text weight="bold" color="primary">
-                      Background Collection &amp; Ingestion
-                    </Text>
-                    <Text type="body" color="secondary">
-                      Adaptive Spotify polling with duplicate reconciliation and multi-year JSON archive ingestion.
-                    </Text>
-                  </VStack>
-                </HStack>
-
-                <HStack align="start" gap={3} className="livrea-pillar-item">
-                  <Text type="code" className="livrea-text-cyan" weight="bold">
-                    02.
-                  </Text>
-                  <VStack gap={0.5}>
-                    <Text weight="bold" color="primary">
-                      Dual SQLite Architecture &amp; WAL Mode
-                    </Text>
-                    <Text type="body" color="secondary">
-                      Isolates listening analytics (archive.db) from auth tokens (auth.db), querying 50,000+ tracks in &lt; 5ms.
-                    </Text>
-                  </VStack>
-                </HStack>
-
-                <HStack align="start" gap={3} className="livrea-pillar-item">
-                  <Text type="code" className="livrea-text-cyan" weight="bold">
-                    03.
-                  </Text>
-                  <VStack gap={0.5}>
-                    <Text weight="bold" color="primary">
-                      Single-Binary Embedded Distribution
-                    </Text>
-                    <Text type="body" color="secondary">
-                      Compiles React and TypeScript assets directly into the standalone Rust binary with bundled SQLite.
-                    </Text>
-                  </VStack>
-                </HStack>
+              <VStack gap={0} width="100%" className="livrea-pillars-list">
+                <Pillar n="01" title="Background collection and ingestion">
+                  Adaptive Spotify polling with duplicate reconciliation and multi-year JSON archive ingestion.
+                </Pillar>
+                <Pillar n="02" title="Dual SQLite databases in WAL mode">
+                  Keeps listening analytics (archive.db) apart from auth tokens (auth.db), querying 50,000+ tracks in under 5 ms.
+                </Pillar>
+                <Pillar n="03" title="Single-binary distribution">
+                  Compiles the React and TypeScript frontend into the standalone Rust binary with bundled SQLite.
+                </Pillar>
               </VStack>
 
-              <HStack paddingBlockStart={1}>
-                <Button
-                  label="Inspect scrobbl.rs on GitHub ↗"
-                  variant="primary"
-                  href={scrobblProj.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="livrea-primary-action-btn"
-                />
+              <HStack gap={2} wrap="wrap">
+                <Button label="View on GitHub" variant="primary" href={scrobblProj.href} {...external} endContent={extIcon} />
               </HStack>
             </VStack>
 
-            {/* Right Column: Framed Real Desktop App Tour GIF */}
-            <VStack gap={2} width="100%" className="livrea-split-right-col">
-              <VStack width="100%" className="livrea-mockup-frame">
-                {/* Desktop Window Title Bar */}
-                <HStack
-                  justify="between"
-                  align="center"
-                  width="100%"
-                  className="livrea-mockup-titlebar"
-                >
-                  <HStack align="center" gap={2}>
-                    <HStack align="center" gap={1.5} className="livrea-win-controls">
-                      <Text as="span" className="livrea-win-dot dot-reset" aria-hidden="true">{'\u00A0'}</Text>
-                      <Text as="span" className="livrea-win-dot dot-compact" aria-hidden="true">{'\u00A0'}</Text>
-                      <Text as="span" className="livrea-win-dot dot-fill" aria-hidden="true">{'\u00A0'}</Text>
-                    </HStack>
-                    <Text type="code" size="sm" className="livrea-win-title-text">
-                      scrobbl.rs // Dashboard &amp; History
-                    </Text>
-                  </HStack>
-
-                  <Text type="code" size="xsm" className="livrea-win-tag-badge">
-                    RUST + SQLITE
-                  </Text>
-                </HStack>
-
-                {/* Real Tour Preview */}
-                <AspectRatio ratio={16 / 9} fit="cover">
-                  <img
-                    src="/scrobbl-preview.gif"
-                    alt="scrobbl.rs dashboard showing real-time listening history, statistics charts, and personal rankings"
-                    className="livrea-app-screenshot"
-                  />
-                </AspectRatio>
-              </VStack>
-
-              <HStack justify="between" align="center" width="100%" className="livrea-stage-caption">
-                <Text type="supporting" color="secondary" size="sm">
-                  Official scrobbl.rs interface: listening dashboard, history query engine &amp; rankings
-                </Text>
-                <Text type="code" color="secondary" size="sm">
-                  GPL-3.0
-                </Text>
-              </HStack>
-            </VStack>
+            <ProductWindow
+              title="scrobbl.rs — dashboard and history"
+              src="/scrobbl-preview.gif"
+              alt="scrobbl.rs dashboard with listening history, statistics charts and personal rankings"
+              ratio={16 / 9}
+              caption="Listening dashboard, history queries and rankings"
+              meta="GPL-3.0"
+            />
           </HStack>
 
           <HStack justify="between" align="center" width="100%" className="livrea-bottom-strip livrea-intermediate-strip">
-            <Text type="code" color="secondary" size="sm">
-              SYSTEMS: ASYNC RUST DAEMON + EMBEDDED SQLITE WAL
-            </Text>
-            <Text type="code" color="secondary" size="sm">
-              2026 · ACTIVE
-            </Text>
+            <Text type="code" size="sm" color="secondary">Async Rust daemon · embedded SQLite WAL</Text>
+            <Text type="code" size="sm" color="secondary">2026 · active</Text>
           </HStack>
         </VStack>
       </VStack>
 
-      {/* ========================================================================= */}
-      {/* 06 — EMBEDDED & GIS ARCHITECTURES (06) */}
-      {/* ========================================================================= */}
+      {/* 06 — Embedded & GIS */}
       <VStack as="section" id="panel-6" className="livrea-panel livrea-panel-06">
         <VStack justify="between" height="100%" width="100%" className="livrea-panel-inner">
-          <HStack justify="between" align="center" width="100%" className="livrea-telemetry-header">
-            <HStack align="center" gap={2} className="livrea-telemetry-left">
-              <Text as="span" className="livrea-red-indicator">{'\u00A0'}</Text>
-              <Text weight="bold" color="secondary" size="sm" className="livrea-kicker">
-                SECTOR 06 // LOW-LEVEL EMBEDDED &amp; DISTRIBUTED GIS
-              </Text>
-            </HStack>
-            <Text type="code" className="livrea-telemetry-badge" size="sm">
-              C + POSTGIS
-            </Text>
-          </HStack>
+          <SectorHeader num="06" label="Embedded & GIS" meta="C · PostGIS" />
 
-          <VStack gap={4} width="100%" className="livrea-detail-block">
-            <VStack gap={1}>
+          <VStack gap={6} width="100%" className="livrea-detail-block">
+            <VStack gap={2}>
               <Heading level={2} className="livrea-section-head">
-                EMBEDDED HARDWARE &amp; SPATIAL PLATFORMS
+                Embedded firmware and spatial platforms
               </Heading>
-              <Text type="large" color="secondary">
-                From microcontrollers running bare-metal C in under 16 KB SRAM, to regional GIS backends processing thousands of spatial polygons.
+              <Text color="secondary" className="livrea-section-lead">
+                From bare-metal C running in under 16 KB of SRAM to a regional GIS backend checking thousands of spatial polygons.
               </Text>
             </VStack>
 
-            {/* Two Deep Architecture Columns */}
-            <HStack justify="between" align="stretch" gap={4} width="100%" className="livrea-split-engineering">
-              {/* Left Column: Garda Chiese Alert with Logo */}
+            <HStack justify="between" align="stretch" gap={3} width="100%" className="livrea-split-engineering">
               <VStack gap={3} className="livrea-system-split-box">
                 <HStack justify="between" align="center" wrap="wrap" gap={2}>
                   <HStack align="center" gap={2}>
-                    <img
-                      src="/garda-chiese-logo.png"
-                      alt="Garda Chiese Logo"
-                      className="livrea-garda-logo"
-                    />
-                    <Text type="code" className="livrea-text-cyan" weight="bold">
-                      SPATIAL PLATFORM
-                    </Text>
+                    <img src="/garda-chiese-logo.png" alt="" className="livrea-garda-logo" />
+                    <Text type="code" size="sm" color="secondary">Spatial platform</Text>
                   </HStack>
-                  <Text type="code" color="accent" size="sm">
-                    1ST PLACE HACK4WATER
-                  </Text>
+                  <Text type="code" size="sm" color="secondary">1st place · Hack4Water</Text>
                 </HStack>
-
-                <Heading level={3} weight="bold" color="primary">
-                  {gardaProj.title}
-                </Heading>
-                <Text as="p" type="body" color="secondary">
-                  {gardaProj.description}
-                </Text>
-
+                <Heading level={3} className="livrea-card-title">{gardaProj.title}</Heading>
+                <Text as="p" type="body" color="secondary">{gardaProj.description}</Text>
                 <VStack gap={1} className="livrea-card-specs">
-                  <Text type="code" color="primary" size="sm">
-                    ARCHITECTURE: PostGIS GIST Spatial Indices + Gemini
+                  <Text type="code" size="sm" color="primary">PostGIS GIST spatial indices · Gemini</Text>
+                  <Text size="sm" color="secondary">
+                    Sub-millisecond containment checks over 76,645 hectares across 33 municipal canal boundaries, with no sign-up required.
                   </Text>
-                  <Text type="supporting" color="secondary">
-                    Sub-millisecond containment verification over 76,645 hectares across 33 municipal canal boundaries without user registration friction.
-                  </Text>
-                  <Text type="code" color="secondary" size="sm">
-                    STACK: {gardaProj.stack}
-                  </Text>
+                  <Text type="code" size="sm" color="secondary">{gardaProj.stack}</Text>
                 </VStack>
-
-                <Button
-                  label="View Basin Platform Repo ↗"
-                  variant="secondary"
-                  href={gardaProj.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                />
+                <HStack>
+                  <Button label="View on GitHub" variant="secondary" href={gardaProj.href} {...external} endContent={extIcon} />
+                </HStack>
               </VStack>
 
-              {/* Right Column: STM32 Smart Garden */}
               <VStack gap={3} className="livrea-system-split-box">
                 <HStack justify="between" align="center" wrap="wrap" gap={2}>
-                  <Text type="code" color="accent" weight="bold">
-                    SYSTEM B // BARE-METAL FIRMWARE
-                  </Text>
-                  <Text type="code" color="secondary" size="sm">
-                    ARM CORTEX-M4
-                  </Text>
+                  <Text type="code" size="sm" color="secondary">Bare-metal firmware</Text>
+                  <Text type="code" size="sm" color="secondary">ARM Cortex-M4</Text>
                 </HStack>
-
-                <Heading level={3} weight="bold" color="primary">
-                  {stm32Proj.title}
-                </Heading>
-                <Text as="p" type="body" color="secondary">
-                  {stm32Proj.description}
-                </Text>
-
+                <Heading level={3} className="livrea-card-title">{stm32Proj.title}</Heading>
+                <Text as="p" type="body" color="secondary">{stm32Proj.description}</Text>
                 <VStack gap={1} className="livrea-card-specs">
-                  <Text type="code" color="primary" size="sm">
-                    ARCHITECTURE: Zero OS Bare-Metal C Under 16 KB SRAM
+                  <Text type="code" size="sm" color="primary">No OS · bare-metal C · under 16 KB SRAM</Text>
+                  <Text size="sm" color="secondary">
+                    Direct register access on ARM Cortex-M4, a non-blocking state machine and Wi-Fi TCP/IP polling of rain forecasts before each valve cycle.
                   </Text>
-                  <Text type="supporting" color="secondary">
-                    Direct register manipulation on ARM Cortex-M4, non-blocking state machine, Wi-Fi TCP/IP socket polling rain forecasts before valve duty cycles.
-                  </Text>
-                  <Text type="code" color="secondary" size="sm">
-                    STACK: {stm32Proj.stack}
-                  </Text>
+                  <Text type="code" size="sm" color="secondary">{stm32Proj.stack}</Text>
                 </VStack>
-
-                <Button
-                  label="View Firmware Code ↗"
-                  variant="secondary"
-                  href={stm32Proj.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                />
+                <HStack>
+                  <Button label="View on GitHub" variant="secondary" href={stm32Proj.href} {...external} endContent={extIcon} />
+                </HStack>
               </VStack>
             </HStack>
           </VStack>
 
           <HStack justify="between" align="center" width="100%" className="livrea-bottom-strip livrea-intermediate-strip">
-            <Text type="code" color="secondary" size="sm">
-              ENGINEERING DISCIPLINES: C FIRMWARE + POSTGRESQL/POSTGIS
-            </Text>
-            <Text type="code" color="secondary" size="sm">
-              2026 ARCHITECTURES
-            </Text>
+            <Text type="code" size="sm" color="secondary">C firmware · PostgreSQL / PostGIS</Text>
+            <Text type="code" size="sm" color="secondary">2026</Text>
           </HStack>
         </VStack>
       </VStack>
 
-      {/* ========================================================================= */}
-      {/* 07 — AUXILIARY MACHINERY & LAB (07) */}
-      {/* ========================================================================= */}
+      {/* 07 — More projects */}
       <VStack as="section" id="panel-7" className="livrea-panel livrea-panel-07">
         <VStack justify="between" height="100%" width="100%" className="livrea-panel-inner">
-          <HStack justify="between" align="center" width="100%" className="livrea-telemetry-header">
-            <HStack align="center" gap={2} className="livrea-telemetry-left">
-              <Text as="span" className="livrea-red-indicator">{'\u00A0'}</Text>
-              <Text weight="bold" color="secondary" size="sm" className="livrea-kicker">
-                SECTOR 07 // AUXILIARY MACHINERY &amp; HOME LAB
-              </Text>
-            </HStack>
-            <Text type="code" className="livrea-telemetry-badge" size="sm">
-              SYSTEMS &amp; INFRASTRUCTURE
-            </Text>
-          </HStack>
+          <SectorHeader num="07" label="More projects" meta="Systems & infrastructure" />
 
-          <VStack gap={3} width="100%" className="livrea-detail-block">
-            <VStack gap={1}>
-              <Heading level={2} className="livrea-section-head">
-                MORE MACHINERY
-              </Heading>
-              <Text type="large" color="secondary">
-                Specialized tools, systems daemons, infrastructure experiments, and home lab systems.
+          <VStack gap={6} width="100%" className="livrea-detail-block">
+            <VStack gap={2}>
+              <Heading level={2} className="livrea-section-head">More projects</Heading>
+              <Text color="secondary" className="livrea-section-lead">
+                Smaller tools, system daemons, infrastructure experiments and a home lab.
               </Text>
             </VStack>
 
-            {/* Symmetrical Precision Grid with Equal-Height Rows */}
             <VStack
               width="100%"
               className="livrea-machinery-grid"
@@ -1223,52 +748,24 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
             >
               {machineryProjects.map((item) => (
                 <VStack key={item.id} gap={2} className="livrea-machinery-card">
-                  <HStack justify="between" align="center">
-                    <Heading level={3} weight="bold" color="primary">
-                      {item.title}
-                    </Heading>
-                    <Text
-                      type="code"
-                      color="secondary"
-                      size="sm"
-                    >
-                      {item.tech}
-                    </Text>
+                  <HStack justify="between" align="center" gap={3}>
+                    <Heading level={3} className="livrea-card-title">{item.title}</Heading>
+                    <Text type="code" size="sm" color="secondary" className="livrea-machinery-tech">{item.tech}</Text>
                   </HStack>
-                  <Text type="body" color="secondary" className="livrea-machinery-desc">
-                    {item.description}
-                  </Text>
+                  <Text type="body" color="secondary" className="livrea-machinery-desc">{item.description}</Text>
                   {item.statusNote && (
-                    <Text type="code" color="secondary" size="sm" className="livrea-card-status-note">
-                      {item.statusNote}
-                    </Text>
+                    <Text size="sm" color="secondary" className="livrea-card-status-note">{item.statusNote}</Text>
                   )}
                   {(item.liveUrl || item.githubUrl) && (
-                    <HStack gap={3} wrap="wrap">
+                    <HStack gap={4} wrap="wrap" className="livrea-card-actions">
                       {item.liveUrl && (
-                        <Link
-                          href={item.liveUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          color="accent"
-                          size="sm"
-                          weight="bold"
-                          className="livrea-card-action-btn"
-                        >
-                          Live Web Application ↗
+                        <Link href={item.liveUrl} {...external} color="primary" className="livrea-card-link">
+                          Open live app ↗
                         </Link>
                       )}
                       {item.githubUrl && (
-                        <Link
-                          href={item.githubUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          color={item.liveUrl ? 'secondary' : 'accent'}
-                          size="sm"
-                          weight={item.liveUrl ? undefined : 'bold'}
-                          className="livrea-card-action-btn"
-                        >
-                          {item.liveUrl ? 'GitHub Repo ↗' : 'GitHub Repository ↗'}
+                        <Link href={item.githubUrl} {...external} color={item.liveUrl ? 'secondary' : 'primary'} className="livrea-card-link">
+                          View on GitHub ↗
                         </Link>
                       )}
                     </HStack>
@@ -1279,121 +776,74 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
           </VStack>
 
           <HStack justify="between" align="center" width="100%" className="livrea-bottom-strip livrea-intermediate-strip">
-            <Text type="code" color="secondary" size="sm">
-              SYSTEMS: RUST, C, PYTHON, POSTGIS, LINUX, ZFS, DOCKER
-            </Text>
-            <Text type="code" color="secondary" size="sm">
-              ALL SOURCE ON GITHUB
-            </Text>
+            <Text type="code" size="sm" color="secondary">Rust · C · Python · PostGIS · Linux · ZFS · Docker</Text>
+            <Text type="code" size="sm" color="secondary">Source on GitHub</Text>
           </HStack>
         </VStack>
       </VStack>
 
-      {/* ========================================================================= */}
-      {/* 08 — STARTING GRID: THE TRAJECTORY (08) */}
-      {/* ========================================================================= */}
+      {/* 08 — Education */}
       <VStack as="section" id="panel-8" className="livrea-panel livrea-panel-08">
         <VStack justify="between" height="100%" width="100%" className="livrea-panel-inner">
-          <HStack justify="between" align="center" width="100%" className="livrea-telemetry-header">
-            <HStack align="center" gap={2} className="livrea-telemetry-left">
-              <Text as="span" className="livrea-red-indicator">{'\u00A0'}</Text>
-              <Text weight="bold" color="secondary" size="sm" className="livrea-kicker">
-                SECTOR 08 // ACADEMIC &amp; SYSTEMS TRAJECTORY
-              </Text>
-            </HStack>
-            <Text type="code" className="livrea-telemetry-badge" size="sm">
-              2019 → 2027
-            </Text>
-          </HStack>
+          <SectorHeader num="08" label="Education" meta="2019 – 2027" />
 
-          <VStack gap={4} width="100%" className="livrea-detail-block">
-            <VStack gap={1}>
-              <Heading level={2} className="livrea-section-head">
-                STARTING GRID
-              </Heading>
-              <Text type="large" color="secondary">
-                Rigorous computer science foundations, enterprise infrastructure experience, and ongoing engineering honours.
+          <VStack gap={6} width="100%" className="livrea-detail-block">
+            <VStack gap={2}>
+              <Heading level={2} className="livrea-section-head">Education and experience</Heading>
+              <Text color="secondary" className="livrea-section-lead">
+                Computer science foundations, enterprise infrastructure experience and an engineering degree in progress.
               </Text>
             </VStack>
 
-            {/* 4 Starting Grid Chronological Timeline Nodes */}
-            <VStack gap={3} width="100%" className="livrea-grid-rows livrea-grid-timeline">
-              {/* P01 */}
-              <HStack align="center" gap={4} className="livrea-grid-row livrea-timeline-node is-active-node">
-                <HStack align="center" gap={2} className="livrea-grid-node-header">
-                  <Text className="livrea-grid-pos" color="accent">
-                    P01
-                  </Text>
-                  <Text type="code" color="primary" weight="bold">
-                    2024 – PRESENT
-                  </Text>
+            <VStack gap={0} width="100%" className="livrea-grid-rows">
+              <HStack align="start" gap={6} className="livrea-grid-row is-active-node">
+                <HStack align="center" gap={3} className="livrea-grid-node-header">
+                  <Text type="code" size="sm" className="livrea-grid-pos is-current">P01</Text>
+                  <Text type="code" size="sm" color="primary">2024 – present</Text>
                 </HStack>
-                <VStack gap={0.5} width="100%" className="livrea-grid-node-body">
-                  <Heading level={3} weight="bold" color="primary">
-                    B.Sc. Computer Engineering — UNIMORE (Mantova Campus)
-                  </Heading>
+                <VStack gap={1} width="100%">
+                  <Heading level={3} className="livrea-card-title">B.Sc. Computer Engineering — UNIMORE, Mantova campus</Heading>
                   <Text type="body" color="secondary">
-                    Weighted academic average: <Text className="livrea-text-cyan" weight="bold">27.3 / 30</Text> · 125 / 180 ECTS completed · Expected graduation: 2027.
+                    Weighted average <Text as="span" color="primary" weight="medium">27.3 / 30</Text> · 125 / 180 ECTS completed · expected graduation 2027
                   </Text>
                 </VStack>
               </HStack>
 
-              {/* P02 */}
-              <HStack align="center" gap={4} className="livrea-grid-row livrea-timeline-node">
-                <HStack align="center" gap={2} className="livrea-grid-node-header">
-                  <Text className="livrea-grid-pos" color="primary">
-                    P02
-                  </Text>
-                  <Text type="code" color="primary" weight="bold">
-                    2023
-                  </Text>
+              <HStack align="start" gap={6} className="livrea-grid-row">
+                <HStack align="center" gap={3} className="livrea-grid-node-header">
+                  <Text type="code" size="sm" color="secondary" className="livrea-grid-pos">P02</Text>
+                  <Text type="code" size="sm" color="primary">2023</Text>
                 </HStack>
-                <VStack gap={0.5} width="100%" className="livrea-grid-node-body">
-                  <Heading level={3} weight="bold" color="primary">
-                    IT Systems Internship — Novellini S.p.A.
-                  </Heading>
+                <VStack gap={1} width="100%">
+                  <Heading level={3} className="livrea-card-title">IT systems internship — Novellini S.p.A.</Heading>
                   <Text type="body" color="secondary">
-                    Corporate enterprise network infrastructure diagnostics, hardware maintenance, and workstation support.
+                    Enterprise network infrastructure diagnostics, hardware maintenance and workstation support.
                   </Text>
                 </VStack>
               </HStack>
 
-              {/* P03 */}
-              <HStack align="center" gap={4} className="livrea-grid-row livrea-timeline-node">
-                <HStack align="center" gap={2} className="livrea-grid-node-header">
-                  <Text className="livrea-grid-pos" color="primary">
-                    P03
-                  </Text>
-                  <Text type="code" color="primary" weight="bold">
-                    2019 – 2024
-                  </Text>
+              <HStack align="start" gap={6} className="livrea-grid-row">
+                <HStack align="center" gap={3} className="livrea-grid-node-header">
+                  <Text type="code" size="sm" color="secondary" className="livrea-grid-pos">P03</Text>
+                  <Text type="code" size="sm" color="primary">2019 – 2024</Text>
                 </HStack>
-                <VStack gap={0.5} width="100%" className="livrea-grid-node-body">
-                  <Heading level={3} weight="bold" color="primary">
-                    Diploma in Computer Science — ITIS "E. Fermi" Mantova
-                  </Heading>
+                <VStack gap={1} width="100%">
+                  <Heading level={3} className="livrea-card-title">Diploma in Computer Science — ITIS "E. Fermi", Mantova</Heading>
                   <Text type="body" color="secondary">
-                    Graduated with top marks: <Text color="primary" weight="bold">100 / 100</Text>. Foundational C programming, network protocols, algorithms.
+                    Graduated with <Text as="span" color="primary" weight="medium">100 / 100</Text> · C programming, network protocols, algorithms
                   </Text>
                 </VStack>
               </HStack>
 
-              {/* P04 */}
-              <HStack align="center" gap={4} className="livrea-grid-row livrea-timeline-node">
-                <HStack align="center" gap={2} className="livrea-grid-node-header">
-                  <Text className="livrea-grid-pos" color="secondary">
-                    P04
-                  </Text>
-                  <Text type="code" color="primary" weight="bold">
-                    CERTIFICATIONS
-                  </Text>
+              <HStack align="start" gap={6} className="livrea-grid-row">
+                <HStack align="center" gap={3} className="livrea-grid-node-header">
+                  <Text type="code" size="sm" color="secondary" className="livrea-grid-pos">P04</Text>
+                  <Text type="code" size="sm" color="primary">Certifications</Text>
                 </HStack>
-                <VStack gap={0.5} width="100%" className="livrea-grid-node-body">
-                  <Heading level={3} weight="bold" color="primary">
-                    Cambridge B2 First &amp; Language Competencies
-                  </Heading>
+                <VStack gap={1} width="100%">
+                  <Heading level={3} className="livrea-card-title">Cambridge B2 First and languages</Heading>
                   <Text type="body" color="secondary">
-                    Professional working proficiency in English · Native Italian speaker.
+                    Professional working proficiency in English · native Italian speaker
                   </Text>
                 </VStack>
               </HStack>
@@ -1401,265 +851,139 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
           </VStack>
 
           <HStack justify="between" align="center" width="100%" className="livrea-bottom-strip livrea-intermediate-strip">
-            <Text type="code" color="secondary" size="sm">
-              ACADEMIC VERIFICATION: UNIMORE MANTOVA CAMPUS
-            </Text>
-            <Text type="code" color="secondary" size="sm">
-              MANTOVA, ITALY
-            </Text>
+            <Text type="code" size="sm" color="secondary">UNIMORE · Mantova campus</Text>
+            <Text type="code" size="sm" color="secondary">Mantova, Italy</Text>
           </HStack>
         </VStack>
       </VStack>
 
-      {/* ========================================================================= */}
-      {/* 09 — REDESIGNED CONTACT & PIT WALL SECTION (09) */}
-      {/* ========================================================================= */}
+      {/* 09 — Contact */}
       <VStack as="section" id="panel-9" className="livrea-panel livrea-panel-09">
         <VStack justify="between" height="100%" width="100%" className="livrea-panel-inner">
-          <HStack justify="between" align="center" width="100%" className="livrea-telemetry-header">
-            <HStack align="center" gap={2} className="livrea-telemetry-left">
-              <Text as="span" className="livrea-red-indicator">{'\u00A0'}</Text>
-              <Text weight="bold" color="secondary" size="sm" className="livrea-kicker">
-                SECTOR 09 // PIT WALL &amp; CONTACT TRANSMISSION
-              </Text>
-            </HStack>
-            <Text type="code" className="livrea-telemetry-badge" size="sm">
-              OPEN TO CONNECT
-            </Text>
-          </HStack>
+          <SectorHeader num="09" label="Contact" meta="Open to connect" />
 
-          <VStack gap={4} width="100%" className="livrea-contact-center">
-            <VStack gap={1}>
-              <Heading level={2} className="livrea-massive-title">
-                LET'S BUILD TOGETHER.
+          <VStack gap={6} width="100%" className="livrea-contact-center">
+            <VStack gap={3}>
+              <Heading level={2} className="livrea-section-head livrea-contact-head">
+                {availability}
               </Heading>
-              <HStack align="center" gap={2} paddingBlockStart={1}>
-                <Text type="code" className="livrea-role-badge">
-                  {IDENTITY.availability.toUpperCase()}
-                </Text>
-              </HStack>
+              <Text as="p" color="secondary" className="livrea-contact-lead">
+                I'm looking for an internship in systems, embedded or motorsport software. Email is the fastest way to reach me, and my CV is available in English and Italian.
+              </Text>
             </VStack>
 
-            <Text as="p" type="large" color="primary" className="livrea-contact-lead">
-              I build fast, reliable software across the modern stack — from web and desktop applications to systems engineering and developer tooling. If you're building ambitious products or engineering solid software, I'd love to connect.
-            </Text>
-
-            {/* Desktop: 4 High-Contrast Structured Contact Cards */}
+            {/* Desktop: four channels */}
             <HStack justify="between" align="stretch" gap={3} width="100%" className="livrea-contact-cards-grid livrea-contact-cards-desktop">
-              {/* Card 1: Direct Email */}
-              <VStack gap={2} className="livrea-contact-card is-primary-action">
-                <Text type="code" color="accent" size="sm">
-                  CHANNEL 01 // DIRECT
-                </Text>
-                <Heading level={4} weight="bold" color="primary">
-                  Direct Inquiries
-                </Heading>
-                <Text type="body" color="secondary">
-                  Fastest response channel for project discussions, internships, and technical questions.
-                </Text>
-                <Button
-                  label={isCopied ? 'EMAIL COPIED ✓' : `COPY: ${CONTACTS.email}`}
-                  variant="primary"
-                  onClick={handleCopy}
-                  className="livrea-primary-action-btn"
-                />
-              </VStack>
-
-              {/* Card 2: GitHub Profile */}
-              <VStack gap={2} className="livrea-contact-card">
-                <Text type="code" color="secondary" size="sm">
-                  CHANNEL 02 // CODE
-                </Text>
-                <Heading level={4} weight="bold" color="primary">
-                  GitHub Profile
-                </Heading>
-                <Text type="body" color="secondary">
-                  Open source contributions, Oxide work, repositories, commits, and telemetry experiments.
-                </Text>
-                <Button
-                  label="Visit @itsmrma on GitHub ↗"
-                  variant="secondary"
-                  href={CONTACTS.github}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                />
-              </VStack>
-
-              {/* Card 3: LinkedIn & Network */}
-              <VStack gap={2} className="livrea-contact-card">
-                <Text type="code" color="secondary" size="sm">
-                  CHANNEL 03 // NETWORK
-                </Text>
-                <Heading level={4} weight="bold" color="primary">
-                  LinkedIn Profile
-                </Heading>
-                <Text type="body" color="secondary">
-                  Based in Mantova (UNIMORE). Open to high-performance motorsport and systems software opportunities.
-                </Text>
-                <Button
-                  label="Connect on LinkedIn ↗"
-                  variant="secondary"
-                  href={CONTACTS.linkedin}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                />
-              </VStack>
-
-              {/* Card 4: Curriculum Vitae */}
-              <VStack gap={2} className="livrea-contact-card">
-                <Text type="code" color="secondary" size="sm">
-                  CHANNEL 04 // CREDENTIALS
-                </Text>
-                <Heading level={4} weight="bold" color="primary">
-                  Download CV
-                </Heading>
-                <Text type="body" color="secondary">
-                  Complete academic trajectory, hackathon credentials, technical skills, and experience.
-                </Text>
-                <HStack gap={2}>
+              <VStack gap={3} className="livrea-contact-card">
+                <VStack gap={1}>
+                  <Text size="sm" color="secondary">Email</Text>
+                  <Text color="primary" weight="medium">{CONTACTS.email}</Text>
+                  <Text size="sm" color="secondary">Projects, internships and technical questions</Text>
+                </VStack>
+                <HStack>
                   <Button
-                    label="CV (English PDF) ↗"
-                    variant="secondary"
-                    href={CONTACTS.cvEn}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                    label={isCopied ? 'Email copied' : 'Copy email'}
+                    variant="primary"
+                    onClick={handleCopy}
+                    icon={<Icon icon={isCopied ? 'check' : 'copy'} />}
                   />
-                  <Button
-                    label="CV (Italian PDF) ↗"
-                    variant="secondary"
-                    href={CONTACTS.cvIt}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  />
+                </HStack>
+              </VStack>
+
+              <VStack gap={3} className="livrea-contact-card">
+                <VStack gap={1}>
+                  <Text size="sm" color="secondary">GitHub</Text>
+                  <Text color="primary" weight="medium">@{CONTACTS.githubUsername}</Text>
+                  <Text size="sm" color="secondary">Open source work, Oxide and every repository on this page</Text>
+                </VStack>
+                <HStack>
+                  <Button label="Open GitHub" variant="secondary" href={CONTACTS.github} {...external} endContent={extIcon} />
+                </HStack>
+              </VStack>
+
+              <VStack gap={3} className="livrea-contact-card">
+                <VStack gap={1}>
+                  <Text size="sm" color="secondary">LinkedIn</Text>
+                  <Text color="primary" weight="medium">Matteo Benassi</Text>
+                  <Text size="sm" color="secondary">Based in Mantova, open to motorsport and systems software roles</Text>
+                </VStack>
+                <HStack>
+                  <Button label="Open LinkedIn" variant="secondary" href={CONTACTS.linkedin} {...external} endContent={extIcon} />
+                </HStack>
+              </VStack>
+
+              <VStack gap={3} className="livrea-contact-card">
+                <VStack gap={1}>
+                  <Text size="sm" color="secondary">CV</Text>
+                  <Text color="primary" weight="medium">PDF, English and Italian</Text>
+                  <Text size="sm" color="secondary">Education, hackathons, skills and experience</Text>
+                </VStack>
+                <HStack gap={2} wrap="wrap">
+                  <Button label="English" variant="secondary" href={CONTACTS.cvEn} {...external} endContent={extIcon} />
+                  <Button label="Italiano" variant="secondary" href={CONTACTS.cvIt} {...external} endContent={extIcon} />
                 </HStack>
               </VStack>
             </HStack>
 
-            {/* Mobile: Dedicated Ergonomic Contact Action Deck */}
-            <VStack gap={2} width="100%" className="livrea-contact-action-deck">
+            {/* Mobile: one list of contact rows */}
+            <VStack gap={0} width="100%" className="livrea-contact-action-deck">
               {contactDeckActions.map((action) => {
                 if (action.action === 'email') {
                   return (
-                    <VStack key={action.id} className="livrea-contact-deck-item">
-                      <Link
-                        href={`mailto:${CONTACTS.email}`}
-                        onClick={handleCopy}
-                        className="livrea-contact-deck-btn is-primary-deck-action"
-                      >
-                        <HStack justify="between" align="center" width="100%">
-                          <VStack gap={1} align="start">
-                            <HStack align="center" gap={2}>
-                              <Text type="code" color="accent" size="sm" weight="bold">
-                                {action.channelLabel}
-                              </Text>
-                              {isCopied && (
-                                <Text as="span" className="livrea-contact-toast">
-                                  COPIED ✓
-                                </Text>
-                              )}
-                            </HStack>
-                            <Text weight="bold" color="primary">
-                              {action.label}
-                            </Text>
-                            <Text type="code" color="secondary" size="sm">
-                              {action.subtitle}
-                            </Text>
-                          </VStack>
-                          <Text type="code" color="accent" size="lg" weight="bold">
-                            {isCopied ? '✓' : 'COPY'}
-                          </Text>
+                    <Link
+                      key={action.id}
+                      href={`mailto:${CONTACTS.email}`}
+                      onClick={handleCopy}
+                      className="livrea-contact-deck-btn"
+                      aria-label={isCopied ? 'Email copied' : `Copy email address ${CONTACTS.email}`}
+                    >
+                      <HStack justify="between" align="center" gap={3} width="100%">
+                        <VStack gap={0.5}>
+                          <Text size="sm" color="secondary">{action.channelLabel}</Text>
+                          <Text color="primary" weight="medium">{action.subtitle}</Text>
+                        </VStack>
+                        <HStack align="center" gap={1} className="livrea-contact-deck-action">
+                          <Text size="sm" color="primary">{isCopied ? 'Copied' : 'Copy'}</Text>
+                          <Icon icon={isCopied ? 'check' : 'copy'} size="sm" color="primary" />
                         </HStack>
-                      </Link>
-                    </VStack>
+                      </HStack>
+                    </Link>
                   );
                 }
 
                 if (action.action === 'cv') {
                   return (
-                    <VStack key={action.id} className="livrea-contact-deck-item">
-                      <HStack gap={2} width="100%">
-                        <Link
-                          href={CONTACTS.cvEn}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="livrea-contact-deck-btn"
-                          style={{ flex: 1 }}
-                        >
-                          <HStack justify="between" align="center" width="100%">
-                            <VStack gap={1} align="start">
-                              <Text type="code" color="secondary" size="sm">
-                                {action.channelLabel}
-                              </Text>
-                              <Text weight="bold" color="primary">
-                                CV (English PDF)
-                              </Text>
-                            </VStack>
-                            <Text type="code" color="secondary" size="lg" weight="bold">
-                              ↗
-                            </Text>
-                          </HStack>
-                        </Link>
-
-                        <Link
-                          href={CONTACTS.cvIt}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="livrea-contact-deck-btn"
-                          style={{ flex: 1 }}
-                        >
-                          <HStack justify="between" align="center" width="100%">
-                            <VStack gap={1} align="start">
-                              <Text type="code" color="secondary" size="sm">
-                                {action.channelLabel}
-                              </Text>
-                              <Text weight="bold" color="primary">
-                                CV (Italian PDF)
-                              </Text>
-                            </VStack>
-                            <Text type="code" color="secondary" size="lg" weight="bold">
-                              ↗
-                            </Text>
-                          </HStack>
-                        </Link>
+                    <HStack key={action.id} justify="between" align="center" gap={3} width="100%" className="livrea-contact-deck-btn is-static">
+                      <VStack gap={0.5}>
+                        <Text size="sm" color="secondary">{action.channelLabel}</Text>
+                        <Text color="primary" weight="medium">{action.subtitle}</Text>
+                      </VStack>
+                      <HStack gap={2}>
+                        <Button label="EN" size="sm" variant="secondary" href={CONTACTS.cvEn} {...external} aria-label="CV in English (PDF)" />
+                        <Button label="IT" size="sm" variant="secondary" href={CONTACTS.cvIt} {...external} aria-label="CV in Italian (PDF)" />
                       </HStack>
-                    </VStack>
+                    </HStack>
                   );
                 }
 
                 return (
-                  <VStack key={action.id} className="livrea-contact-deck-item">
-                    <Link
-                      href={action.href ?? '#'}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="livrea-contact-deck-btn"
-                    >
-                      <HStack justify="between" align="center" width="100%">
-                        <VStack gap={1} align="start">
-                          <Text type="code" color="secondary" size="sm">
-                            {action.channelLabel}
-                          </Text>
-                          <Text weight="bold" color="primary">
-                            {action.label}
-                          </Text>
-                          <Text type="code" color="secondary" size="sm">
-                            {action.subtitle}
-                          </Text>
-                        </VStack>
-                        <Text type="code" color="secondary" size="lg" weight="bold">
-                          ↗
-                        </Text>
-                      </HStack>
-                    </Link>
-                  </VStack>
+                  <Link key={action.id} href={action.href ?? '#'} {...external} className="livrea-contact-deck-btn">
+                    <HStack justify="between" align="center" gap={3} width="100%">
+                      <VStack gap={0.5}>
+                        <Text size="sm" color="secondary">{action.channelLabel}</Text>
+                        <Text color="primary" weight="medium">{action.subtitle}</Text>
+                      </VStack>
+                      <Icon icon="externalLink" size="sm" color="secondary" />
+                    </HStack>
+                  </Link>
                 );
               })}
             </VStack>
           </VStack>
 
           <HStack justify="center" align="center" width="100%" className="livrea-bottom-strip livrea-finish-strip">
-            <Text type="code" color="secondary" size="sm">
-              © 2026 MATTEO BENASSI // MANTOVA, ITALY
+            <Text type="code" size="sm" color="secondary">
+              © 2026 Matteo Benassi · Mantova, Italy
             </Text>
           </HStack>
         </VStack>

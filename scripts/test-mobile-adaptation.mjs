@@ -29,7 +29,9 @@ import {
   getMachineryGridConfig,
   getContactDeckActions,
   getTelemetryKickerConfig,
+  CONTACT_LINKS,
 } from '../src/utils/mobileAdaptation.ts';
+import { CONTACTS } from '../src/data/curatedData.ts';
 
 test('mobileAdaptation: isMobileViewport correctly detects mobile vs desktop', () => {
   // Mobile widths (< 820px) should return true regardless of pointer type
@@ -270,15 +272,15 @@ test('mobileWaypointHud: SECTOR_WAYPOINTS contains all 9 telemetry sectors', () 
 
   // Verify each sector structure
   const expectedSectors = [
-    { num: '01', id: 'panel-1', title: 'CHASSIS' },
-    { num: '02', id: 'panel-2', title: 'PODIUM' },
-    { num: '03', id: 'panel-3', title: 'OXIDE' },
-    { num: '04', id: 'panel-4', title: 'SYNCFORGE' },
-    { num: '05', id: 'panel-5', title: 'SCROBBL' },
-    { num: '06', id: 'panel-6', title: 'EMBEDDED' },
-    { num: '07', id: 'panel-7', title: 'MACHINERY' },
-    { num: '08', id: 'panel-8', title: 'GRID' },
-    { num: '09', id: 'panel-9', title: 'CONTACT' },
+    { num: '01', id: 'panel-1', title: 'About' },
+    { num: '02', id: 'panel-2', title: 'Hackathons' },
+    { num: '03', id: 'panel-3', title: 'Oxide' },
+    { num: '04', id: 'panel-4', title: 'SyncForge' },
+    { num: '05', id: 'panel-5', title: 'scrobbl.rs' },
+    { num: '06', id: 'panel-6', title: 'Embedded & GIS' },
+    { num: '07', id: 'panel-7', title: 'More projects' },
+    { num: '08', id: 'panel-8', title: 'Education' },
+    { num: '09', id: 'panel-9', title: 'Contact' },
   ];
 
   expectedSectors.forEach((exp, idx) => {
@@ -292,30 +294,30 @@ test('mobileWaypointHud: SECTOR_WAYPOINTS contains all 9 telemetry sectors', () 
 });
 
 test('mobileWaypointHud: getSectorWaypoint returns correct waypoint by index or id', () => {
-  assert.equal(getSectorWaypoint(1).title, 'CHASSIS');
-  assert.equal(getSectorWaypoint(3).title, 'OXIDE');
-  assert.equal(getSectorWaypoint('panel-3').title, 'OXIDE');
-  assert.equal(getSectorWaypoint('panel-9').title, 'CONTACT');
-  assert.equal(getSectorWaypoint(9).title, 'CONTACT');
+  assert.equal(getSectorWaypoint(1).title, 'About');
+  assert.equal(getSectorWaypoint(3).title, 'Oxide');
+  assert.equal(getSectorWaypoint('panel-3').title, 'Oxide');
+  assert.equal(getSectorWaypoint('panel-9').title, 'Contact');
+  assert.equal(getSectorWaypoint(9).title, 'Contact');
 
   // Edge cases / fallback to 1
-  assert.equal(getSectorWaypoint(99).title, 'CHASSIS', 'Out of bounds index falls back to sector 1');
-  assert.equal(getSectorWaypoint('unknown').title, 'CHASSIS', 'Invalid id falls back to sector 1');
+  assert.equal(getSectorWaypoint(99).title, 'About', 'Out of bounds index falls back to sector 1');
+  assert.equal(getSectorWaypoint('unknown').title, 'About', 'Invalid id falls back to sector 1');
 });
 
 test('mobileWaypointHud: formatSectorTelemetryKicker formats active sector indicator', () => {
   // Closed state (default)
-  assert.equal(formatSectorTelemetryKicker(1), '[ 01 // CHASSIS ▾ ]');
-  assert.equal(formatSectorTelemetryKicker(3), '[ 03 // OXIDE ▾ ]');
-  assert.equal(formatSectorTelemetryKicker('panel-3'), '[ 03 // OXIDE ▾ ]');
-  assert.equal(formatSectorTelemetryKicker(9), '[ 09 // CONTACT ▾ ]');
+  assert.equal(formatSectorTelemetryKicker(1), '01 About, open section menu');
+  assert.equal(formatSectorTelemetryKicker(3), '03 Oxide, open section menu');
+  assert.equal(formatSectorTelemetryKicker('panel-3'), '03 Oxide, open section menu');
+  assert.equal(formatSectorTelemetryKicker(9), '09 Contact, open section menu');
 
   // Open state (arrow flipped up)
-  assert.equal(formatSectorTelemetryKicker(3, true), '[ 03 // OXIDE ▴ ]');
-  assert.equal(formatSectorTelemetryKicker('panel-9', true), '[ 09 // CONTACT ▴ ]');
+  assert.equal(formatSectorTelemetryKicker(3, true), '03 Oxide, close section menu');
+  assert.equal(formatSectorTelemetryKicker('panel-9', true), '09 Contact, close section menu');
 
   // Invalid sector falls back safely
-  assert.equal(formatSectorTelemetryKicker(-1), '[ 01 // CHASSIS ▾ ]');
+  assert.equal(formatSectorTelemetryKicker(-1), '01 About, open section menu');
 });
 
 test('mobileWaypointHud: getContactSectorId returns panel-9 for direct quick action', () => {
@@ -625,32 +627,32 @@ test('machineryGrid: structures 6 hardware/lab projects into a responsive high-d
   // Verify project identities and content
   const fanControl = projects.find((p) => p.id === 'amd-fan-control');
   assert.ok(fanControl, 'AMD Fan Control project exists');
-  assert.equal(fanControl.tech, 'RUST FFI');
+  assert.equal(fanControl.tech, 'Rust FFI');
   assert.equal(fanControl.githubUrl, 'https://github.com/itsmrma/amd-fan-control');
 
   const truenas = projects.find((p) => p.id === 'truenas-homelab');
   assert.ok(truenas, 'TrueNAS Home Lab project exists');
-  assert.equal(truenas.tech, 'ZFS / LINUX');
+  assert.equal(truenas.tech, 'ZFS / Linux');
 
   const viessmann = projects.find((p) => p.id === 'viessmann-dashboard');
   assert.ok(viessmann, 'Viessmann Dashboard project exists');
-  assert.equal(viessmann.tech, 'HOME ASSISTANT');
+  assert.equal(viessmann.tech, 'Home Assistant');
   assert.equal(viessmann.githubUrl, 'https://github.com/itsmrma/viesmann-dashboard-hass');
 
   const musicLib = projects.find((p) => p.id === 'uni-musiclib');
   assert.ok(musicLib, 'UNIMORE Music Library project exists');
-  assert.equal(musicLib.tech, 'PYTHON / UV');
+  assert.equal(musicLib.tech, 'Python / uv');
   assert.equal(musicLib.githubUrl, 'https://github.com/itsmrma/uni-musiclib-project');
 
   const musicHistory = projects.find((p) => p.id === 'music-history-analyzer');
   assert.ok(musicHistory, 'Music History Analyzer project exists');
-  assert.equal(musicHistory.tech, 'LIVE APP');
+  assert.equal(musicHistory.tech, 'Live app');
   assert.equal(musicHistory.liveUrl, 'https://spotify-history-analyzer.benassimatteo.dev');
   assert.equal(musicHistory.githubUrl, 'https://github.com/itsmrma/spotify-history-analyzer');
 
   const credentials = projects.find((p) => p.id === 'language-credentials');
   assert.ok(credentials, 'Language credentials project exists');
-  assert.equal(credentials.tech, 'PROFICIENCY');
+  assert.equal(credentials.tech, 'Proficiency');
 
   // Verify responsive grid layout config
   const desktopConfig = getMachineryGridConfig(false);
@@ -680,23 +682,23 @@ test('contactActionDeck: provides dedicated >= 48px direct action buttons with i
   const emailAction = initialActions.find((a) => a.id === 'email');
   assert.ok(emailAction, 'Email direct action exists');
   assert.equal(emailAction.instantFeedback, true, 'Email action supports instant feedback indicator');
-  assert.equal(emailAction.channelLabel, 'CHANNEL 01 // DIRECT', 'Email is Channel 01 Direct');
+  assert.equal(emailAction.channelLabel, 'Email', 'Email channel');
   assert.match(emailAction.label, /EMAIL/i);
 
   const githubAction = initialActions.find((a) => a.id === 'github');
   assert.ok(githubAction, 'GitHub action exists');
-  assert.equal(githubAction.channelLabel, 'CHANNEL 02 // CODE', 'GitHub is Channel 02 Code');
+  assert.equal(githubAction.channelLabel, 'GitHub', 'GitHub channel');
   assert.equal(githubAction.href, 'https://github.com/itsmrma');
 
   const linkedinAction = initialActions.find((a) => a.id === 'linkedin');
   assert.ok(linkedinAction, 'LinkedIn action exists');
-  assert.equal(linkedinAction.channelLabel, 'CHANNEL 03 // NETWORK', 'LinkedIn is Channel 03 Network');
-  assert.equal(linkedinAction.href, 'https://www.linkedin.com/in/matteo-benassi/');
+  assert.equal(linkedinAction.channelLabel, 'LinkedIn', 'LinkedIn channel');
+  assert.equal(linkedinAction.href, 'https://www.linkedin.com/in/matteo-benassi-bb47b02b0/');
 
   const cvAction = initialActions.find((a) => a.id === 'cv');
   assert.ok(cvAction, 'CV download action exists');
-  assert.equal(cvAction.channelLabel, 'CHANNEL 04 // CREDENTIALS', 'CV is Channel 04 Credentials');
-  assert.ok(cvAction.href.includes('cv.pdf'), 'CV action points to CV PDF');
+  assert.equal(cvAction.channelLabel, 'CV', 'CV channel');
+  assert.ok(cvAction.href.toLowerCase().endsWith('.pdf'), 'CV action points to CV PDF');
 
   // Test copied state
   const copiedActions = getContactDeckActions(true);
@@ -721,4 +723,12 @@ test('telemetryKicker: maintains single-line layout without line-wrapping on nar
   const configDesktop = getTelemetryKickerConfig(1280);
   assert.equal(configDesktop.wrap, false, 'Desktop kickers remain single line');
   assert.equal(configDesktop.allowEllipsis, false);
+});
+
+test('contactActionDeck: mobile contact links match the desktop CONTACTS source of truth', () => {
+  for (const key of ['email', 'github', 'linkedin', 'cvEn', 'cvIt']) {
+    assert.equal(CONTACT_LINKS[key], CONTACTS[key], `CONTACT_LINKS.${key} mirrors CONTACTS.${key}`);
+  }
+  const actions = getContactDeckActions(false);
+  assert.equal(actions.find((a) => a.id === 'email').subtitle, CONTACTS.email, 'Mobile shows the same email the copy button writes');
 });
