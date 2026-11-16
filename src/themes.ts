@@ -15,7 +15,7 @@ export const themeLivrea = defineTheme({
   name: 'livrea-motorsport',
   extends: baseTheme,
   tokens: {
-    '--font-family-heading': '"Archivo", -apple-system, BlinkMacSystemFont, sans-serif',
+    '--font-family-heading': '"Space Grotesk", "Archivo", -apple-system, BlinkMacSystemFont, sans-serif',
     '--font-family-body': '"Archivo", -apple-system, BlinkMacSystemFont, sans-serif',
     '--font-family-code': '"Geist Mono", ui-monospace, monospace',
 

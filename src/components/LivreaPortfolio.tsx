@@ -344,14 +344,10 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
           <VStack gap={6} width="100%" className="livrea-hero-center">
             <VStack gap={3} width="100%">
               <Heading level={1} className="livrea-huge-name">
-                Matteo
-                <br />
-                Benassi
+                Matteo Benassi
               </Heading>
               <HStack align="center" gap={2} wrap="wrap" className="livrea-role-strip">
-                <Text color="primary">Computer Engineering at UNIMORE</Text>
-                <Text color="secondary" className="livrea-role-separator" aria-hidden="true">·</Text>
-                <Text color="secondary">Software &amp; systems engineer</Text>
+                <Text color="primary">Computer Engineering student at UNIMORE</Text>
                 <Text color="secondary" className="livrea-role-separator" aria-hidden="true">·</Text>
                 <Text color="secondary">Mantova, Italy</Text>
               </HStack>
@@ -405,15 +401,15 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
       {/* 02 — Hackathons */}
       <VStack as="section" id="panel-2" className="livrea-panel livrea-panel-02">
         <VStack justify="between" height="100%" width="100%" className="livrea-panel-inner">
-          <SectorHeader num="02" label="Hackathons" meta="3 entries · 3 podiums" />
+          <SectorHeader num="02" label="Hackathons" meta="2025 – 2026" />
 
           <VStack gap={6} width="100%" className="livrea-podium-container">
             <VStack gap={2}>
               <Heading level={2} className="livrea-section-head">
-                Three hackathons, three podiums
+                Hackathons
               </Heading>
               <Text color="secondary" className="livrea-section-lead">
-                Systems architecture, GIS engineering and applied AI, built with the UNIMORE team.
+                Team projects built with other UNIMORE students, on GIS, predictive maintenance and document processing.
               </Text>
             </VStack>
 
@@ -433,7 +429,7 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
                 <VStack gap={1} className="livrea-card-specs">
                   <Text type="code" size="sm" color="primary">Django REST · PostGIS GIST · React · Gemini AI</Text>
                   <Text size="sm" color="secondary">
-                    Sub-millisecond PostGIS polygon checks and automated Gemini multimodal voice triage.
+                    PostGIS polygon checks on GIST indices and Gemini triage of voice reports.
                   </Text>
                 </VStack>
                 <Link href="https://github.com/cavallinilorenzo/alert-app-garda-chiese" {...external} color="primary" className="livrea-card-link">
@@ -491,7 +487,7 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
 
           <HStack justify="between" align="center" width="100%" className="livrea-bottom-strip livrea-intermediate-strip">
             <Text type="code" size="sm" color="secondary">Hack4Water · SCIoTeM</Text>
-            <Text type="code" size="sm" color="secondary">2025 – 2026</Text>
+            <Text type="code" size="sm" color="secondary">UNIMORE team</Text>
           </HStack>
         </VStack>
       </VStack>
@@ -523,8 +519,8 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
                 <Pillar n="02" title="Pre-merge verification gate">
                   Runs typechecking and test suites on every agent turn before reconciling into the primary branch.
                 </Pillar>
-                <Pillar n="03" title="Native Rust and Tauri 2 backend">
-                  Low-memory backend executing async subagent channels with native OS performance.
+                <Pillar n="03" title="Rust and Tauri 2 backend">
+                  Agent sessions run as async channels in a Rust backend.
                 </Pillar>
               </VStack>
 
@@ -575,13 +571,13 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
 
               <VStack gap={0} width="100%" className="livrea-pillars-list">
                 <Pillar n="01" title="FFT waveform cross-correlation">
-                  Computes sub-millisecond audio stream offsets natively in Rust without external audio dependencies.
+                  Finds the offset between two audio streams in Rust, without external audio libraries.
                 </Pillar>
                 <Pillar n="02" title="Lossless MKV stream pipeline">
                   Extracts and shifts subtitle and audio tracks without lossy video re-encoding.
                 </Pillar>
                 <Pillar n="03" title="Model Context Protocol server">
-                  Ships with an embedded MCP server exposing 20 media tools to Claude Code and Cursor.
+                  Includes an MCP server with 20 media tools for Claude Code and Cursor.
                 </Pillar>
               </VStack>
 
@@ -632,7 +628,7 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
                   Adaptive Spotify polling with duplicate reconciliation and multi-year JSON archive ingestion.
                 </Pillar>
                 <Pillar n="02" title="Dual SQLite databases in WAL mode">
-                  Keeps listening analytics (archive.db) apart from auth tokens (auth.db), querying 50,000+ tracks in under 5 ms.
+                  Keeps listening data (archive.db) separate from auth tokens (auth.db).
                 </Pillar>
                 <Pillar n="03" title="Single-binary distribution">
                   Compiles the React and TypeScript frontend into the standalone Rust binary with bundled SQLite.
@@ -669,10 +665,10 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
           <VStack gap={6} width="100%" className="livrea-detail-block">
             <VStack gap={2}>
               <Heading level={2} className="livrea-section-head">
-                Embedded firmware and spatial platforms
+                Embedded and GIS
               </Heading>
               <Text color="secondary" className="livrea-section-lead">
-                From bare-metal C running in under 16 KB of SRAM to a regional GIS backend checking thousands of spatial polygons.
+                A bare-metal firmware for a microcontroller and the GIS backend of the Hack4Water project.
               </Text>
             </VStack>
 
@@ -690,7 +686,7 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
                 <VStack gap={1} className="livrea-card-specs">
                   <Text type="code" size="sm" color="primary">PostGIS GIST spatial indices · Gemini</Text>
                   <Text size="sm" color="secondary">
-                    Sub-millisecond containment checks over 76,645 hectares across 33 municipal canal boundaries, with no sign-up required.
+                    Checks whether each report falls inside one of the 33 municipal canal areas. No sign-up needed to report.
                   </Text>
                   <Text type="code" size="sm" color="secondary">{gardaProj.stack}</Text>
                 </VStack>
@@ -791,7 +787,7 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
             <VStack gap={2}>
               <Heading level={2} className="livrea-section-head">Education and experience</Heading>
               <Text color="secondary" className="livrea-section-lead">
-                Computer science foundations, enterprise infrastructure experience and an engineering degree in progress.
+                Where I have studied and worked so far.
               </Text>
             </VStack>
 
@@ -860,7 +856,7 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
       {/* 09 — Contact */}
       <VStack as="section" id="panel-9" className="livrea-panel livrea-panel-09">
         <VStack justify="between" height="100%" width="100%" className="livrea-panel-inner">
-          <SectorHeader num="09" label="Contact" meta="Open to connect" />
+          <SectorHeader num="09" label="Contact" meta="Mantova, Italy" />
 
           <VStack gap={6} width="100%" className="livrea-contact-center">
             <VStack gap={3}>
@@ -894,7 +890,7 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
                 <VStack gap={1}>
                   <Text size="sm" color="secondary">GitHub</Text>
                   <Text color="primary" weight="medium">@{CONTACTS.githubUsername}</Text>
-                  <Text size="sm" color="secondary">Open source work, Oxide and every repository on this page</Text>
+                  <Text size="sm" color="secondary">Oxide and the other repositories on this page</Text>
                 </VStack>
                 <HStack>
                   <Button label="Open GitHub" variant="secondary" href={CONTACTS.github} {...external} endContent={extIcon} />
@@ -905,7 +901,7 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
                 <VStack gap={1}>
                   <Text size="sm" color="secondary">LinkedIn</Text>
                   <Text color="primary" weight="medium">Matteo Benassi</Text>
-                  <Text size="sm" color="secondary">Based in Mantova, open to motorsport and systems software roles</Text>
+                  <Text size="sm" color="secondary">Based in Mantova</Text>
                 </VStack>
                 <HStack>
                   <Button label="Open LinkedIn" variant="secondary" href={CONTACTS.linkedin} {...external} endContent={extIcon} />
