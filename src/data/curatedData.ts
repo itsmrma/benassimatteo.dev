@@ -50,13 +50,14 @@ export interface MilestoneItem {
 
 export const IDENTITY = {
   name: 'Matteo Benassi',
-  role: 'Computer Engineering student · Software & Systems Engineer',
+  role: 'Computer Engineering student',
   location: 'Mantova, Italy',
   manifesto:
     'Learning by building things close to the metal — mostly systems software, embedded firmware, and tools I actually use.',
   bio:
-    "I'm a Computer Engineering student at the University of Modena and Reggio Emilia, Mantova campus. Co-founder of Oxide, 3x hackathon podium winner, open-source systems developer, and aspiring motorsport software engineer.",
+    "I study Computer Engineering at the University of Modena and Reggio Emilia, Mantova campus. I co-founded Oxide with Lorenzo Cavallini, write small open-source tools in Rust and C, and I'd like to work on motorsport software one day.",
   availability: 'Open to a curricular internship in 2026/27.',
+  cofounder: { name: 'Lorenzo Cavallini', url: 'https://cavallinilorenzo.com' },
   lastUpdated: 'November 2026',
 };
 
@@ -118,7 +119,7 @@ export const FEATURED_PROJECTS: FeaturedProject[] = [
     year: '2026',
     tagline: 'Self-hosted listening archive & daemon · Active Development (Pre-release)',
     description:
-      'Single-owner, self-hosted music listening archive and analytics daemon. Collects Spotify plays in the background, ingests multi-year JSON streaming archives, and serves high-throughput personal rankings and activity charts.',
+      'Single-owner, self-hosted music listening archive and analytics daemon. Collects Spotify plays in the background, imports multi-year JSON streaming archives and shows personal rankings and activity charts.',
     stack: 'Rust · SQLite WAL · React · Axum',
     href: 'https://github.com/itsmrma/scrobbl-rs',
     badge: 'Active Development · Pre-release',

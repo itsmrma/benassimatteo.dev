@@ -371,19 +371,19 @@ export function getHeroTelemetryMetrics(): TelemetryMetric[] {
   return [
     {
       id: 'kpi-podiums',
-      label: 'Competitions',
-      shortLabel: 'Competitions',
+      label: 'Hackathons',
+      shortLabel: 'Hackathons',
       value: '3x Podiums',
-      desktopValue: '3x Podiums',
-      detail: '1st Hack4Water 2026 · 2x SCIoTeM 2026 & 2025',
+      desktopValue: '3 podiums',
+      detail: '1st Hack4Water 2026 · 2nd SCIoTeM 2026 and 2025',
       accent: true,
     },
     {
       id: 'kpi-academics',
-      label: 'Academics',
-      shortLabel: 'Academics',
+      label: 'Average grade',
+      shortLabel: 'Average grade',
       value: '27.3/30 avg',
-      desktopValue: '27.3 / 30 avg',
+      desktopValue: '27.3 / 30',
       detail: '125/180 ECTS · 100/100 high-school diploma',
       accent: false,
     },
@@ -572,7 +572,7 @@ export interface SectorWaypoint {
 
 export const SECTOR_WAYPOINTS: readonly SectorWaypoint[] = [
   { id: 'panel-1', num: '01', index: 1, title: 'About', label: 'Profile, highlights and links' },
-  { id: 'panel-2', num: '02', index: 2, title: 'Hackathons', label: 'Three podiums, 2025–2026' },
+  { id: 'panel-2', num: '02', index: 2, title: 'Hackathons', label: 'Team projects, 2025–2026' },
   { id: 'panel-3', num: '03', index: 3, title: 'Oxide', label: 'Coding agents in parallel Git worktrees' },
   { id: 'panel-4', num: '04', index: 4, title: 'SyncForge', label: 'Audio and subtitle sync in Rust' },
   { id: 'panel-5', num: '05', index: 5, title: 'scrobbl.rs', label: 'Self-hosted listening archive' },
