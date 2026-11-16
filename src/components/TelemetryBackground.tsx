@@ -2,10 +2,10 @@ import { useEffect, useRef } from 'react';
 import { TelemetryAnimationController } from '../utils/mobileAdaptation';
 
 // =============================================================================
-// TelemetryBackground - Calibrated Motorsport Blueprint & Live Telemetry Mesh
-// - Technical CAD grid with visible precision crosshairs
-// - Balanced particle constellation: 36 nodes, crisp alphas, delicate linkages
-// - Reactive cursor glow with soft telemetry halo (fine pointer only)
+// TelemetryBackground - quiet engineering-drawing backdrop
+// - Static CAD grid with precision crosshairs (the part that carries the style)
+// - A sparse set of neutral nodes drifting slowly, faint linkages, no colour,
+//   no pulsing, no cursor glow: it should never compete with the content
 // - Touch & scroll throttled: halts animation during active mobile scroll gestures
 // - Strict prefers-reduced-motion: reduce compliance (single static CAD grid)
 // - Single offscreen grid blit + batched line and node passes
@@ -56,7 +56,6 @@ export function TelemetryBackground() {
 
     // Offscreen cached canvases
     let offscreenGrid: HTMLCanvasElement | null = null;
-    let glowSprite: HTMLCanvasElement | null = null;
 
     // Render single static CAD blueprint grid frame (used for reduced motion & resize)
     const renderStaticFrame = () => {
@@ -89,23 +88,6 @@ export function TelemetryBackground() {
       onRenderStaticFrame: renderStaticFrame,
     });
 
-    // 240x240 pre-baked interactive cursor glow sprite
-    const createGlowSprite = () => {
-      const sprite = document.createElement('canvas');
-      sprite.width = 240;
-      sprite.height = 240;
-      const sCtx = sprite.getContext('2d');
-      if (sCtx) {
-        const rad = sCtx.createRadialGradient(120, 120, 0, 120, 120, 120);
-        rad.addColorStop(0, 'rgba(224, 62, 62, 0.04)');
-        rad.addColorStop(0.45, 'rgba(224, 62, 62, 0.01)');
-        rad.addColorStop(1, 'rgba(224, 62, 62, 0)');
-        sCtx.fillStyle = rad;
-        sCtx.fillRect(0, 0, 240, 240);
-      }
-      return sprite;
-    };
-    glowSprite = createGlowSprite();
 
     const resize = () => {
       const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
@@ -168,22 +150,22 @@ export function TelemetryBackground() {
 
       // Balanced telemetry particle count (clearly visible, not crowded)
       maxLineDistSq = (width < 768 ? 75 : 95) ** 2;
-      const particleCount = width < 768 ? 20 : 38;
+      const particleCount = width < 768 ? 12 : 24;
       particles = [];
 
       for (let i = 0; i < particleCount; i++) {
-        const isAccent = Math.random() < 0.20; // ~20% calibrated vermilion telemetry markers
+        const isAccent = false; // neutral only: red is reserved for the livery mark
         particles.push({
           x: Math.random() * width,
           y: Math.random() * height,
-          vx: (Math.random() - 0.5) * 0.28,
-          vy: (Math.random() - 0.5) * 0.28,
+          vx: (Math.random() - 0.5) * 0.16,
+          vy: (Math.random() - 0.5) * 0.16,
           radius: isAccent ? Math.random() * 0.4 + 1.8 : Math.random() * 0.4 + 1.2,
-          baseAlpha: isAccent ? Math.random() * 0.2 + 0.65 : Math.random() * 0.15 + 0.35,
+          baseAlpha: Math.random() * 0.1 + 0.16,
           isAccent,
-          pulseSpeed: Math.random() * 0.02 + 0.01,
+          pulseSpeed: 0,
           pulsePhase: Math.random() * Math.PI * 2,
-          pingRadius: isAccent && Math.random() < 0.35 ? Math.random() * 24 : 0,
+          pingRadius: undefined,
           pingAlpha: 0,
         });
       }
@@ -245,22 +227,13 @@ export function TelemetryBackground() {
         ctx.drawImage(offscreenGrid, 0, 0, width, height);
       }
 
-      // 2. Cursor glow halo (only when cursor tracking is active and on desktop)
-      if (
-        glowSprite &&
-        controller.shouldTrackCursor() &&
-        mouseX > 0 &&
-        mouseY > 0 &&
-        width >= 768
-      ) {
-        ctx.drawImage(glowSprite, mouseX - 120, mouseY - 120, 240, 240);
-      }
+      // (cursor glow removed: decoration that competed with the content)
 
       const n = particles.length;
 
       // 3. Delicate connecting linkages (sparse, only when nodes pass nearby)
       ctx.beginPath();
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
+      ctx.strokeStyle = 'rgba(236, 237, 239, 0.035)';
       ctx.lineWidth = 0.5;
       for (let i = 0; i < n; i++) {
         const p = particles[i];
@@ -356,7 +329,7 @@ export function TelemetryBackground() {
         } else {
           ctx.beginPath();
           ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
+          ctx.fillStyle = `rgba(236, 237, 239, ${alpha})`;
           ctx.fill();
         }
       }
