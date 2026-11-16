@@ -1,13 +1,13 @@
 /*
   X-Content-Type-Options: nosniff
   X-Frame-Options: SAMEORIGIN
-  Content-Security-Policy: frame-ancestors 'self' https://benassimatteo.dev https://*.benassimatteo-dev.pages.dev
+  Content-Security-Policy: frame-ancestors 'self' https://benassimatteo.dev https://*.workers.dev
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: camera=(), microphone=(), geolocation=()
 
 /demos/*
   X-Frame-Options: SAMEORIGIN
-  Content-Security-Policy: frame-ancestors 'self' https://benassimatteo.dev https://*.benassimatteo-dev.pages.dev
+  Content-Security-Policy: frame-ancestors 'self' https://benassimatteo.dev https://*.workers.dev
   Cache-Control: public, max-age=3600
 
 /assets/*

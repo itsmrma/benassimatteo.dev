@@ -8,7 +8,7 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.8-3178c6?style=flat-square&logo=typescript)](https://www.typescriptlang.org/)
 [![Vite](https://img.shields.io/badge/Vite-6.2-646cff?style=flat-square&logo=vite)](https://vitejs.dev/)
 [![Astryx Design](https://img.shields.io/badge/Design_System-Astryx_0.7-10b981?style=flat-square)](https://astryx.design)
-[![Cloudflare Pages](https://img.shields.io/badge/Hosted_on-Cloudflare_Pages-f38020?style=flat-square&logo=cloudflare)](https://pages.cloudflare.com/)
+[![Cloudflare Workers](https://img.shields.io/badge/Hosted_on-Cloudflare_Workers-f38020?style=flat-square&logo=cloudflare)](https://workers.cloudflare.com/)
 
 ---
 
@@ -108,7 +108,9 @@ npm install
 | `npm run typecheck` | Runs TypeScript compiler verification (`tsc --noEmit`) |
 | `npm run test:geometry` | Executes the unit tests for the window geometry engine |
 | `npm run sync:demos` | Synchronizes pre-built interactive demos into `public/demos/` |
-| `npm run pages:deploy` | Builds and deploys directly to Cloudflare Pages via Wrangler |
+| `npm test` | Runs geometry and mobile adaptation suites |
+| `npm run deploy` | Builds and deploys to production (Workers Static Assets) |
+| `npm run versions:upload` | Builds and uploads a non-production version (preview) |
 
 ---
 
@@ -124,14 +126,17 @@ This project strictly follows the **Astryx Design System** (`@astryxdesign/core`
 
 ## Deployment
 
-The portfolio is deployed to **Cloudflare Pages**:
+The portfolio is a **Cloudflare Workers** project with static assets (`wrangler.jsonc`), connected to Workers Builds.
 
-```bash
-# Build and deploy to production
-npm run pages:deploy
-```
+Settings required in the dashboard (Workers & Pages → benassimatteo-dev → Settings → Builds):
 
-Configuration is defined in `wrangler.jsonc`. Security headers (allowing same-origin iframe embedding for local demo previews) are managed in `public/_headers`.
+| Field | Value |
+|---|---|
+| Build command | `npm run build` |
+| Deploy command (production) | `npx wrangler deploy` |
+| Non-production branch deploy command | `npx wrangler preview` (richiede `"previews": {}` in `wrangler.jsonc`) |
+
+Every PR gets a preview version; `npm run deploy` / `npm run versions:upload` do the same locally. CI (`.github/workflows/ci.yml`) runs typecheck, tests, build and a wrangler dry-run. Security headers are in `public/_headers`.
 
 ---
 
