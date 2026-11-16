@@ -109,7 +109,7 @@ export function TelemetryBackground() {
         const gridSize = width < 768 ? 72 : 88;
 
         // Clearly visible CAD blueprint grid lines
-        gridCtx.strokeStyle = 'rgba(255, 255, 255, 0.026)';
+        gridCtx.strokeStyle = 'rgba(236, 237, 239, 0.05)';
         gridCtx.lineWidth = 0.5;
         gridCtx.beginPath();
         for (let x = gridSize; x < width; x += gridSize) {
@@ -123,10 +123,10 @@ export function TelemetryBackground() {
         gridCtx.stroke();
 
         // Technical crosshairs '+' at every 2nd intersection
-        gridCtx.strokeStyle = 'rgba(255, 255, 255, 0.065)';
-        gridCtx.lineWidth = 0.75;
+        gridCtx.strokeStyle = 'rgba(236, 237, 239, 0.14)';
+        gridCtx.lineWidth = 1;
         gridCtx.beginPath();
-        const crossSize = 3;
+        const crossSize = 4;
         for (let x = gridSize; x < width; x += gridSize * 2) {
           for (let y = gridSize; y < height; y += gridSize * 2) {
             gridCtx.moveTo(x - crossSize, y);
@@ -150,7 +150,7 @@ export function TelemetryBackground() {
 
       // Balanced telemetry particle count (clearly visible, not crowded)
       maxLineDistSq = (width < 768 ? 75 : 95) ** 2;
-      const particleCount = width < 768 ? 12 : 24;
+      const particleCount = width < 768 ? 18 : 34;
       particles = [];
 
       for (let i = 0; i < particleCount; i++) {
@@ -161,7 +161,7 @@ export function TelemetryBackground() {
           vx: (Math.random() - 0.5) * 0.16,
           vy: (Math.random() - 0.5) * 0.16,
           radius: isAccent ? Math.random() * 0.4 + 1.8 : Math.random() * 0.4 + 1.2,
-          baseAlpha: Math.random() * 0.1 + 0.16,
+          baseAlpha: Math.random() * 0.15 + 0.32,
           isAccent,
           pulseSpeed: 0,
           pulsePhase: Math.random() * Math.PI * 2,
@@ -233,7 +233,7 @@ export function TelemetryBackground() {
 
       // 3. Delicate connecting linkages (sparse, only when nodes pass nearby)
       ctx.beginPath();
-      ctx.strokeStyle = 'rgba(236, 237, 239, 0.035)';
+      ctx.strokeStyle = 'rgba(236, 237, 239, 0.08)';
       ctx.lineWidth = 0.5;
       for (let i = 0; i < n; i++) {
         const p = particles[i];
