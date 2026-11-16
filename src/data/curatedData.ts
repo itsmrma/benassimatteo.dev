@@ -56,7 +56,6 @@ export const IDENTITY = {
     'Learning by building things close to the metal — mostly systems software, embedded firmware, and tools I actually use.',
   bio:
     "I study Computer Engineering at the University of Modena and Reggio Emilia, Mantova campus. I co-founded Oxide with Lorenzo Cavallini, write small open-source tools in Rust and C, and I'd like to work on motorsport software one day.",
-  availability: 'Open to a curricular internship in 2026/27.',
   cofounder: { name: 'Lorenzo Cavallini', url: 'https://cavallinilorenzo.com' },
   lastUpdated: 'November 2026',
 };
@@ -314,7 +313,7 @@ export const CHRONOLOGICAL_MILESTONES: MilestoneItem[] = [
     year: '2027 →',
     title: 'Next: Software for Motorsport',
     subtitle: 'The Finish Line',
-    description: 'Seeking a curricular internship in 2026/27 to build high-performance systems for racing teams.',
+    description: 'Interested in software for motorsport and high-performance systems.',
     isFinish: true,
   },
 ];

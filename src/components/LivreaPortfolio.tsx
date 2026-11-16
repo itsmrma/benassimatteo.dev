@@ -283,7 +283,6 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
   const stm32Proj = FEATURED_PROJECTS.find((p) => p.id === 'stm32')!;
   const scrobblProj = FEATURED_PROJECTS.find((p) => p.id === 'scrobbl')!;
 
-  const availability = IDENTITY.availability.replace(/\.$/, '');
   const cofounderLink = (
     <Link href={IDENTITY.cofounder.url} {...external} color="primary" className="livrea-inline-link">
       {IDENTITY.cofounder.name}
@@ -871,10 +870,10 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
           <VStack gap={6} width="100%" className="livrea-contact-center">
             <VStack gap={3}>
               <Heading level={2} className="livrea-section-head livrea-contact-head">
-                {availability}
+                Contact
               </Heading>
               <Text as="p" color="secondary" className="livrea-contact-lead">
-                I'm looking for an internship in systems, embedded or motorsport software. Email is the fastest way to reach me, and my CV is available in English and Italian.
+                Email is the quickest way to reach me. My CV is available in English and Italian.
               </Text>
             </VStack>
 
@@ -884,7 +883,7 @@ export function LivreaPortfolio({ onCopyEmail, emailCopied }: LivreaPortfolioPro
                 <VStack gap={1}>
                   <Text size="sm" color="secondary">Email</Text>
                   <Text color="primary" weight="medium">{CONTACTS.email}</Text>
-                  <Text size="sm" color="secondary">Projects, internships and technical questions</Text>
+                  <Text size="sm" color="secondary">Projects and technical questions</Text>
                 </VStack>
                 <HStack>
                   <Button

@@ -186,12 +186,12 @@ test('mobileAdaptation: getHeroTelemetryMetrics and formatCompactTelemetryRibbon
   const [m1, m2, m3] = metrics;
   assert.equal(m1.value, '3x Podiums', 'KPI 01 value formatted for mobile HUD ribbon');
   assert.equal(m2.value, '27.3/30 avg', 'KPI 02 value formatted for mobile HUD ribbon');
-  assert.equal(m3.value, '2026/27 Ready', 'KPI 03 value formatted for mobile HUD ribbon');
+  assert.equal(m3.value, '125/180 ECTS', 'KPI 03 value formatted for mobile HUD ribbon');
 
   const ribbon = formatCompactTelemetryRibbon(metrics);
   assert.equal(
     ribbon,
-    '3x Podiums | 27.3/30 avg | 2026/27 Ready',
+    '3x Podiums | 27.3/30 avg | 125/180 ECTS',
     'Compact telemetry HUD ribbon matches ticket acceptance criteria'
   );
 });
